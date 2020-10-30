@@ -1,2 +1,0 @@
-import platform
-platform.architecture()
