@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="{{ url_for('static', filename='css/icons.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/responsive.css') }}" rel="stylesheet">
+</head>
+
+
+<body class="sticky-header">
+
+
+<!-- main content start-->
+<div>
+
+    <!--body wrapper start-->
+    <div class="wrapper">
+
+        <!--Start  row-->
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="white-box">
+                    <h2 class="header-title">柱状图</h2>
+                    <div id="flot1" style="height: 320px;" class="flot-chart"></div>
+                </div>
+            </div><!-- /col-md-6-->
+
+            <div class="col-md-6">
+                <div class="white-box">
+                    <h2 class="header-title">折线图</h2>
+                    <div id="flot2" style="height: 320px;" class="flot-chart"></div>
+                </div>
+            </div><!-- /col-md-6-->
+
+        </div>
+        <!--End  row-->
+
+
+        <!--Start  row-->
+        <div class="row">
+
+            <div class="col-md-6">
+                <div class="white-box">
+                    <h2 class="header-title">饼图</h2>
+                    <div id="flot3" style="height: 320px;" class="flot-chart"></div>
+                </div>
+            </div><!-- /col-md-6-->
+
+            <div class="col-md-6">
+                <div class="white-box">
+                    <h2 class="header-title">实时折线图</h2>
+                    <div id="flot4" style="height: 320px;" class="flot-chart"></div>
+                </div>
+            </div><!-- /col-md-6-->
+
+        </div>
+        <!--End  row-->
+
+    </div>
+    <!-- End Wrapper-->
+
+    <!--Start  Footer -->
+    <footer class="footer-main"><a target="_blank" href="{{ url_for("admin.login") }}">跳转至登录页</a>
+    </footer>
+    <!--End footer -->
+
+</div>
+<!--End main content -->
+
+
+<!--Begin core plugin -->
+<script src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/moment.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.slimscroll.js') }}"></script>
+<script src="{{ url_for('static', filename='js/jquery.nicescroll.js') }}"></script>
+<script src="{{ url_for('static', filename='js/functions.js') }}"></script>
+<!-- End core plugin -->
+
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+<script src="{{ url_for('static', filename='plugins/jquery.sparkline.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.time.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.tooltip.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.resize.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.pie.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.selection.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.stack.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.orderBars.min.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.crosshair.js') }}"></script>
+<script src="{{ url_for('static', filename='plugins/flot-chart/jquery.flot.init.js') }}"></script>
+<!-- BEGIN PAGE LEVEL SCRIPTS -->
+
+
+</body>
+
+</html>

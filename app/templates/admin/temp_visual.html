@@ -1,0 +1,25 @@
+{% extends "admin/admin.html" %}
+
+
+{% block content %}
+<!--内容-->
+    <section class="content-header">
+        <h1>生丝水分控制后台管理系统</h1>
+        <ol class="breadcrumb">
+            <li><a href="#"><i class="fa fa-dashboard"></i> 可视化分析</a></li>
+            <li class="active">温度可视化</li>
+        </ol>
+    </section>
+<!--内容-->
+
+{% endblock %}
+
+
+{% block js %}
+    <script>
+        $(ducument).ready(function () {
+            $("#g-3").addClass("active");
+            $("#g-3-1").addClass("active");
+        })
+    </script>
+{% endblock %}
