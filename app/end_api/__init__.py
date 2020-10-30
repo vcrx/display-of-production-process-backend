@@ -1,5 +1,3 @@
 from flask import Blueprint
 
-end = Blueprint('end', __name__)
-
-
+end = Blueprint("end", __name__)

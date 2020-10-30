@@ -7,6 +7,7 @@ from flask import request
 def get_index_data():
     return response()
 
+
 # 生丝水分控制的影响因素：
 @front.route("/get_influence", methods=["GET"])
 def front_get_influence():

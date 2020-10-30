@@ -25,24 +25,24 @@ mapping = {
     "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_ValPos_Y32": "烘丝Y32阀门值",
     "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.FLOW_PV": "烘丝物料实际流量",
     "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.FLOW_TOT": "烘丝物料累计重量",
-    "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.CV_SteamMaFl": "烘丝蒸汽流量阀门开度"
-
+    "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.CV_SteamMaFl": "烘丝蒸汽流量阀门开度",
 }
 
-var = [{
-    "id": 998,
-    "_BATCHID": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV",
-    "_NUMERICID": 0,
-    "_VALUE": 4199.225586,
-    "_TIMESTAMP": "2020/10/12 16:29:00",
-    "_QUALITY": 192
-},
+var = [
+    {
+        "id": 998,
+        "_BATCHID": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV",
+        "_NUMERICID": 0,
+        "_VALUE": 4199.225586,
+        "_TIMESTAMP": "2020/10/12 16:29:00",
+        "_QUALITY": 192,
+    },
     {
         "id": 999,
         "_BATCHID": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.KA104_PV_ST201_Temperature",
         "_NUMERICID": 0,
         "_VALUE": 123,
         "_TIMESTAMP": "2020/10/12 16:29:00",
-        "_QUALITY": 192
-    }
+        "_QUALITY": 192,
+    },
 ]
