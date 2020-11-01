@@ -1,3 +1,4 @@
+# type: ignore
 from app import db
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -11,7 +12,6 @@ class Sshc(db.Model):
     sshc_wd = db.Column(db.Integer)  # 温度
     sshc_sd = db.Column(db.Integer)  # 湿度
     sshc_cksf = db.Column(db.Integer)  # 出口水分
-
     sssf_controls = db.relationship("Sssf_control", backref="sshc")  # 生丝水分控制外键关系关联
 
     def __repr__(self):

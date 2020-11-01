@@ -18,10 +18,6 @@ services:
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       MYSQL_DATABASE: yancao
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - 8080:8080
+
 volumes:
   mysql-data: {}
