@@ -1,7 +1,7 @@
 from . import admin
 from flask import render_template, redirect, url_for, flash, session, request, abort
 from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm
-from app.models import Admin, Auth, Role, Adminloginlog, Oplog
+from app.models import Admin, Auth, Role, AdminLoginLog, Oplog
 from functools import wraps
 from app import db
 import datetime
@@ -66,7 +66,7 @@ def login():
             return redirect(url_for("admin.login"))
         session["admin"] = data["account"]
         session["admin_id"] = admin.id
-        adminloginlog = Adminloginlog(
+        adminloginlog = AdminLoginLog(
             admin_id=admin.id,
             ip=request.remote_addr,
         )
@@ -464,11 +464,11 @@ def adminloginlog_list(page=None):
     if page is None:
         page = 1
     page_data = (
-        Adminloginlog.query.join(Admin)
+        AdminLoginLog.query.join(Admin)
         .filter(
-            Admin.id == Adminloginlog.admin_id,
+            Admin.id == AdminLoginLog.admin_id,
         )
-        .order_by(Adminloginlog.addtime.desc())
+        .order_by(AdminLoginLog.addtime.desc())
         .paginate(page=page, per_page=10)
     )
     return render_template("admin/adminloginlog_list.html", page_data=page_data)
