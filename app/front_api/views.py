@@ -1,6 +1,8 @@
 from . import front
 from app.utils import response
 from flask import request
+from app.models import Yjl, Hs, Sshc
+from datetime import datetime
 
 
 # 首页数据
@@ -43,7 +45,19 @@ def get_index_data():
         "time":timestamp
     }
     """
-    return response()
+    data = {"yjl": {}, "sssf": {}, "cy": {}, "qs": {},
+            "time": int(datetime.timestamp(datetime.now()))}
+    yjl: Yjl = Yjl.query.order_by(Yjl.id.desc()).first()
+    data["yjl"]["wlsjll"] = yjl.wlsjll
+    data["yjl"]["wlljzl"] = yjl.wlljzl
+    data["yjl"]["ljjsl"] = yjl.ljjsl
+    data["yjl"]["rksf"] = yjl.rksf
+    data["yjl"]["ssjsl"] = yjl.ssjsl
+    data["yjl"]["ssjlj"] = yjl.ssjlj
+    data["yjl"]["lywd"] = yjl.lywd
+    data["yjl"]["ckwd"] = yjl.ckwd
+    data["yjl"]["cksf"] = yjl.cksf
+    return response(data=data)
 
 
 # 生丝水分控制的影响因素：
@@ -76,6 +90,22 @@ def front_get_influence():
 
 @front.route("/get_alarm", methods=["GET"])
 def front_get_alarm():
+    """
+    [{
+        "time":timestamp,
+        "pp":str, //pp:品牌
+        "pch": str, //批次号
+        "scjd": str, //生产阶段
+        "ysys": str, //影响因素
+        "bjyy": str, //报警原因
+        "sfyd": str //是否以读
+    }]
+    """
+    return response()
+
+
+@front.route("/get_first_five_batch", methods=["GET"])
+def get_first_five_batch():
     """
     [{
         "time":timestamp,

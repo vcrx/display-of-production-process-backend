@@ -2,7 +2,7 @@
 
 
 {% block content %}
-<!--内容-->
+    <!--内容-->
     <section class="content-header">
         <h1>生丝水分控制后台管理系统</h1>
         <ol class="breadcrumb">
@@ -10,15 +10,247 @@
             <li class="active">报警控制</li>
         </ol>
     </section>
-<!--内容-->
+    <section class="content" id="showcontent">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box box-primary">
+                    <div class="box-header">
+                        <h3 class="box-title">报警管理</h3>
+                    </div>
+                    <ul class="nav nav-tabs" role="tablist" style="margin-left: 10px;margin-bottom: 10px">
+                        <li role="presentation" class="active">
+                            <a href="#ryjl" aria-controls="ryjl" role="tab" data-toggle="tab">润叶加料</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#sshc" aria-controls="sshc" role="tab"
+                               data-toggle="tab">松散回潮</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#cy" aria-controls="cy" role="tab"
+                               data-toggle="tab">储叶</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#qs" aria-controls="qs" role="tab"
+                               data-toggle="tab">切丝</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#sssf" aria-controls="sssf" role="tab"
+                               data-toggle="tab">生丝水分</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="ryjl">
+                            <div class="box-body table-responsive no-padding">
+                                <form id="sshc_form" action="/modify_alert/ryjl" method="POST">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <th>生产阶段</th>
+                                            <th>影响因素名称</th>
+                                            <th>控制范围上限</th>
+                                            <th>控制范围下限</th>
+                                        </tr>
+                                        <tr>
+                                            <th>1</th>
+                                            <th>入口水分</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="rksf-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="rksf-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>2</th>
+                                            <th>物料累计重量</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="wlljzl-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="wlljzl-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>3</th>
+                                            <th>瞬时加水量</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="ssjsl-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="ssjsl-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>4</th>
+                                            <th>料液温度</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="lywd-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="lywd-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>5</th>
+                                            <th>环境温度</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="hjwd-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="hjwd-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>6</th>
+                                            <th>环境湿度</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="hjsd-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="hjsd-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>7</th>
+                                            <th>出口温度</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="ckwd-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="ckwd-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>8</th>
+                                            <th>出口水分</th>
+                                            <th>
+                                                <input type="number" class="form-control" name="cksf-up"
+                                                       placeholder="控制范围上限">
+                                            </th>
+                                            <th>
+                                                <input type="number" class="form-control" name="cksf-down"
+                                                       placeholder="控制范围下限">
+                                            </th>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                    <button type="submit" class="btn btn-default">保存</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="sshc">
+                            松散回潮
+                            <div class="box-body table-responsive no-padding">
+                                <form>
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <th>生产阶段</th>
+                                            <th>影响因素名称</th>
+                                            <th>控制范围上限</th>
+                                            <th>控制范围下限</th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <input class="btn btn-default" type="submit" value="Submit">
+                                </form>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="cy">
+                            储叶
+                            <div class="box-body table-responsive no-padding">
+                                <form>
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <th>生产阶段</th>
+                                            <th>影响因素名称</th>
+                                            <th>控制范围上限</th>
+                                            <th>控制范围下限</th>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                    <input class="btn btn-default" type="submit" value="Submit">
+                                </form>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="qs">
+                            <div class="box-body table-responsive no-padding">
+                                切丝
+                                <form>
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <th>生产阶段</th>
+                                            <th>影响因素名称</th>
+                                            <th>控制范围上限</th>
+                                            <th>控制范围下限</th>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                    <input class="btn btn-default" type="submit" value="Submit">
+                                </form>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="sssf">
+                            <div class="box-body table-responsive no-padding">
+                                生丝水分
+                                <form>
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <th>生产阶段</th>
+                                            <th>影响因素名称</th>
+                                            <th>控制范围上限</th>
+                                            <th>控制范围下限</th>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                    <input class="btn btn-default" type="submit" value="Submit">
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--内容-->
 {% endblock %}
 
 
 {% block js %}
     <script>
-        $(ducument).ready(function () {
-            $("#g-2").addClass("active");
-            $("#g-2-2").addClass("active");
-        })
+
+    </script>
+    <script type="text/javascript">
+        $("#sshc_form").submit(function (event) {
+            event.preventDefault();
+            $(this).ajaxSubmit({
+                success: function (data) { // data 保存提交后返回的数据，一般为 json 数据
+                    console.log(data)
+                    success_prompt("保存成功")
+                }
+            });
+        });
     </script>
 {% endblock %}
