@@ -72,31 +72,3 @@ z2_mapping = {
 }
 
 
-def getData(csv_name):
-    """
-    {
-        '2020/10/12 13:06': {
-            'DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV': {
-                '_NUMERICID': 0.0,
-                '_VALUE': 18.793315889,
-                '_QUALITY': 192.0
-            },
-            ...
-        },
-    }
-    """
-    df = pd.read_csv(csv_name, encoding="gbk")
-    df.drop(df.columns[-1], axis=1, inplace=True)
-
-    grouped = df.groupby("_TIMESTAMP")
-    result = {}
-    for key in grouped.groups.keys():
-        data = (
-            grouped.get_group(key)
-            .groupby("_BATCHID")
-            .mean()
-            .drop("id", axis=1)
-            .T.to_dict()
-        )
-        result[key] = data
-    return result

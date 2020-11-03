@@ -1,10 +1,11 @@
 from app import db
 from datetime import datetime
 from werkzeug.security import check_password_hash
+from .base import Base
 
 
 # 角色
-class Role(db.Model):
+class Role(Base, db.Model):
     __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     name = db.Column(db.String(100), unique=True)  # 名称
@@ -17,7 +18,7 @@ class Role(db.Model):
 
 
 # 权限
-class Auth(db.Model):
+class Auth(Base, db.Model):
     __tablename__ = "auth"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     name = db.Column(db.String(100), unique=True)  # 名称
@@ -29,7 +30,7 @@ class Auth(db.Model):
 
 
 # 管理员
-class Admin(db.Model):
+class Admin(Base, db.Model):
     __tablename__ = "admin"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     name = db.Column(db.String(100), unique=True)  # 管理员账号
@@ -50,7 +51,7 @@ class Admin(db.Model):
 
 
 # 管理员登录日志
-class AdminLoginLog(db.Model):
+class AdminLoginLog(Base, db.Model):
     __tablename__ = "adminlog"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     ip = db.Column(db.String(100))  # 登录IP
@@ -62,7 +63,7 @@ class AdminLoginLog(db.Model):
 
 
 # 操作日志
-class Oplog(db.Model):
+class Oplog(Base, db.Model):
     __tablename__ = "oplog"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     ip = db.Column(db.String(100))  # 登录IP

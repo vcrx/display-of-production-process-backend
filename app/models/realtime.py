@@ -1,9 +1,11 @@
 from app import db
 from typing import Dict
+from .base import Base
+from sqlalchemy import exc
 
 
 # 松散回潮
-class Sshc(db.Model):
+class Sshc(Base, db.Model):
     __tablename__ = "sshc"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.String(20))  # 时间
@@ -38,13 +40,13 @@ class Sshc(db.Model):
                 obj = Sshc(time=time, **kwargs)
                 db.session.add(obj)
             db.session.commit()
-        except Exception as e:
-            print(e)
+        except exc.SQLAlchemyError:
             db.session.rollback()
+            raise
 
 
 # 叶加料
-class Yjl(db.Model):
+class Yjl(Base, db.Model):
     __tablename__ = "yjl"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.String(20))  # 时间
@@ -91,13 +93,13 @@ class Yjl(db.Model):
                 obj = Yjl(time=time, **kwargs)
                 db.session.add(obj)
             db.session.commit()
-        except Exception as e:
-            print(e)
+        except exc.SQLAlchemyError:
             db.session.rollback()
+            raise
 
 
 # 烘丝
-class Hs(db.Model):
+class Hs(Base, db.Model):
     __tablename__ = "hs"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.String(20))  # 时间
@@ -144,13 +146,13 @@ class Hs(db.Model):
                 obj = Hs(time=time, **kwargs)
                 db.session.add(obj)
             db.session.commit()
-        except Exception as e:
-            print(e)
+        except exc.SQLAlchemyError:
             db.session.rollback()
+            raise
 
 
 # 预测
-class Yc(db.Model):
+class Yc(Base, db.Model):
     __tablename__ = "yc"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     yc_ljjsl = db.Column(db.Float)  # 预测的累积加水量
@@ -166,7 +168,7 @@ class Yc(db.Model):
 
 
 # 可视化
-class Ksh(db.Model):
+class Ksh(Base, db.Model):
     __tablename__ = "ksh"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     

@@ -14,5 +14,4 @@ docker-compose up -d
 
 ```bash
 docker-compose down -v
-docker volume rm backend_mysql-data
 ```
