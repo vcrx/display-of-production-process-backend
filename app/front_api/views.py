@@ -1,8 +1,9 @@
 from . import front
 from app.utils import response
 from flask import request
-from app.models import Yjl, Hs, Sshc
+from app.models import Yjl, YjlInfo, CyInfo
 from datetime import datetime
+from typing import List
 
 
 # 首页数据
@@ -108,13 +109,29 @@ def front_get_alarm():
 def get_first_five_batch():
     """
     [{
-        "time":timestamp,
         "pp":str, //pp:品牌
         "pch": str, //批次号
-        "scjd": str, //生产阶段
-        "ysys": str, //影响因素
-        "bjyy": str, //报警原因
-        "sfyd": str //是否以读
+        ...
     }]
     """
-    return response()
+    yjls: List[YjlInfo] = YjlInfo.query.order_by(YjlInfo.id.desc()).slice(0, 5)
+    result = []
+    for yjl in yjls:
+        tmp = {}
+        pch = yjl.pch
+        tmp["pch"] = pch
+        rq = yjl.rq
+        tmp["rq"] = rq
+        pp = yjl.pph
+        tmp["pp"] = pp
+        jsl = yjl.ljjsl
+        tmp["jsl"] = jsl
+        cy: CyInfo = CyInfo.query.filter(CyInfo.pch == pch, CyInfo.pph == pp,
+                                         CyInfo.rq == rq).first()
+        # 如果 cy 是 none， 则说明没查到
+        if cy is not None:
+            tmp["sssf"] = cy.sssf
+        else:
+            tmp["sssf"] = None
+        result.append(tmp)
+    return response(data=result)
