@@ -5,6 +5,13 @@ from app.models import BjControl
 from app import db
 
 
+def safe_float(value, default):
+    try:
+        return float(value)
+    except Exception:
+        return default
+
+
 # 获取报警信息
 @end.route("/get_alert", methods=["GET"])
 def end_get_alert():
@@ -56,24 +63,24 @@ def end_modify_alert(type):
     print(data)
     
     print(type)
-    if type == "yjl":
+    if type == "ryjl":
         obj = BjControl()
-        obj.yjl_rksfup = data.get("rksf-up")
-        obj.yjl_rksfdown = data.get("rksf-down")
-        obj.yjl_cljzlup = data.get("wlljzl-up")
-        obj.yjl_cljzldown = data.get("wlljzl-down")
-        obj.yjl_ssjslup = data.get("ssjsl-up")
-        obj.yjl_ssjsldown = data.get("ssjsl-down")
-        obj.yjl_lywdup = data.get("lywd-up")
-        obj.yjl_lywddown = data.get("lywd-down")
-        obj.yjl_wdup = data.get("hjwd-up")
-        obj.yjl_wddown = data.get("hjwd-down")
-        obj.yjl_sdup = data.get("hjsd-up")
-        obj.yjl_sddown = data.get("hjsd-down")
-        obj.yjl_ckwdup = data.get("ckwd-up")
-        obj.yjl_ckwddown = data.get("ckwd-down")
-        obj.yjl_cksfup = data.get("cksf-up")
-        obj.yjl_cksfdown = data.get("cksf-down")
+        obj.yjl_rksfup = safe_float(data.get("rksf-up"), 0)
+        obj.yjl_rksfdown = safe_float(data.get("rksf-down"), 0)
+        obj.yjl_cljzlup = safe_float(data.get("wlljzl-up"), 0)
+        obj.yjl_cljzldown = safe_float(data.get("wlljzl-down"), 0)
+        obj.yjl_ssjslup = safe_float(data.get("ssjsl-up"), 0)
+        obj.yjl_ssjsldown = safe_float(data.get("ssjsl-down"), 0)
+        obj.yjl_lywdup = safe_float(data.get("lywd-up"), 0)
+        obj.yjl_lywddown = safe_float(data.get("lywd-down"), 0)
+        obj.yjl_wdup = safe_float(data.get("hjwd-up"), 0)
+        obj.yjl_wddown = safe_float(data.get("hjwd-down"), 0)
+        obj.yjl_sdup = safe_float(data.get("hjsd-up"), 0)
+        obj.yjl_sddown = safe_float(data.get("hjsd-down"), 0)
+        obj.yjl_ckwdup = safe_float(data.get("ckwd-up"), 0)
+        obj.yjl_ckwddown = safe_float(data.get("ckwd-down"), 0)
+        obj.yjl_cksfup = safe_float(data.get("cksf-up"), 0)
+        obj.yjl_cksfdown = safe_float(data.get("cksf-down"), 0)
         db.session.add(obj)
         db.session.commit()
         return response()

@@ -2,7 +2,7 @@ from . import admin
 from flask import render_template, redirect, url_for, flash, session, request, \
     abort
 from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm
-from app.models import Admin, Auth, Role, AdminLoginLog, Oplog
+from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, BjControl
 from functools import wraps
 from app import db
 import datetime
@@ -124,7 +124,30 @@ def police():
                   reason="进行报警控制")
     db.session.add(oplog)
     db.session.commit()
-    return render_template("admin/police.html")
+    bj_control: BjControl = BjControl.get_last_one()
+    data = {}
+    if bj_control is not None:
+        data["yjl_rksfup"] = bj_control.yjl_rksfup
+        data["yjl_rksfdown"] = bj_control.yjl_rksfdown
+        data["yjl_cljzlup"] = bj_control.yjl_cljzlup
+        data["yjl_cljzldown"] = bj_control.yjl_cljzldown
+        data["yjl_cssllup"] = bj_control.yjl_cssllup
+        data["yjl_csslldown"] = bj_control.yjl_csslldown
+        data["yjl_lywdup"] = bj_control.yjl_lywdup
+        data["yjl_lywddown"] = bj_control.yjl_lywddown
+        data["yjl_ljjslup"] = bj_control.yjl_ljjslup
+        data["yjl_ljjsldown"] = bj_control.yjl_ljjsldown
+        data["yjl_ssjslup"] = bj_control.yjl_ssjslup
+        data["yjl_ssjsldown"] = bj_control.yjl_ssjsldown
+        data["yjl_wdup"] = bj_control.yjl_wdup
+        data["yjl_wddown"] = bj_control.yjl_wddown
+        data["yjl_sdup"] = bj_control.yjl_sdup
+        data["yjl_sddown"] = bj_control.yjl_sddown
+        data["yjl_ckwdup"] = bj_control.yjl_ckwdup
+        data["yjl_ckwddown"] = bj_control.yjl_ckwddown
+        data["yjl_cksfup"] = bj_control.yjl_cksfup
+        data["yjl_cksfdown"] = bj_control.yjl_cksfdown
+    return render_template("admin/police.html", data=data)
 
 
 # 人工干预

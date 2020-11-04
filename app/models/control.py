@@ -62,6 +62,12 @@ class BjControl(Base, db.Model):
     
     def __repr__(self):
         return "<BjControl {}>".format(self.id)
+    
+    @classmethod
+    def get_last_one(cls):
+        bj_control: BjControl = BjControl.query.order_by(
+            BjControl.id.desc()).first()
+        return bj_control
 
 
 # 人工控制

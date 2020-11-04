@@ -1,7 +1,7 @@
 from . import front
 from app.utils import response
 from flask import request
-from app.models import Yjl, YjlInfo, CyInfo
+from app.models import Yjl, YjlInfo, CyInfo, BjControl
 from datetime import datetime
 from typing import List
 
@@ -18,17 +18,20 @@ def get_index_data():
     ------------------------------------------------
     {
         "yjl":{
-            "yjl_rksf":number,   //入口水分
-            "yjl_cljzl":number,  //物料累积重量
-            "yjl_cssll":number,  //物料瞬时流量
-            "yjl_lywd":number,  //料液温度
-            "yjl_ljjsl":number,  //累积加水量
-            "yjl_ssjsl":number,  /瞬时加水量
-            "yjl_wd":number,  // 环境温度
-            "yjl_sd":number,  // 环境湿度
-            "yjl_ckwd":number,  //出口温度
-            "yjl_cksf":number,  //出口水分
-            "yjlsc":number  //叶加料时长
+            "rksf": {
+                value: number,
+                up: number,
+                down: number,
+            },   //入口水分
+            "cljzl":...,  //物料累积重量
+            "cssll":...,  //物料瞬时流量
+            "lywd":...,  //料液温度
+            "ljjsl":...,  //累积加水量
+            "ssjsl":...,  /瞬时加水量
+            "wd":...,  // 环境温度
+            "sd":...,  // 环境湿度
+            "ckwd":...,  //出口温度
+            "cksf":...,  //出口水分
         },
         "sssf":{
             "yc_sssf"：number //预测的生丝水分值
@@ -49,15 +52,44 @@ def get_index_data():
     data = {"yjl": {}, "sssf": {}, "cy": {}, "qs": {},
             "time": int(datetime.timestamp(datetime.now()))}
     yjl: Yjl = Yjl.query.order_by(Yjl.id.desc()).first()
-    data["yjl"]["wlsjll"] = yjl.wlsjll
-    data["yjl"]["wlljzl"] = yjl.wlljzl
-    data["yjl"]["ljjsl"] = yjl.ljjsl
-    data["yjl"]["rksf"] = yjl.rksf
-    data["yjl"]["ssjsl"] = yjl.ssjsl
-    data["yjl"]["ssjlj"] = yjl.ssjlj
-    data["yjl"]["lywd"] = yjl.lywd
-    data["yjl"]["ckwd"] = yjl.ckwd
-    data["yjl"]["cksf"] = yjl.cksf
+    bj_control: BjControl = BjControl.get_last_one()
+    if bj_control:
+        # 物料累计重量
+        data["yjl"]["wlljzl"] = {
+            "value": yjl.wlljzl,
+            "up": bj_control.yjl_cljzlup,
+            "down": bj_control.yjl_cljzldown,
+        }
+        # 入口水分
+        data["yjl"]["rksf"] = {
+            "value": yjl.rksf,
+            "up": bj_control.yjl_rksfup,
+            "down": bj_control.yjl_rksfdown,
+        }
+        # 瞬时加水量
+        data["yjl"]["ssjsl"] = {
+            "value": yjl.ssjsl,
+            "up": bj_control.yjl_ssjslup,
+            "down": bj_control.yjl_ssjsldown,
+        }
+        # 料液温度
+        data["yjl"]["lywd"] = {
+            "value": yjl.lywd,
+            "up": bj_control.yjl_lywdup,
+            "down": bj_control.yjl_lywddown,
+        }
+        # 出口温度
+        data["yjl"]["ckwd"] = {
+            "value": yjl.ckwd,
+            "up": bj_control.yjl_ckwdup,
+            "down": bj_control.yjl_ckwddown,
+        }
+        # 出口水分
+        data["yjl"]["cksf"] = {
+            "value": yjl.cksf,
+            "up": bj_control.yjl_cksfup,
+            "down": bj_control.yjl_cksfdown,
+        }
     return response(data=data)
 
 
