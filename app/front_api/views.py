@@ -38,12 +38,28 @@ def get_index_data():
         },
         "cy":{
             "cysc",number, //储叶时长
-            "cy_wd",number, //温度
-            "cy_sd",number //湿度
+            "wd",{
+                value: number,
+                up: number,
+                down: number,
+            }, //温度
+            "sd",{
+                value: number,
+                up: number,
+                down: number,
+            } //湿度
         },
         "qs":{
-            "qs_wd":number, //温度
-            "qs_sd":number, //湿度
+            "wd":{
+                value: number,
+                up: number,
+                down: number,
+            }, //温度
+            "sd":{
+                value: number,
+                up: number,
+                down: number,
+            }, //湿度
             "qssc":number //切丝时长
         },
         "time":timestamp
@@ -89,6 +105,36 @@ def get_index_data():
             "value": yjl.cksf,
             "up": bj_control.yjl_cksfup,
             "down": bj_control.yjl_cksfdown,
+        }
+        # 储叶时长
+        data["cy"]["sc"] = {
+            "value": "",
+            "up": None,
+            "down": None,
+        }
+        # 储叶温度
+        data["cy"]["wd"] = {
+            "value": "",
+            "up": bj_control.cy_wdup,
+            "down": bj_control.cy_wddown,
+        }
+        # 储叶湿度
+        data["cy"]["sd"] = {
+            "value": "",
+            "up": bj_control.cy_sdup,
+            "down": bj_control.cy_sddown,
+        }
+        # 切丝温度
+        data["qs"]["wd"] = {
+            "value": "",
+            "up": bj_control.qs_wdup,
+            "down": bj_control.qs_wddown,
+        }
+        # 切丝湿度
+        data["qs"]["sd"] = {
+            "value": "",
+            "up": bj_control.qs_sdup,
+            "down": bj_control.qs_sddown,
         }
     return response(data=data)
 

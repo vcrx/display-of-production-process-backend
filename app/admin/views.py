@@ -115,6 +115,12 @@ def influence():
     return render_template("admin/influence.html")
 
 
+def ensure_not_none(value, default=""):
+    if value is not None:
+        return value
+    return default
+
+
 # 报警控制
 @admin.route("/police/")
 @admin_login_req
@@ -127,26 +133,36 @@ def police():
     bj_control: BjControl = BjControl.get_last_one()
     data = {}
     if bj_control is not None:
-        data["yjl_rksfup"] = bj_control.yjl_rksfup
-        data["yjl_rksfdown"] = bj_control.yjl_rksfdown
-        data["yjl_cljzlup"] = bj_control.yjl_cljzlup
-        data["yjl_cljzldown"] = bj_control.yjl_cljzldown
-        data["yjl_cssllup"] = bj_control.yjl_cssllup
-        data["yjl_csslldown"] = bj_control.yjl_csslldown
-        data["yjl_lywdup"] = bj_control.yjl_lywdup
-        data["yjl_lywddown"] = bj_control.yjl_lywddown
-        data["yjl_ljjslup"] = bj_control.yjl_ljjslup
-        data["yjl_ljjsldown"] = bj_control.yjl_ljjsldown
-        data["yjl_ssjslup"] = bj_control.yjl_ssjslup
-        data["yjl_ssjsldown"] = bj_control.yjl_ssjsldown
-        data["yjl_wdup"] = bj_control.yjl_wdup
-        data["yjl_wddown"] = bj_control.yjl_wddown
-        data["yjl_sdup"] = bj_control.yjl_sdup
-        data["yjl_sddown"] = bj_control.yjl_sddown
-        data["yjl_ckwdup"] = bj_control.yjl_ckwdup
-        data["yjl_ckwddown"] = bj_control.yjl_ckwddown
-        data["yjl_cksfup"] = bj_control.yjl_cksfup
-        data["yjl_cksfdown"] = bj_control.yjl_cksfdown
+        data["sshc_cksfup"] = ensure_not_none(bj_control.sshc_cksfup)
+        data["sshc_cksfdown"] = ensure_not_none(bj_control.sshc_cksfdown)
+        data["yjl_rksfup"] = ensure_not_none(bj_control.yjl_rksfup)
+        data["yjl_rksfdown"] = ensure_not_none(bj_control.yjl_rksfdown)
+        data["yjl_cljzlup"] = ensure_not_none(bj_control.yjl_cljzlup)
+        data["yjl_cljzldown"] = ensure_not_none(bj_control.yjl_cljzldown)
+        data["yjl_cssllup"] = ensure_not_none(bj_control.yjl_cssllup)
+        data["yjl_csslldown"] = ensure_not_none(bj_control.yjl_csslldown)
+        data["yjl_lywdup"] = ensure_not_none(bj_control.yjl_lywdup)
+        data["yjl_lywddown"] = ensure_not_none(bj_control.yjl_lywddown)
+        data["yjl_ljjslup"] = ensure_not_none(bj_control.yjl_ljjslup)
+        data["yjl_ljjsldown"] = ensure_not_none(bj_control.yjl_ljjsldown)
+        data["yjl_ssjslup"] = ensure_not_none(bj_control.yjl_ssjslup)
+        data["yjl_ssjsldown"] = ensure_not_none(bj_control.yjl_ssjsldown)
+        data["yjl_wdup"] = ensure_not_none(bj_control.yjl_wdup)
+        data["yjl_wddown"] = ensure_not_none(bj_control.yjl_wddown)
+        data["yjl_sdup"] = ensure_not_none(bj_control.yjl_sdup)
+        data["yjl_sddown"] = ensure_not_none(bj_control.yjl_sddown)
+        data["yjl_ckwdup"] = ensure_not_none(bj_control.yjl_ckwdup)
+        data["yjl_ckwddown"] = ensure_not_none(bj_control.yjl_ckwddown)
+        data["yjl_cksfup"] = ensure_not_none(bj_control.yjl_cksfup)
+        data["yjl_cksfdown"] = ensure_not_none(bj_control.yjl_cksfdown)
+        data["cy_wdup"] = ensure_not_none(bj_control.cy_wdup)
+        data["cy_wddown"] = ensure_not_none(bj_control.cy_wddown)
+        data["cy_sdup"] = ensure_not_none(bj_control.cy_sdup)
+        data["cy_sddown"] = ensure_not_none(bj_control.cy_sddown)
+        data["qs_wdup"] = ensure_not_none(bj_control.qs_wdup)
+        data["qs_wddown"] = ensure_not_none(bj_control.qs_wddown)
+        data["qs_sdup"] = ensure_not_none(bj_control.qs_sdup)
+        data["qs_sddown"] = ensure_not_none(bj_control.qs_sddown)
     return render_template("admin/police.html", data=data)
 
 

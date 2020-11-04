@@ -42,7 +42,7 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="ryjl">
                             <div class="box-body table-responsive no-padding">
-                                <form id="sshc_form" action="/modify_alert/ryjl" method="POST">
+                                <form class="form_sub" action="/modify_alert/ryjl" method="POST">
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -52,102 +52,101 @@
                                             <th>控制范围下限</th>
                                         </tr>
                                         <tr>
-                                            <th>1</th>
+                                            <th>润叶加料</th>
                                             <th>入口水分</th>
                                             <th>
-                                                <input class="form-control" name="rksf-up"
+                                                <input class="form-control" name="yjl_rksfup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_rksfup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="rksf-down"
+                                                <input class="form-control" name="yjl_rksfdown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_rksfdown }}">
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>2</th>
+                                            <th>润叶加料</th>
                                             <th>物料累计重量</th>
                                             <th>
-                                                <input class="form-control" name="wlljzl-up"
+                                                <input class="form-control" name="yjl_cljzlup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_cljzlup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="wlljzl-down"
+                                                <input class="form-control" name="yjl_cljzldown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_cljzldown }}">
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>3</th>
+                                            <th>润叶加料</th>
                                             <th>瞬时加水量</th>
                                             <th>
-                                                <input class="form-control" name="ssjsl-up"
+                                                <input class="form-control" name="yjl_ssjslup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_ssjslup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="ssjsl-down"
+                                                <input class="form-control" name="yjl_ssjsldown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_ssjsldown }}">
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>4</th>
+                                            <th>润叶加料</th>
                                             <th>料液温度</th>
                                             <th>
-                                                <input class="form-control" name="lywd-up"
+                                                <input class="form-control" name="yjl_lywdup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_lywdup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="lywd-down"
+                                                <input class="form-control" name="yjl_ssjsldown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_ssjsldown }}">
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>5</th>
+                                            <th>润叶加料</th>
                                             <th>环境温度</th>
                                             <th>
-                                                <input class="form-control" name="hjwd-up"
+                                                <input class="form-control" name="yjl_wdup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_wdup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="hjwd-down"
+                                                <input class="form-control" name="yjl_wddown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_wddown }}">
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>6</th>
+                                            <th>润叶加料</th>
                                             <th>环境湿度</th>
                                             <th>
-                                                <input class="form-control" name="hjsd-up"
+                                                <input class="form-control" name="yjl_sdup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_sdup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="hjsd-down"
+                                                <input class="form-control" name="yjl_sddown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_sddown }}">
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>7</th>
+                                            <th>润叶加料</th>
                                             <th>出口温度</th>
                                             <th>
-                                                <input class="form-control" name="ckwd-up"
+                                                <input class="form-control" name="yjl_ckwdup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_ckwdup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="ckwd-down"
+                                                <input class="form-control" name="yjl_ckwddown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_ckwddown }}">
                                             </th>
                                         </tr>
                                         <tr>
-                                            <th>8</th>
+                                            <th>润叶加料</th>
                                             <th>出口水分</th>
                                             <th>
-                                                <input class="form-control" name="cksf-up"
+                                                <input class="form-control" name="yjl_cksfup"
                                                        placeholder="控制范围上限" value="{{ data.yjl_cksfup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="cksf-down"
+                                                <input class="form-control" name="yjl_cksfdown"
                                                        placeholder="控制范围下限" value="{{ data.yjl_cksfdown }}">
                                             </th>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                     <button type="submit" class="btn btn-default">保存</button>
@@ -155,9 +154,8 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="sshc">
-                            松散回潮
                             <div class="box-body table-responsive no-padding">
-                                <form>
+                                <form class="form_sub" action="/modify_alert/sshc" method="POST">
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -165,6 +163,18 @@
                                             <th>影响因素名称</th>
                                             <th>控制范围上限</th>
                                             <th>控制范围下限</th>
+                                        </tr>
+                                        <tr>
+                                            <th>松散回潮</th>
+                                            <th>出口水分</th>
+                                            <th>
+                                                <input class="form-control" name="sshc_cksfup"
+                                                       placeholder="控制范围上限" value="{{ data.sshc_cksfup }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="sshc_cksfdown"
+                                                       placeholder="控制范围下限" value="{{ data.sshc_cksfdown }}">
+                                            </th>
                                         </tr>
                                         </tbody>
                                     </table>
@@ -173,9 +183,8 @@
                             </div>
                         </div>
                         <div role="tabpanel" class="tab-pane" id="cy">
-                            储叶
                             <div class="box-body table-responsive no-padding">
-                                <form>
+                                <form class="form_sub" action="/modify_alert/cy" method="POST">
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -184,7 +193,30 @@
                                             <th>控制范围上限</th>
                                             <th>控制范围下限</th>
                                         </tr>
-
+                                        <tr>
+                                            <th>储叶</th>
+                                            <th>温度</th>
+                                            <th>
+                                                <input class="form-control" name="cy_wdup"
+                                                       placeholder="控制范围上限" value="{{ data.cy_wdup }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="cy_wddown"
+                                                       placeholder="控制范围下限" value="{{ data.cy_wddown }}">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>储叶</th>
+                                            <th>湿度</th>
+                                            <th>
+                                                <input class="form-control" name="cy_sdup"
+                                                       placeholder="控制范围上限" value="{{ data.cy_sdup }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="cy_sddown"
+                                                       placeholder="控制范围下限" value="{{ data.cy_sddown }}">
+                                            </th>
+                                        </tr>
                                         </tbody>
                                     </table>
                                     <input class="btn btn-default" type="submit" value="Submit">
@@ -193,8 +225,7 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="qs">
                             <div class="box-body table-responsive no-padding">
-                                切丝
-                                <form>
+                                <form class="form_sub" action="/modify_alert/qs" method="POST">
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -203,7 +234,30 @@
                                             <th>控制范围上限</th>
                                             <th>控制范围下限</th>
                                         </tr>
-
+                                        <tr>
+                                            <th>切丝</th>
+                                            <th>温度</th>
+                                            <th>
+                                                <input class="form-control" name="qs_wdup"
+                                                       placeholder="控制范围上限" value="{{ data.qs_wdup }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="qs_wddown"
+                                                       placeholder="控制范围下限" value="{{ data.qs_wddown }}">
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th>切丝</th>
+                                            <th>湿度</th>
+                                            <th>
+                                                <input class="form-control" name="qs_sdup"
+                                                       placeholder="控制范围上限" value="{{ data.qs_sdup }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="qs_sddown"
+                                                       placeholder="控制范围下限" value="{{ data.qs_sddown }}">
+                                            </th>
+                                        </tr>
                                         </tbody>
                                     </table>
                                     <input class="btn btn-default" type="submit" value="Submit">
@@ -243,7 +297,7 @@
 
     </script>
     <script type="text/javascript">
-        $("#sshc_form").submit(function (event) {
+        $(".form_sub").submit(function (event) {
             event.preventDefault();
             $(this).ajaxSubmit({
                 success: function (data) { // data 保存提交后返回的数据，一般为 json 数据
