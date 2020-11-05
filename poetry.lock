@@ -142,6 +142,31 @@ url = "https://mirrors.aliyun.com/pypi/simple"
 reference = "aliyun"
 
 [[package]]
+name = "flask-marshmallow"
+version = "0.14.0"
+description = "Flask + marshmallow for beautiful APIs"
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+Flask = "*"
+marshmallow = ">=2.0.0"
+six = ">=1.9.0"
+
+[package.extras]
+dev = ["flask-sqlalchemy", "pytest", "mock", "flake8 (==3.8.3)", "pre-commit (>=2.4,<3.0)", "tox", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "flake8-bugbear (==20.1.4)", "marshmallow-sqlalchemy (>=0.13.0)"]
+docs = ["marshmallow-sqlalchemy (>=0.13.0)", "Sphinx (==3.2.1)", "sphinx-issues (==1.2.0)"]
+lint = ["flake8 (==3.8.3)", "pre-commit (>=2.4,<3.0)", "flake8-bugbear (==20.1.4)"]
+sqlalchemy = ["flask-sqlalchemy", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "marshmallow-sqlalchemy (>=0.13.0)"]
+tests = ["flask-sqlalchemy", "pytest", "mock", "marshmallow-sqlalchemy (>=0.13.0,<0.19.0)", "marshmallow-sqlalchemy (>=0.13.0)"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "aliyun"
+
+[[package]]
 name = "flask-sqlalchemy"
 version = "2.4.4"
 description = "Adds SQLAlchemy support to your Flask application."
@@ -215,6 +240,48 @@ description = "Safely add untrusted strings to HTML/XML markup."
 category = "main"
 optional = false
 python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "aliyun"
+
+[[package]]
+name = "marshmallow"
+version = "3.9.0"
+description = "A lightweight library for converting complex datatypes to and from native Python datatypes."
+category = "main"
+optional = false
+python-versions = ">=3.5"
+
+[package.extras]
+dev = ["pytest", "pytz", "simplejson", "mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.1.4)", "pre-commit (>=2.4,<3.0)", "tox"]
+docs = ["sphinx (==3.2.1)", "sphinx-issues (==1.2.0)", "alabaster (==0.7.12)", "sphinx-version-warning (==1.1.2)", "autodocsumm (==0.2.1)"]
+lint = ["mypy (==0.790)", "flake8 (==3.8.4)", "flake8-bugbear (==20.1.4)", "pre-commit (>=2.4,<3.0)"]
+tests = ["pytest", "pytz", "simplejson"]
+
+[package.source]
+type = "legacy"
+url = "https://mirrors.aliyun.com/pypi/simple"
+reference = "aliyun"
+
+[[package]]
+name = "marshmallow-sqlalchemy"
+version = "0.24.0"
+description = "SQLAlchemy integration with the marshmallow (de)serialization library"
+category = "main"
+optional = false
+python-versions = ">=3.6"
+
+[package.dependencies]
+marshmallow = ">=3.0.0"
+SQLAlchemy = ">=1.2.0"
+
+[package.extras]
+dev = ["pytest", "pytest-lazy-fixture", "flake8 (==3.8.4)", "flake8-bugbear (==20.1.4)", "pre-commit (>=2.0,<3.0)", "tox"]
+docs = ["sphinx (==3.2.1)", "alabaster (==0.7.12)", "sphinx-issues (==1.2.0)"]
+lint = ["flake8 (==3.8.4)", "flake8-bugbear (==20.1.4)", "pre-commit (>=2.0,<3.0)"]
+tests = ["pytest", "pytest-lazy-fixture"]
 
 [package.source]
 type = "legacy"
@@ -529,7 +596,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "bedc9aff21d4b9ece5cfed960abca8673c39d4548c63f245edd71403f569d595"
+content-hash = "d28af57ad5b3d769dd26ac15dbd78a6785abf501f8ecd02bb561f2b29f808107"
 
 [metadata.files]
 appdirs = [
@@ -558,6 +625,10 @@ flask = [
 flask-cors = [
     {file = "Flask-Cors-3.0.9.tar.gz", hash = "sha256:6bcfc100288c5d1bcb1dbb854babd59beee622ffd321e444b05f24d6d58466b8"},
     {file = "Flask_Cors-3.0.9-py2.py3-none-any.whl", hash = "sha256:cee4480aaee421ed029eaa788f4049e3e26d15b5affb6a880dade6bafad38324"},
+]
+flask-marshmallow = [
+    {file = "flask-marshmallow-0.14.0.tar.gz", hash = "sha256:bd01a6372cbe50e36f205cfff0fc5dab0b7b662c4c8b2c4fc06a3151b2950950"},
+    {file = "flask_marshmallow-0.14.0-py2.py3-none-any.whl", hash = "sha256:2adcd782b5a4a6c5ae3c96701f320d8ca6997995a52b2661093c56cc3ed24754"},
 ]
 flask-sqlalchemy = [
     {file = "Flask-SQLAlchemy-2.4.4.tar.gz", hash = "sha256:bfc7150eaf809b1c283879302f04c42791136060c6eeb12c0c6674fb1291fae5"},
@@ -609,6 +680,14 @@ markupsafe = [
     {file = "MarkupSafe-1.1.1-cp38-cp38-win32.whl", hash = "sha256:596510de112c685489095da617b5bcbbac7dd6384aeebeda4df6025d0256a81b"},
     {file = "MarkupSafe-1.1.1-cp38-cp38-win_amd64.whl", hash = "sha256:e8313f01ba26fbbe36c7be1966a7b7424942f670f38e666995b88d012765b9be"},
     {file = "MarkupSafe-1.1.1.tar.gz", hash = "sha256:29872e92839765e546828bb7754a68c418d927cd064fd4708fab9fe9c8bb116b"},
+]
+marshmallow = [
+    {file = "marshmallow-3.9.0-py2.py3-none-any.whl", hash = "sha256:4bc31ab18133083b12893c61f2fc38b93c390d3fd6ae2ac61980b7dc936a1afa"},
+    {file = "marshmallow-3.9.0.tar.gz", hash = "sha256:97ad6acaf727be986330969cff16040fce051510759ca709de9cd48093c55d04"},
+]
+marshmallow-sqlalchemy = [
+    {file = "marshmallow-sqlalchemy-0.24.0.tar.gz", hash = "sha256:cf0c7fead0b30ad66892a0cefcb39151591842ab16ca48ffa5bd816719b2491e"},
+    {file = "marshmallow_sqlalchemy-0.24.0-py2.py3-none-any.whl", hash = "sha256:098d4486374d0c63b4a947269c36d8850eedf35c59f172c5a1da28c070af64f4"},
 ]
 mccabe = [
     {file = "mccabe-0.6.1-py2.py3-none-any.whl", hash = "md5:6afffd590703262843327af8c4051928"},

@@ -1,6 +1,9 @@
-from app import db
 from datetime import datetime
+
+from flask import session, request
 from werkzeug.security import check_password_hash
+
+from app import db
 from .base import Base
 
 
@@ -73,3 +76,10 @@ class Oplog(Base, db.Model):
     
     def __repr__(self):
         return "<Oplog {}>".format(self.id)
+    
+    @classmethod
+    def add_one(cls, reason="unknow op"):
+        oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
+                      reason=reason)
+        db.session.add(oplog)
+        db.session.commit()

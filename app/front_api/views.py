@@ -2,9 +2,9 @@ from . import front
 from app.utils import response
 from flask import request
 from app.models import Yjl, YjlInfo, CyInfo, BjControl
+from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema
 from datetime import datetime
 from typing import List
-
 
 # 首页数据
 @front.route("/get_index_data", methods=["GET"])
@@ -23,7 +23,7 @@ def get_index_data():
                 up: number,
                 down: number,
             },   //入口水分
-            "cljzl":...,  //物料累积重量
+            "wlljzl":...,  //物料累积重量
             "cssll":...,  //物料瞬时流量
             "lywd":...,  //料液温度
             "ljjsl":...,  //累积加水量
@@ -65,77 +65,58 @@ def get_index_data():
         "time":timestamp
     }
     """
-    data = {"yjl": {}, "sssf": {}, "cy": {}, "qs": {},
-            "time": int(datetime.timestamp(datetime.now()))}
+    data = {
+        "yjl": {},
+        "sssf": {},
+        "cy": {},
+        "qs": {},
+        "time": int(datetime.timestamp(datetime.now())),
+    }
     yjl: Yjl = Yjl.query.order_by(Yjl.id.desc()).first()
+    yjl_attr_list = ("wlljzl", "rksf", "ssjsl", "lywd", "ckwd", "cksf")
+    yjl_dumped = YjlSchema(only=yjl_attr_list).dump(yjl)
     bj_control: BjControl = BjControl.get_last_one()
-    if bj_control:
-        # 物料累计重量
-        data["yjl"]["wlljzl"] = {
-            "value": yjl.wlljzl,
-            "up": bj_control.yjl_cljzlup,
-            "down": bj_control.yjl_cljzldown,
+    bj_dumped = BjControlSchema().dump(bj_control)
+    print(bj_dumped)
+    yjl_dct = {}
+    for attr in yjl_attr_list:
+        yjl_dct[attr] = {
+            "value": yjl_dumped[attr],
+            "up": bj_dumped.get("yjl_{}up".format(attr)),
+            "down": bj_dumped.get("yjl_{}down".format(attr)),
         }
-        # 入口水分
-        data["yjl"]["rksf"] = {
-            "value": yjl.rksf,
-            "up": bj_control.yjl_rksfup,
-            "down": bj_control.yjl_rksfdown,
-        }
-        # 瞬时加水量
-        data["yjl"]["ssjsl"] = {
-            "value": yjl.ssjsl,
-            "up": bj_control.yjl_ssjslup,
-            "down": bj_control.yjl_ssjsldown,
-        }
-        # 料液温度
-        data["yjl"]["lywd"] = {
-            "value": yjl.lywd,
-            "up": bj_control.yjl_lywdup,
-            "down": bj_control.yjl_lywddown,
-        }
-        # 出口温度
-        data["yjl"]["ckwd"] = {
-            "value": yjl.ckwd,
-            "up": bj_control.yjl_ckwdup,
-            "down": bj_control.yjl_ckwddown,
-        }
-        # 出口水分
-        data["yjl"]["cksf"] = {
-            "value": yjl.cksf,
-            "up": bj_control.yjl_cksfup,
-            "down": bj_control.yjl_cksfdown,
-        }
-        # 储叶时长
-        data["cy"]["sc"] = {
-            "value": "",
-            "up": None,
-            "down": None,
-        }
-        # 储叶温度
-        data["cy"]["wd"] = {
-            "value": "",
-            "up": bj_control.cy_wdup,
-            "down": bj_control.cy_wddown,
-        }
-        # 储叶湿度
-        data["cy"]["sd"] = {
-            "value": "",
-            "up": bj_control.cy_sdup,
-            "down": bj_control.cy_sddown,
-        }
-        # 切丝温度
-        data["qs"]["wd"] = {
-            "value": "",
-            "up": bj_control.qs_wdup,
-            "down": bj_control.qs_wddown,
-        }
-        # 切丝湿度
-        data["qs"]["sd"] = {
-            "value": "",
-            "up": bj_control.qs_sdup,
-            "down": bj_control.qs_sddown,
-        }
+    print(yjl_dct)
+    data["yjl"] = yjl_dct
+    # 储叶时长
+    data["cy"]["sc"] = {
+        "value": "",
+        "up": None,
+        "down": None,
+    }
+    # 储叶温度
+    data["cy"]["wd"] = {
+        "value": "",
+        "up": bj_control.cy_wdup,
+        "down": bj_control.cy_wddown,
+    }
+    # 储叶湿度
+    data["cy"]["sd"] = {
+        "value": "",
+        "up": bj_control.cy_sdup,
+        "down": bj_control.cy_sddown,
+    }
+    # 切丝温度
+    data["qs"]["wd"] = {
+        "value": "",
+        "up": bj_control.qs_wdup,
+        "down": bj_control.qs_wddown,
+    }
+    # 切丝湿度
+    data["qs"]["sd"] = {
+        "value": "",
+        "up": bj_control.qs_sdup,
+        "down": bj_control.qs_sddown,
+    }
     return response(data=data)
 
 
@@ -187,29 +168,31 @@ def front_get_alarm():
 def get_first_five_batch():
     """
     [{
-        "pp":str, //pp:品牌
+        "pph": str, // 品牌号
         "pch": str, //批次号
         ...
     }]
     """
     yjls: List[YjlInfo] = YjlInfo.query.order_by(YjlInfo.id.desc()).slice(0, 5)
+
+    # [{'pph': '利群(新版)烟丝', 'pch': 195, 'rq': '2020-05-31', 'ljjsl': 58.1}, ...]
+    yjl_dcts = YjlInfoSchema(many=True, only=("pch", "rq", "pph", "ljjsl")).dump(yjls)
     result = []
-    for yjl in yjls:
-        tmp = {}
-        pch = yjl.pch
-        tmp["pch"] = pch
-        rq = yjl.rq
-        tmp["rq"] = rq
-        pp = yjl.pph
-        tmp["pp"] = pp
-        jsl = yjl.ljjsl
-        tmp["jsl"] = jsl
-        cy: CyInfo = CyInfo.query.filter(CyInfo.pch == pch, CyInfo.pph == pp,
-                                         CyInfo.rq == rq).first()
-        # 如果 cy 是 none， 则说明没查到
-        if cy is not None:
-            tmp["sssf"] = cy.sssf
-        else:
-            tmp["sssf"] = None
-        result.append(tmp)
+
+    def f(name):
+        return list(map(lambda x: x[name], yjl_dcts))
+
+    sssfs = (
+        CyInfo.query.filter(CyInfo.rq.in_(f("rq")))
+        .filter(CyInfo.pph.in_(f("pph")))
+        .filter(CyInfo.pch.in_(f("pch")))
+        .with_entities(CyInfo.sssf)
+        .order_by(CyInfo.id.desc())
+        .all()
+    )
+    # [ {'sssf': 18.5307}, {'sssf': 18.5465}, ...]
+    sssf_dcts = [dict(zip(i.keys(), i)) for i in sssfs]
+    for yjl, sssf in zip(yjl_dcts, sssf_dcts):
+        yjl["sssf"] = sssf["sssf"]
+        result.append(yjl)
     return response(data=result)

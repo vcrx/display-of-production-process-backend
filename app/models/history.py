@@ -11,8 +11,8 @@ class SshcInfo(Base, db.Model):
     pch = db.Column(db.Integer)  # 批次号
     pph = db.Column(db.String(128))  # 品牌号
     rq = db.Column(db.String(128))  # 日期
-    ssll = db.Column(db.Float)  # 实时流量
-    ljzl = db.Column(db.Float)  # 累计重量
+    wlssll = db.Column(db.Float)  # 物料实时流量
+    wlljzl = db.Column(db.Float)  # 物料累计重量
     ljjsl = db.Column(db.Float)  # 累积加水量
     hfwd = db.Column(db.Float)  # 回风温度
     ckwd = db.Column(db.Float)  # 出口温度
@@ -52,7 +52,7 @@ class YjlInfo(Base, db.Model):
     rq = db.Column(db.String(128))  # 日期
     rksf = db.Column(db.Float)  # 入口水分
     wlssll = db.Column(db.Float)  # 物料实时流量
-    ljzl = db.Column(db.Float)  # 累计重量
+    wlljzl = db.Column(db.Float)  # 物料累计重量
     cksf = db.Column(db.Float)  # 出口水分
     ckwd = db.Column(db.Float)  # 出口温度
     ljjsl = db.Column(db.Float)  # 累积加水量

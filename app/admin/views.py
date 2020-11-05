@@ -3,6 +3,7 @@ from flask import render_template, redirect, url_for, flash, session, request, \
     abort
 from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm
 from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, BjControl
+from app.schemas import BjControlSchema
 from functools import wraps
 from app import db
 import datetime
@@ -109,17 +110,8 @@ def index():
 @admin_login_req
 @admin_auth
 def influence():
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="查看影响因素")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("查看影响因素")
     return render_template("admin/influence.html")
-
-
-def ensure_not_none(value, default=""):
-    if value is not None:
-        return value
-    return default
 
 
 # 报警控制
@@ -127,43 +119,15 @@ def ensure_not_none(value, default=""):
 @admin_login_req
 @admin_auth
 def alarm():
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="进行报警控制")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("进行报警控制")
     bj_control: BjControl = BjControl.get_last_one()
     data = {}
     if bj_control is not None:
-        data["sshc_cksfup"] = ensure_not_none(bj_control.sshc_cksfup)
-        data["sshc_cksfdown"] = ensure_not_none(bj_control.sshc_cksfdown)
-        data["yjl_rksfup"] = ensure_not_none(bj_control.yjl_rksfup)
-        data["yjl_rksfdown"] = ensure_not_none(bj_control.yjl_rksfdown)
-        data["yjl_cljzlup"] = ensure_not_none(bj_control.yjl_cljzlup)
-        data["yjl_cljzldown"] = ensure_not_none(bj_control.yjl_cljzldown)
-        data["yjl_cssllup"] = ensure_not_none(bj_control.yjl_cssllup)
-        data["yjl_csslldown"] = ensure_not_none(bj_control.yjl_csslldown)
-        data["yjl_lywdup"] = ensure_not_none(bj_control.yjl_lywdup)
-        data["yjl_lywddown"] = ensure_not_none(bj_control.yjl_lywddown)
-        data["yjl_ljjslup"] = ensure_not_none(bj_control.yjl_ljjslup)
-        data["yjl_ljjsldown"] = ensure_not_none(bj_control.yjl_ljjsldown)
-        data["yjl_ssjslup"] = ensure_not_none(bj_control.yjl_ssjslup)
-        data["yjl_ssjsldown"] = ensure_not_none(bj_control.yjl_ssjsldown)
-        data["yjl_wdup"] = ensure_not_none(bj_control.yjl_wdup)
-        data["yjl_wddown"] = ensure_not_none(bj_control.yjl_wddown)
-        data["yjl_sdup"] = ensure_not_none(bj_control.yjl_sdup)
-        data["yjl_sddown"] = ensure_not_none(bj_control.yjl_sddown)
-        data["yjl_ckwdup"] = ensure_not_none(bj_control.yjl_ckwdup)
-        data["yjl_ckwddown"] = ensure_not_none(bj_control.yjl_ckwddown)
-        data["yjl_cksfup"] = ensure_not_none(bj_control.yjl_cksfup)
-        data["yjl_cksfdown"] = ensure_not_none(bj_control.yjl_cksfdown)
-        data["cy_wdup"] = ensure_not_none(bj_control.cy_wdup)
-        data["cy_wddown"] = ensure_not_none(bj_control.cy_wddown)
-        data["cy_sdup"] = ensure_not_none(bj_control.cy_sdup)
-        data["cy_sddown"] = ensure_not_none(bj_control.cy_sddown)
-        data["qs_wdup"] = ensure_not_none(bj_control.qs_wdup)
-        data["qs_wddown"] = ensure_not_none(bj_control.qs_wddown)
-        data["qs_sdup"] = ensure_not_none(bj_control.qs_sdup)
-        data["qs_sddown"] = ensure_not_none(bj_control.qs_sddown)
+        data: dict = BjControlSchema().dump(bj_control)
+        # 不过滤一次的话，前端留空的显示的就是 None
+        for k, v in data.items():
+            if v is None:
+                data[k] = ""
     return render_template("admin/alarm.html", data=data)
 
 
@@ -172,10 +136,7 @@ def alarm():
 @admin_login_req
 @admin_auth
 def manual():
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="进行人工干预")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("人工干预")
     return render_template("admin/manual.html")
 
 
@@ -187,10 +148,7 @@ def manual():
 @admin_login_req
 @admin_auth
 def temp_visual():
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="温度可视化")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("温度可视化")
     return render_template("admin/temp_visual.html")
 
 
@@ -199,10 +157,7 @@ def temp_visual():
 @admin_login_req
 @admin_auth
 def humidity_visual():
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="湿度可视化")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("湿度可视化")
     return render_template("admin/humidity_visual.html")
 
 
@@ -214,11 +169,7 @@ def humidity_visual():
 @admin_login_req
 @admin_auth
 def query():
-    print(123123)
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="查询数据情况")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("查询数据情况")
     return render_template("admin/query.html")
 
 
@@ -227,10 +178,7 @@ def query():
 @admin_login_req
 @admin_auth
 def statistics():
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="查看统计情况")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("查看统计情况")
     return render_template("admin/statistics.html")
 
 
@@ -256,13 +204,7 @@ def admin_add():
         db.session.add(admin)
         db.session.commit()
         flash("管理员添加成功!", "ok")
-        oplog = Oplog(
-            admin_id=session["admin_id"],
-            ip=request.remote_addr,
-            reason="添加管理员{}".format(data["name"]),
-        )
-        db.session.add(oplog)
-        db.session.commit()
+        Oplog.add_one("添加管理员{}".format(data["name"]))
         return redirect(url_for("admin.admin_add"))
     return render_template("admin/admin_add.html", form=form)
 
@@ -280,11 +222,7 @@ def admin_list(page=None):
             .order_by(Admin.addtime.desc())
             .paginate(page=page, per_page=10)
     )
-    oplog = Oplog(
-        admin_id=session["admin_id"], ip=request.remote_addr, reason="查看管理员列表"
-    )
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("查看管理员列表")
     return render_template("admin/admin_list.html", page_data=page_data)
 
 
@@ -303,12 +241,7 @@ def pwd():
         db.session.add(admin)
         db.session.commit()
         flash("密码修改成功,请重新登录!", "ok")
-        oplog = Oplog(
-            admin_id=session["admin_id"], ip=request.remote_addr,
-            reason="进行密码修改"
-        )
-        db.session.add(oplog)
-        db.session.commit()
+        Oplog.add_one("进行密码修改")
         return redirect(url_for("admin.logout"))
     return render_template("admin/pwd.html", form=form)
 
@@ -337,13 +270,7 @@ def auth_add():
             db.session.add(auth)
             db.session.commit()
             flash("权限添加成功!", "ok")
-            oplog = Oplog(
-                admin_id=session["admin_id"],
-                ip=request.remote_addr,
-                reason="添加权限{}".format(data["name"]),
-            )
-            db.session.add(oplog)
-            db.session.commit()
+            Oplog.add_one("添加权限{}".format(data["name"]))
             return redirect(url_for("admin.auth_add"))
     return render_template("admin/auth_add.html", form=form)
 
@@ -358,10 +285,7 @@ def auth_list(page=None):
     page_data = Auth.query.order_by(Auth.addtime.desc()).paginate(
         page=page, per_page=10
     )
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="查看权限列表")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("查看权限列表")
     return render_template("admin/auth_list.html", page_data=page_data)
 
 
@@ -374,10 +298,7 @@ def auth_del(id=None):
     db.session.delete(auth)
     db.session.commit()
     flash("删除权限成功!", "ok")
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="删除权限")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("删除权限" + str(id))
     return redirect(url_for("admin.auth_list", page=1))
 
 
@@ -396,11 +317,7 @@ def auth_edit(id=None):
         db.session.commit()
         flash("权限修改成功!", "ok")
         redirect(url_for("admin.auth_edit", id=id))
-        oplog = Oplog(
-            admin_id=session["admin_id"], ip=request.remote_addr, reason="编辑权限"
-        )
-        db.session.add(oplog)
-        db.session.commit()
+        Oplog.add_one("编辑权限" + str(data))
     return render_template("admin/auth_edit.html", form=form, auth=auth)
 
 
@@ -422,13 +339,7 @@ def role_add():
         db.session.add(role)
         db.session.commit()
         flash("角色添加成功!", "ok")
-        oplog = Oplog(
-            admin_id=session["admin_id"],
-            ip=request.remote_addr,
-            reason="添加角色{}".format(data["name"]),
-        )
-        db.session.add(oplog)
-        db.session.commit()
+        Oplog.add_one("添加角色{}".format(data["name"]))
     return render_template("admin/role_add.html", form=form)
 
 
@@ -443,10 +354,7 @@ def role_list(page=None):
         page=page, per_page=10
     )
     print("page_data:", page_data)
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="查看角色列表")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("查看角色列表" + str(page))
     return render_template("admin/role_list.html", page_data=page_data)
 
 
@@ -459,10 +367,7 @@ def role_del(id=None):
     db.session.delete(role)
     db.session.commit()
     flash("角色删除成功!", "ok")
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="删除角色")
-    db.session.add(oplog)
-    db.session.commit()
+    Oplog.add_one("删除角色" + str(id))
     return redirect(url_for("admin.role_list", page=1))
 
 
@@ -483,11 +388,7 @@ def role_edit(id=None):
         db.session.add(role)
         db.session.commit()
         flash("角色修改成功!", "ok")
-        oplog = Oplog(
-            admin_id=session["admin_id"], ip=request.remote_addr, reason="编辑角色"
-        )
-        db.session.add(oplog)
-        db.session.commit()
+        Oplog.add_one("编辑角色" + str(id))
     return render_template("admin/role_edit.html", form=form, role=role)
 
 
@@ -502,12 +403,9 @@ def oplog_list(page=None):
     if page is None:
         page = 1
     page_data = (
-        Oplog.query.join(Admin)
-            .filter(
+        Oplog.query.join(Admin).filter(
             Admin.id == Oplog.admin_id,
-        )
-            .order_by(Oplog.addtime.desc())
-            .paginate(page=page, per_page=10)
+        ).order_by(Oplog.addtime.desc()).paginate(page=page, per_page=10)
     )
     return render_template("admin/oplog_list.html", page_data=page_data)
 
@@ -520,11 +418,8 @@ def adminloginlog_list(page=None):
     if page is None:
         page = 1
     page_data = (
-        AdminLoginLog.query.join(Admin)
-            .filter(
-            Admin.id == AdminLoginLog.admin_id,
-        )
-            .order_by(AdminLoginLog.addtime.desc())
-            .paginate(page=page, per_page=10)
+        AdminLoginLog.query.join(Admin).filter(
+            Admin.id == AdminLoginLog.admin_id).order_by(
+            AdminLoginLog.addtime.desc()).paginate(page=page, per_page=10)
     )
     return render_template("admin/adminloginlog_list.html", page_data=page_data)

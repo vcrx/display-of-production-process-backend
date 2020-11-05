@@ -1,4 +1,4 @@
 from .admin import *
-from .realtime import *
 from .control import *
+from .realtime import *
 from .history import *
