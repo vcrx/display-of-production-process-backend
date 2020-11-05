@@ -43,6 +43,7 @@ def admin_auth(func):
         urls = [v.url for v in auth_list for val in auths if val == v.id]
         rule = request.url_rule
         if str(rule) not in urls:
+            print(str(rule) + " is blocked because auth fail")
             abort(404)
         return func(*args, **kwargs)
     
@@ -122,10 +123,10 @@ def ensure_not_none(value, default=""):
 
 
 # 报警控制
-@admin.route("/police/")
+@admin.route("/alarm/")
 @admin_login_req
 @admin_auth
-def police():
+def alarm():
     oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
                   reason="进行报警控制")
     db.session.add(oplog)
@@ -163,19 +164,19 @@ def police():
         data["qs_wddown"] = ensure_not_none(bj_control.qs_wddown)
         data["qs_sdup"] = ensure_not_none(bj_control.qs_sdup)
         data["qs_sddown"] = ensure_not_none(bj_control.qs_sddown)
-    return render_template("admin/police.html", data=data)
+    return render_template("admin/alarm.html", data=data)
 
 
 # 人工干预
-@admin.route("/people/")
+@admin.route("/manual/")
 @admin_login_req
 @admin_auth
-def people():
+def manual():
     oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
                   reason="进行人工干预")
     db.session.add(oplog)
     db.session.commit()
-    return render_template("admin/people.html")
+    return render_template("admin/manual.html")
 
 
 """可视化分析"""
@@ -209,15 +210,16 @@ def humidity_visual():
 
 
 # 查询
-@admin.route("/select/")
+@admin.route("/query/")
 @admin_login_req
 @admin_auth
-def select():
+def query():
+    print(123123)
     oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
                   reason="查询数据情况")
     db.session.add(oplog)
     db.session.commit()
-    return render_template("admin/select.html")
+    return render_template("admin/query.html")
 
 
 # 统计

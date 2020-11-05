@@ -293,10 +293,11 @@
 
 
 {% block js %}
-    <script>
-
-    </script>
     <script type="text/javascript">
+        $(document).ready(function () {
+            $("#g-2").addClass("active");
+            $("#g-2-2").addClass("active");
+        })
         $(".form_sub").submit(function (event) {
             event.preventDefault();
             $(this).ajaxSubmit({
