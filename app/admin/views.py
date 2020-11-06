@@ -224,7 +224,7 @@ def admin_list(page=None):
     page_data = (
         Admin.query.join(Role)
             .filter(Role.id == Admin.role_id)
-            .order_by(Admin.addtime.desc())
+            .order_by(Admin.create_at.desc())
             .paginate(page=page, per_page=10)
     )
     Oplog.add_one("查看管理员列表")
@@ -287,7 +287,7 @@ def auth_add():
 def auth_list(page=None):
     if page is None:
         page = 1
-    page_data = Auth.query.order_by(Auth.addtime.desc()).paginate(
+    page_data = Auth.query.order_by(Auth.create_at.desc()).paginate(
         page=page, per_page=10
     )
     Oplog.add_one("查看权限列表")
@@ -355,7 +355,7 @@ def role_add():
 def role_list(page=None):
     if page is None:
         page = 1
-    page_data = Role.query.order_by(Role.addtime.desc()).paginate(
+    page_data = Role.query.order_by(Role.create_at.desc()).paginate(
         page=page, per_page=10
     )
     Oplog.add_one("查看角色列表" + str(page))
@@ -409,7 +409,7 @@ def oplog_list(page=None):
     page_data = (
         Oplog.query.join(Admin).filter(
             Admin.id == Oplog.admin_id,
-        ).order_by(Oplog.addtime.desc()).paginate(page=page, per_page=10)
+        ).order_by(Oplog.create_at.desc()).paginate(page=page, per_page=10)
     )
     return render_template("admin/oplog_list.html", page_data=page_data)
 
@@ -424,6 +424,6 @@ def adminloginlog_list(page=None):
     page_data = (
         AdminLoginLog.query.join(Admin).filter(
             Admin.id == AdminLoginLog.admin_id).order_by(
-            AdminLoginLog.addtime.desc()).paginate(page=page, per_page=10)
+            AdminLoginLog.create_at.desc()).paginate(page=page, per_page=10)
     )
     return render_template("admin/adminloginlog_list.html", page_data=page_data)

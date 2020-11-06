@@ -12,7 +12,6 @@ class Role(Base, db.Model):
     __tablename__ = "role"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     name = db.Column(db.String(100), unique=True)  # 名称
-    addtime = db.Column(db.DateTime, index=True, default=datetime.now)  # 添加时间
     auths = db.Column(db.String(600))  # 角色权限列表
     admins = db.relationship("Admin", backref="role")  # 管理员外键关系关联
     
@@ -26,7 +25,6 @@ class Auth(Base, db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 编号
     name = db.Column(db.String(100), unique=True)  # 名称
     url = db.Column(db.String(255), unique=True)  # 地址
-    addtime = db.Column(db.DateTime, index=True, default=datetime.now)  # 添加时间
     
     def __repr__(self):
         return "<Auth {}>".format(self.name)
@@ -41,7 +39,6 @@ class Admin(Base, db.Model):
     email = db.Column(db.String(100), unique=True)  # 邮箱
     phone = db.Column(db.Integer, unique=True)  # 电话号码
     is_super = db.Column(db.SmallInteger)  # 是否是超级管理员，0为超级管理员
-    addtime = db.Column(db.DateTime, index=True, default=datetime.now)  # 添加时间
     role_id = db.Column(db.Integer, db.ForeignKey("role.id"))  # 所属角色
     adminlogs = db.relationship("AdminLoginLog", backref="admin")  # 管理员登录日志外键关联
     oplogs = db.relationship("Oplog", backref="admin")  # 管理员操作日志外键关联
@@ -58,7 +55,6 @@ class AdminLoginLog(Base, db.Model):
     __tablename__ = "adminlog"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     ip = db.Column(db.String(100))  # 登录IP
-    addtime = db.Column(db.DateTime, index=True, default=datetime.now)  # 登录时间
     admin_id = db.Column(db.Integer, db.ForeignKey("admin.id"))  # 所属管理员
     
     def __repr__(self):
@@ -71,7 +67,6 @@ class Oplog(Base, db.Model):
     id = db.Column(db.Integer, primary_key=True)  # 编号
     ip = db.Column(db.String(100))  # 登录IP
     reason = db.Column(db.String(600))  # 操作原因
-    addtime = db.Column(db.DateTime, index=True, default=datetime.now)  # 登录时间
     admin_id = db.Column(db.Integer, db.ForeignKey("admin.id"))  # 所属管理员
     
     def __repr__(self):

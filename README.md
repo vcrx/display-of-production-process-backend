@@ -48,3 +48,7 @@ python manage.py
 依赖在：`pyproject.toml` 这个文件 `[tool.poetry.dependencies]` 的字段下面。
 
 然后打开后端页面： http://localhost:5000/ 即可。
+
+
+## 其他信息
+

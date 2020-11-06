@@ -1,10 +1,14 @@
 import pandas as pd
-from app import db
 from app.models import *
 from pathlib import Path
+import arrow
+from app import create_app
+
+app = create_app("db")
+app.app_context().push()
 
 
-def getData(csv_name):
+def get_data(csv_name):
     """
     {
         '2020/10/12 13:06': {
@@ -20,23 +24,24 @@ def getData(csv_name):
     df = pd.read_csv(csv_name, encoding="gbk")
     df.drop(df.columns[-1], axis=1, inplace=True)
     
-    grouped = df.groupby("_TIMESTAMP")
+    grouped_by_time = df.groupby("_TIMESTAMP")
     result = {}
-    for key in grouped.groups.keys():
+    for time_str in grouped_by_time.groups.keys():
         data = (
-            grouped.get_group(key)
+            grouped_by_time.get_group(time_str)
                 .groupby("_BATCHID")
                 .mean()
                 .drop("id", axis=1)
                 .T.to_dict()
         )
-        result[key] = data
+        time_arrow = arrow.get(time_str).datetime
+        result[time_arrow] = data
     return result
 
 
-z1 = getData("../data/Z1（松散回潮工段）.csv")
-z2 = getData("../data/Z2（润叶加料工段）.csv")
-kld = getData("../data/KLD（烘丝工段）.csv")
+z1 = get_data("../data/Z1（松散回潮工段）.csv")
+z2 = get_data("../data/Z2（润叶加料工段）.csv")
+kld = get_data("../data/KLD（烘丝工段）.csv")
 
 Sshc.add_many(z1)
 Yjl.add_many(z2)
@@ -95,8 +100,16 @@ def gen_data_list(type_dict, whole_df: pd.DataFrame) -> list:
         tmp = {}
         # data_dict 拿到的是 dataframe 转出来的 dict, 字典键还是中文的
         # 转成英文键方便后续使用
-        for key, value in type_dict.items():
-            tmp[value] = data_dict.get(key)
+        for cn_name, en_name in type_dict.items():
+            # 把日期转为 arrow 格式，方便之后使用
+            if en_name == "rq":
+                v = data_dict.get(cn_name)
+                if v is not None:
+                    tmp[en_name] = arrow.get(v).datetime
+                else:
+                    tmp[en_name] = None
+            else:
+                tmp[en_name] = data_dict.get(cn_name)
         result.append(tmp)
     return result
 

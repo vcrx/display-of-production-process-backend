@@ -7,10 +7,7 @@ from wtforms import (
     SelectMultipleField,
 )
 from wtforms.validators import EqualTo, DataRequired, ValidationError
-from app.models import Admin, Auth, Role
-
-auth_list = Auth.query.all()
-role_list = Role.query.all()
+from app.models.admin import Admin, Auth, Role
 
 
 #   管理员登录表单
@@ -131,7 +128,6 @@ class RoleForm(FlaskForm):
             DataRequired("请选择权限!"),
         ],
         coerce=int,
-        choices=[(v.id, v.name) for v in auth_list],
         description="权限列表",
         render_kw={
             "class": "form-control",
@@ -143,6 +139,11 @@ class RoleForm(FlaskForm):
             "class": "btn btn-primary",
         },
     )
+
+    def __init__(self):
+        super().__init__()
+        auth_list = Auth.query.all()
+        self.auths.choices = [(v.id, v.name) for v in auth_list]
 
 
 # 管理员表单
@@ -185,7 +186,6 @@ class AdminForm(FlaskForm):
         label="所属角色",
         validators=[DataRequired("请选择角色!")],
         coerce=int,
-        choices=[(v.id, v.name) for v in role_list],
         description="所属角色",
         render_kw={
             "class": "form-control",
@@ -198,3 +198,8 @@ class AdminForm(FlaskForm):
             "class": "btn btn-primary",
         },
     )
+
+    def __init__(self):
+        super().__init__()
+        role_list = Role.query.all()
+        self.role_id.choices = [(v.id, v.name) for v in role_list]
