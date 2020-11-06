@@ -6,14 +6,15 @@ from .base import Base
 class SssfControl(Base, db.Model):
     __tablename__ = "sssf_control"
     id = db.Column(db.Integer, primary_key=True)  # 编号
-    target_value = db.Column(db.Float)  # 目标值
-
+    
     sshc_id = db.Column(db.Integer, db.ForeignKey("sshc.id"))  # 松散回潮
     yjl_id = db.Column(db.Integer, db.ForeignKey("yjl.id"))  # 叶加料
     hs_id = db.Column(db.Integer, db.ForeignKey("hs.id"))  # 叶加料
-    bj_control_id = db.Column(db.Integer, db.ForeignKey("bj_control.id"))  # 报警控制
-    rg_control_id = db.Column(db.Integer, db.ForeignKey("rg_control.id"))  # 人工控制
-
+    bj_control_id = db.Column(db.Integer,
+                              db.ForeignKey("bj_control.id"))  # 报警控制
+    rg_control_id = db.Column(db.Integer,
+                              db.ForeignKey("rg_control.id"))  # 人工控制
+    
     def __repr__(self):
         return "<SssfControl {}>".format(self.id)
 
@@ -53,15 +54,16 @@ class BjControl(Base, db.Model):
     qs_wddown = db.Column(db.Float)  # 切丝温度下限
     qs_sdup = db.Column(db.Float)  # 切丝湿度上限
     qs_sddown = db.Column(db.Float)  # 切丝湿度下限
-
-    sssf_controls = db.relationship("SssfControl", backref="bj_control")  # 生丝水分控制外键关系关联
-
+    
+    sssf_controls = db.relationship("SssfControl",
+                                    backref="bj_control")  # 生丝水分控制外键关系关联
+    
     def __repr__(self):
         return "<BjControl {}>".format(self.id)
-
+    
     @classmethod
     def get_last_one(cls):
-        bj_control: BjControl = BjControl.query.order_by(BjControl.id.desc()).first()
+        bj_control: cls = cls.query.order_by(cls.id.desc()).first()
         return bj_control
 
 
@@ -70,8 +72,21 @@ class RgControl(Base, db.Model):
     __tablename__ = "rg_control"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     rg_ljjsl = db.Column(db.Float)  # 人工计算的累积加水量
-
-    sssf_controls = db.relationship("SssfControl", backref="rg_control")  # 生丝水分控制外键关系关联
-
+    rg_sssf = db.Column(db.Float)  # 生丝水分目标值
+    
+    sssf_controls = db.relationship("SssfControl",
+                                    backref="rg_control")  # 生丝水分控制外键关系关联
+    
     def __repr__(self):
         return "<RgControl {}>".format(self.id)
+    
+    @classmethod
+    def get_last_one(cls):
+        obj: cls = cls.query.order_by(cls.id.desc()).first()
+        return obj
+    
+    @classmethod
+    def add_one(cls, ljjsl, sssf):
+        obj = RgControl(rg_ljjsl=ljjsl, rg_sssf=sssf)
+        db.session.add(obj)
+        db.session.commit()

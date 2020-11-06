@@ -21,18 +21,13 @@
             <span class="label label-primary pull-right">3</span>
         </a>
         <ul class="treeview-menu">
-            <li id="g-2-1">
-                <a href="{{ url_for('admin.influence') }}">
-                    <i class="fa fa-circle-o"></i> 影响因素
-                </a>
-            </li>
             <li id='g-2-2'>
                 <a href="{{ url_for('admin.alarm') }}">
                     <i class="fa fa-circle-o"></i> 报警控制
                 </a>
             </li>
             <li id='g-2-3'>
-                <a href="{{ url_for('admin.manual') }}">
+                <a href="{{ url_for('admin.manual', page=1) }}">
                     <i class="fa fa-circle-o"></i> 人工干预
                 </a>
             </li>
@@ -65,13 +60,13 @@
         </a>
         <ul class="treeview-menu">
             <li id="g-4-1">
-                <a href="{{ url_for('admin.query') }}">
-                    <i class="fa fa-circle-o"></i> 查询
+                <a href="{{ url_for('admin.query', page=1) }}">
+                    <i class="fa fa-circle-o"></i> 实时数据查询
                 </a>
             </li>
             <li id="g-4-2">
                 <a href="{{ url_for('admin.statistics') }}">
-                    <i class="fa fa-circle-o"></i> 统计
+                    <i class="fa fa-circle-o"></i> 历史数据统计
                 </a>
             </li>
         </ul>

@@ -2,7 +2,8 @@ from . import admin
 from flask import render_template, redirect, url_for, flash, session, request, \
     abort
 from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm
-from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, BjControl
+from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, BjControl, \
+    RgControl, Yjl
 from app.schemas import BjControlSchema
 from functools import wraps
 from app import db
@@ -105,15 +106,6 @@ def index():
 """生丝水分控制"""
 
 
-# 影响因素
-@admin.route("/influence/")
-@admin_login_req
-@admin_auth
-def influence():
-    Oplog.add_one("查看影响因素")
-    return render_template("admin/influence.html")
-
-
 # 报警控制
 @admin.route("/alarm/")
 @admin_login_req
@@ -132,12 +124,18 @@ def alarm():
 
 
 # 人工干预
-@admin.route("/manual/")
+@admin.route("/manual/list/<int:page>/")
 @admin_login_req
 @admin_auth
-def manual():
+def manual(page=None):
     Oplog.add_one("人工干预")
-    return render_template("admin/manual.html")
+    if page is None:
+        page = 1
+    page_data = (
+        RgControl.query.order_by(RgControl.create_at.desc()).paginate(page=page,
+                                                                      per_page=10)
+    )
+    return render_template("admin/manual.html", page_data=page_data)
 
 
 """可视化分析"""
@@ -165,12 +163,19 @@ def humidity_visual():
 
 
 # 查询
-@admin.route("/query/")
+@admin.route("/query/list/<int:page>/")
 @admin_login_req
 @admin_auth
-def query():
+def query(page=None):
+    if page is None:
+        page = 1
     Oplog.add_one("查询数据情况")
-    return render_template("admin/query.html")
+    page_data = (
+        Yjl.query
+            .order_by(Yjl.id.desc())
+            .paginate(page=page, per_page=10)
+    )
+    return render_template("admin/query.html", page_data=page_data)
 
 
 # 统计
@@ -353,7 +358,6 @@ def role_list(page=None):
     page_data = Role.query.order_by(Role.addtime.desc()).paginate(
         page=page, per_page=10
     )
-    print("page_data:", page_data)
     Oplog.add_one("查看角色列表" + str(page))
     return render_template("admin/role_list.html", page_data=page_data)
 

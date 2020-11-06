@@ -1,10 +1,12 @@
 from . import front
 from app.utils import response
 from flask import request
-from app.models import Yjl, YjlInfo, CyInfo, BjControl
-from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema
+from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl
+from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema, RgControlSchema
 from datetime import datetime
 from typing import List
+from marshmallow import ValidationError
+
 
 # 首页数据
 @front.route("/get_index_data", methods=["GET"])
@@ -196,3 +198,32 @@ def get_first_five_batch():
         yjl["sssf"] = sssf["sssf"]
         result.append(yjl)
     return response(data=result)
+
+
+@front.route("/manual_control", methods=["PUT", "PATCH"])
+def manual_control():
+    """
+    接受一个 JSON：
+    {
+        "rg_ljjsl": 100,  # 累计加水量
+        "rg_sssf": 100,  # 生丝水分控制
+    }
+    """
+    data = request.get_json()
+    err = RgControlSchema().validate(data)
+    ljjsl = None
+    sssf = None
+    # 实现 partial 更新，即只传需要改变的值即可
+    if request.method == "PATCH":
+        last = RgControl.get_last_one()
+        if last:
+            ljjsl = last.rg_ljjsl
+            sssf = last.rg_sssf
+
+    if not err:
+        ljjsl = data.get("rg_ljjsl", ljjsl)
+        sssf = data.get("rg_sssf", sssf)
+        RgControl.add_one(ljjsl, sssf)
+        return response()
+    else:
+        return response(code=400, msg=err)
