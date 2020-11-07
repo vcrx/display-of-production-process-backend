@@ -26,9 +26,8 @@ docker-compose down -v
 
 ### 数据准备
 
-将 `app/__init__.py` 中的 `register_blueprint` 相关的行都注释掉（因为数据库没建好的情况下，业务相关的代码无法跑通），
+执行 `app/init_db.py` 和 `app/init_data.py` 两个文件即可初始化数据库：
 
-然后执行 `app/init_db.py` 和 `app/init_data.py` 两个文件：
 ```bash
 python app/init_db.py
 python app/init_data.py
