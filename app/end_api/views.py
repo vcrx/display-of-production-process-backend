@@ -1,15 +1,9 @@
-from . import end
-from app.utils import response
 from flask import request
-from app.models import BjControl
+
 from app import db
-
-
-def safe_float(value, default):
-    try:
-        return float(value)
-    except Exception:
-        return default
+from app.models import BjControl
+from app.utils import response, safe_float
+from . import end
 
 
 # 获取报警信息

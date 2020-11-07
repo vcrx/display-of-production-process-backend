@@ -1,8 +1,15 @@
 {% extends "admin/admin.html" %}
 
 
+
 {% block content %}
-    <!--内容-->
+    <style>
+        .btn-submit {
+            float: right;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
     <section class="content-header">
         <h1>生丝水分控制后台管理系统</h1>
         <ol class="breadcrumb">
@@ -95,8 +102,8 @@
                                                        placeholder="控制范围上限" value="{{ data.yjl_lywdup }}">
                                             </th>
                                             <th>
-                                                <input class="form-control" name="yjl_ssjsldown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_ssjsldown }}">
+                                                <input class="form-control" name="yjl_lywddown"
+                                                       placeholder="控制范围下限" value="{{ data.yjl_lywddown }}">
                                             </th>
                                         </tr>
                                         <tr>
@@ -149,7 +156,7 @@
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <button type="submit" class="btn btn-default">保存</button>
+                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
                                 </form>
                             </div>
                         </div>
@@ -178,7 +185,7 @@
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <input class="btn btn-default" type="submit" value="Submit">
+                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
                                 </form>
                             </div>
                         </div>
@@ -219,7 +226,7 @@
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <input class="btn btn-default" type="submit" value="Submit">
+                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
                                 </form>
                             </div>
                         </div>
@@ -260,7 +267,7 @@
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <input class="btn btn-default" type="submit" value="Submit">
+                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
                                 </form>
                             </div>
                         </div>
@@ -279,7 +286,7 @@
 
                                         </tbody>
                                     </table>
-                                    <input class="btn btn-default" type="submit" value="Submit">
+                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
                                 </form>
                             </div>
                         </div>

@@ -1,11 +1,14 @@
-from . import front
-from app.utils import response
-from flask import request
-from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl
-from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema, RgControlSchema
 from datetime import datetime
 from typing import List
-from marshmallow import ValidationError
+
+import arrow
+from flask import request
+
+from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl
+from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema, \
+    RgControlSchema
+from app.utils import response
+from . import front
 
 
 # 首页数据
@@ -176,50 +179,64 @@ def get_first_five_batch():
     }]
     """
     yjls: List[YjlInfo] = YjlInfo.query.order_by(YjlInfo.id.desc()).slice(0, 5)
-
+    
     # [{'pph': '利群(新版)烟丝', 'pch': 195, 'rq': '2020-05-31', 'ljjsl': 58.1}, ...]
-    yjl_dcts = YjlInfoSchema(many=True, only=("pch", "rq", "pph", "ljjsl")).dump(yjls)
+    yjl_dcts = YjlInfoSchema(many=True,
+                             only=("pch", "rq", "pph", "ljjsl")).dump(yjls)
     result = []
-
+    
     def f(name):
         return list(map(lambda x: x[name], yjl_dcts))
-
+    
     sssfs = (
         CyInfo.query.filter(CyInfo.rq.in_(f("rq")))
-        .filter(CyInfo.pph.in_(f("pph")))
-        .filter(CyInfo.pch.in_(f("pch")))
-        .with_entities(CyInfo.sssf)
-        .order_by(CyInfo.id.desc())
-        .all()
+            .filter(CyInfo.pph.in_(f("pph")))
+            .filter(CyInfo.pch.in_(f("pch")))
+            .with_entities(CyInfo.sssf)
+            .order_by(CyInfo.id.desc())
+            .all()
     )
     # [ {'sssf': 18.5307}, {'sssf': 18.5465}, ...]
     sssf_dcts = [dict(zip(i.keys(), i)) for i in sssfs]
     for yjl, sssf in zip(yjl_dcts, sssf_dcts):
         yjl["sssf"] = sssf["sssf"]
+        yjl["rq"] = arrow.get(yjl["rq"]).format("YYYY-MM-DD")
         result.append(yjl)
     return response(data=result)
 
 
-@front.route("/manual_control", methods=["PUT", "PATCH"])
+@front.route("/manual_control", methods=["GET", "PUT", "PATCH"])
 def manual_control():
     """
+    GET 是获取动作
+    返回一个 JSON：
+    {
+        "rg_ljjsl": 100,  # 累计加水量
+        "rg_sssf": 100,  # 生丝水分控制
+    }
+    PUT 和 PATCH 是修改动作
     接受一个 JSON：
     {
         "rg_ljjsl": 100,  # 累计加水量
         "rg_sssf": 100,  # 生丝水分控制
     }
     """
+    last = RgControl.get_last_one()
+    
+    if request.method == "GET":
+        resp = RgControlSchema().dump(last)
+        return response(data=resp)
+
     data = request.get_json()
     err = RgControlSchema().validate(data)
     ljjsl = None
     sssf = None
     # 实现 partial 更新，即只传需要改变的值即可
     if request.method == "PATCH":
-        last = RgControl.get_last_one()
         if last:
             ljjsl = last.rg_ljjsl
             sssf = last.rg_sssf
-
+    
     if not err:
         ljjsl = data.get("rg_ljjsl", ljjsl)
         sssf = data.get("rg_sssf", sssf)
