@@ -20,17 +20,20 @@
                         </div>
                     </div>
                     <div class="box-body table-responsive no-padding">
-                        <div class="container">
+                        <div class="container" id="search-container">
                             <div class="row">
-                                <div class='col-sm-3'>
+                                <div class='col-sm-3' style="padding-right: 0">
                                     <input type='text' class="form-control datetimepicker" id='datetimepicker1'/>
-
                                 </div>
-                                <div class='col-sm-3'>
+                                <div class='col-sm-1'
+                                     style="height: 100%;padding: 10px 0;line-height: 100%;text-align: center;">
+                                    <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                                </div>
+                                <div class='col-sm-3' style="padding-left: 0">
                                     <input type='text' class="form-control datetimepicker" id='datetimepicker2'/>
                                 </div>
-                                <button type="submit" class="btn btn-default"><i class="fa fa-search"></i>
-                                </button>
+                                <button class="btn btn-default" id="search">查询</button>
+                                <button class="btn btn-default" id="clear-search" style="visibility: hidden">清除</button>
                             </div>
                         </div>
                         <table class="table table-hover">
@@ -61,12 +64,7 @@
 
 
 {% block js %}
-    <script>
-        $(document).ready(function () {
-            $("#g-2").addClass("active");
-            $("#g-2-3").addClass("active");
-        })
-    </script>
+
     <script src="{{ url_for('static', filename='js/moment.js') }}"></script>
     <script src="{{ url_for('static', filename='js/moment-zh-cn.js') }}"></script>
     <link
@@ -74,11 +72,35 @@
             href="{{ url_for('static', filename='css/bootstrap-datetimepicker.min.css') }}"
     />
     <script src="{{ url_for('static', filename='js/bootstrap-datetimepicker.min.js') }}"></script>
-
+    <script>
+        $(document).ready(function () {
+            $("#g-2").addClass("active");
+            $("#g-2-3").addClass("active");
+            const queryString = window.location.search;
+            const params = new URLSearchParams(queryString)
+            if (params.get("from")) {
+                const from = parseInt(params.get("from"))
+                $("#datetimepicker1").data("DateTimePicker").date(moment(from))
+            }
+            if (params.get("to")) {
+                const to = parseInt(params.get("to"))
+                $("#datetimepicker2").data("DateTimePicker").date(moment(to))
+                $("#clear-search").css("visibility", "visible")
+            }
+        })
+    </script>
     <script type="text/javascript">
         $('.datetimepicker').datetimepicker({
             locale: 'zh-CN',
         });
-
+        $("#search").click(() => {
+            let time1 = $("#datetimepicker1").data("DateTimePicker").viewDate()
+            let time2 = $("#datetimepicker2").data("DateTimePicker").viewDate()
+            // 转换为时间戳
+            changeUrlParams({from: time1.format("x"), to: time2.format("x")})
+        })
+        $("#clear-search").click(() => {
+            clearUrlParams()
+        })
     </script>
 {% endblock %}

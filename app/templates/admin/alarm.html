@@ -26,11 +26,11 @@
                     </div>
                     <ul class="nav nav-tabs" role="tablist" style="margin-left: 10px;margin-bottom: 10px">
                         <li role="presentation" class="active">
-                            <a href="#ryjl" aria-controls="ryjl" role="tab" data-toggle="tab">润叶加料</a>
-                        </li>
-                        <li role="presentation">
                             <a href="#sshc" aria-controls="sshc" role="tab"
                                data-toggle="tab">松散回潮</a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#ryjl" aria-controls="ryjl" role="tab" data-toggle="tab">润叶加料</a>
                         </li>
                         <li role="presentation">
                             <a href="#cy" aria-controls="cy" role="tab"
@@ -45,9 +45,37 @@
                                data-toggle="tab">生丝水分</a>
                         </li>
                     </ul>
-                    <!-- Tab panes -->
                     <div class="tab-content">
-                        <div role="tabpanel" class="tab-pane active" id="ryjl">
+                        <div role="tabpanel" class="tab-pane active" id="sshc">
+                            <div class="box-body table-responsive no-padding">
+                                <form class="form_sub" action="/modify_alert/sshc" method="POST">
+                                    <table class="table table-hover">
+                                        <tbody>
+                                        <tr>
+                                            <th>生产阶段</th>
+                                            <th>影响因素名称</th>
+                                            <th>控制范围下限</th>
+                                            <th>控制范围上限</th>
+                                        </tr>
+                                        <tr>
+                                            <th>松散回潮</th>
+                                            <th>出口水分</th>
+                                            <th>
+                                                <input class="form-control" name="sshc_cksfdown"
+                                                       placeholder="控制范围下限" value="{{ data.sshc_cksfdown }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="sshc_cksfup"
+                                                       placeholder="控制范围上限" value="{{ data.sshc_cksfup }}">
+                                            </th>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
+                                </form>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="ryjl">
                             <div class="box-body table-responsive no-padding">
                                 <form class="form_sub" action="/modify_alert/ryjl" method="POST">
                                     <table class="table table-hover">
@@ -160,35 +188,6 @@
                                 </form>
                             </div>
                         </div>
-                        <div role="tabpanel" class="tab-pane" id="sshc">
-                            <div class="box-body table-responsive no-padding">
-                                <form class="form_sub" action="/modify_alert/sshc" method="POST">
-                                    <table class="table table-hover">
-                                        <tbody>
-                                        <tr>
-                                            <th>生产阶段</th>
-                                            <th>影响因素名称</th>
-                                            <th>控制范围上限</th>
-                                            <th>控制范围下限</th>
-                                        </tr>
-                                        <tr>
-                                            <th>松散回潮</th>
-                                            <th>出口水分</th>
-                                            <th>
-                                                <input class="form-control" name="sshc_cksfup"
-                                                       placeholder="控制范围上限" value="{{ data.sshc_cksfup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="sshc_cksfdown"
-                                                       placeholder="控制范围下限" value="{{ data.sshc_cksfdown }}">
-                                            </th>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
-                                </form>
-                            </div>
-                        </div>
                         <div role="tabpanel" class="tab-pane" id="cy">
                             <div class="box-body table-responsive no-padding">
                                 <form class="form_sub" action="/modify_alert/cy" method="POST">
@@ -197,31 +196,31 @@
                                         <tr>
                                             <th>生产阶段</th>
                                             <th>影响因素名称</th>
-                                            <th>控制范围上限</th>
                                             <th>控制范围下限</th>
+                                            <th>控制范围上限</th>
                                         </tr>
                                         <tr>
                                             <th>储叶</th>
                                             <th>温度</th>
                                             <th>
-                                                <input class="form-control" name="cy_wdup"
-                                                       placeholder="控制范围上限" value="{{ data.cy_wdup }}">
-                                            </th>
-                                            <th>
                                                 <input class="form-control" name="cy_wddown"
                                                        placeholder="控制范围下限" value="{{ data.cy_wddown }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="cy_wdup"
+                                                       placeholder="控制范围上限" value="{{ data.cy_wdup }}">
                                             </th>
                                         </tr>
                                         <tr>
                                             <th>储叶</th>
                                             <th>湿度</th>
                                             <th>
-                                                <input class="form-control" name="cy_sdup"
-                                                       placeholder="控制范围上限" value="{{ data.cy_sdup }}">
-                                            </th>
-                                            <th>
                                                 <input class="form-control" name="cy_sddown"
                                                        placeholder="控制范围下限" value="{{ data.cy_sddown }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="cy_sdup"
+                                                       placeholder="控制范围上限" value="{{ data.cy_sdup }}">
                                             </th>
                                         </tr>
                                         </tbody>
@@ -238,31 +237,31 @@
                                         <tr>
                                             <th>生产阶段</th>
                                             <th>影响因素名称</th>
-                                            <th>控制范围上限</th>
                                             <th>控制范围下限</th>
+                                            <th>控制范围上限</th>
                                         </tr>
                                         <tr>
                                             <th>切丝</th>
                                             <th>温度</th>
                                             <th>
-                                                <input class="form-control" name="qs_wdup"
-                                                       placeholder="控制范围上限" value="{{ data.qs_wdup }}">
-                                            </th>
-                                            <th>
                                                 <input class="form-control" name="qs_wddown"
                                                        placeholder="控制范围下限" value="{{ data.qs_wddown }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="qs_wdup"
+                                                       placeholder="控制范围上限" value="{{ data.qs_wdup }}">
                                             </th>
                                         </tr>
                                         <tr>
                                             <th>切丝</th>
                                             <th>湿度</th>
                                             <th>
-                                                <input class="form-control" name="qs_sdup"
-                                                       placeholder="控制范围上限" value="{{ data.qs_sdup }}">
-                                            </th>
-                                            <th>
                                                 <input class="form-control" name="qs_sddown"
                                                        placeholder="控制范围下限" value="{{ data.qs_sddown }}">
+                                            </th>
+                                            <th>
+                                                <input class="form-control" name="qs_sdup"
+                                                       placeholder="控制范围上限" value="{{ data.qs_sdup }}">
                                             </th>
                                         </tr>
                                         </tbody>
@@ -273,17 +272,15 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="sssf">
                             <div class="box-body table-responsive no-padding">
-                                生丝水分
                                 <form>
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
                                             <th>生产阶段</th>
                                             <th>影响因素名称</th>
-                                            <th>控制范围上限</th>
                                             <th>控制范围下限</th>
+                                            <th>控制范围上限</th>
                                         </tr>
-
                                         </tbody>
                                     </table>
                                     <button type="submit" class="btn btn-default btn-submit">保存</button>

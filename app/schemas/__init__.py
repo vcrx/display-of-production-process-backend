@@ -1,4 +1,4 @@
-from app.models.realtime import Yjl
+from app.models.realtime import Yjl, Hs, Sshc
 from app.models.control import BjControl, RgControl
 from app.models.history import YjlInfo
 from app import ma
@@ -7,6 +7,16 @@ from app import ma
 class YjlSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Yjl
+
+
+class HsSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Hs
+
+
+class SshcSchema(ma.SQLAlchemyAutoSchema):
+    class Meta:
+        model = Sshc
 
 
 class BjControlSchema(ma.SQLAlchemyAutoSchema):

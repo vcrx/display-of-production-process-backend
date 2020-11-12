@@ -9,8 +9,10 @@ from functools import wraps
 from app import db
 import datetime
 
-
 # 上下文应用处理器
+from ..utils.time import from_mills_timestamp_to_min
+
+
 @admin.context_processor
 def tpl_extra():
     data = dict(
@@ -131,9 +133,26 @@ def manual(page=None):
     Oplog.add_one("人工干预")
     if page is None:
         page = 1
+    
+    params = request.args
+    time_from = params.get("from")
+    time_to = params.get("to")
+    rg_query = RgControl.query
+    if time_from is not None and time_to is not None:
+        time_from = from_mills_timestamp_to_min(time_from)
+        time_to = from_mills_timestamp_to_min(time_to)
+        # 查后一分钟之前的，所以要加一
+        time_to = time_to.replace(minute=time_to.minute + 1)
+        
+        print(time_from)
+        print(time_to)
+        rg_query = rg_query.filter(
+            RgControl.create_at >= time_from).filter(
+            RgControl.create_at <= time_to)
+    
     page_data = (
-        RgControl.query.order_by(RgControl.create_at.desc()).paginate(page=page,
-                                                                      per_page=10)
+        rg_query.order_by(RgControl.create_at.desc()).paginate(page=page,
+                                                               per_page=10)
     )
     return render_template("admin/manual.html", page_data=page_data)
 

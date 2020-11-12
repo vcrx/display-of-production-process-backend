@@ -4,16 +4,16 @@ from typing import List
 import arrow
 from flask import request
 
-from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl
+from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl, Hs, Sshc
 from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema, \
-    RgControlSchema
-from app.utils import response
+    RgControlSchema, HsSchema, SshcSchema
+from app.utils import response, get_query
 from . import front
 
 
 # 首页数据
-@front.route("/get_index_data", methods=["GET"])
-def get_index_data():
+@front.route("/index_data", methods=["GET"])
+def index_data():
     """
     返回参数说明：
     yjl：润叶加料
@@ -126,8 +126,8 @@ def get_index_data():
 
 
 # 生丝水分控制的影响因素：
-@front.route("/get_influence", methods=["GET"])
-def front_get_influence():
+@front.route("/influence", methods=["GET"])
+def influence():
     """
     type 可选值为：
         sshc:松散回潮
@@ -153,8 +153,8 @@ def front_get_influence():
     return response()
 
 
-@front.route("/get_alarm", methods=["GET"])
-def front_get_alarm():
+@front.route("/alarm", methods=["GET"])
+def alarm():
     """
     [{
         "time":timestamp,
@@ -169,8 +169,56 @@ def front_get_alarm():
     return response()
 
 
-@front.route("/get_first_five_batch", methods=["GET"])
-def get_first_five_batch():
+@front.route("/factor/<name>", methods=["GET"])
+def factor(name):
+    """
+    name: (sshc|yjl|cy|qs|sssf)
+    """
+    query_params = get_query(request.args)
+    page = query_params.get("page", 1)
+    per_page = query_params.get("per_page", 10)
+    if name == "sshc":
+        # 生丝水分
+        data = Sshc.query.order_by(Sshc.time.desc()).paginate(page=page,
+                                                              per_page=per_page,
+                                                              max_per_page=20)
+        items = SshcSchema(many=True).dump(data.items)
+        resp_dict = {"items": items, "page": data.page,
+                     "pages": data.pages, "per_page": data.per_page,
+                     "total": data.total}
+        return response(data=resp_dict)
+    elif name == "yjl":
+        # 润叶加料
+        data = Yjl.query.order_by(Yjl.time.desc()).paginate(page=page,
+                                                            per_page=per_page,
+                                                            max_per_page=20)
+        items = YjlSchema(many=True).dump(data.items)
+        resp_dict = {"items": items, "page": data.page,
+                     "pages": data.pages, "per_page": data.per_page,
+                     "total": data.total}
+        return response(data=resp_dict)
+    elif name == "cy":
+        # 储叶
+        ...
+    elif name == "qs":
+        # 切丝
+        ...
+    elif name == "sssf":
+        # 生丝水分
+        data = Hs.query.order_by(Hs.time.desc()).paginate(page=page,
+                                                          per_page=per_page,
+                                                          max_per_page=20)
+        items = HsSchema(many=True).dump(data.items)
+        resp_dict = {"items": items, "page": data.page,
+                     "pages": data.pages, "per_page": data.per_page,
+                     "total": data.total}
+        return response(data=resp_dict)
+    else:
+        return response(code=400, msg="unknown factor name")
+
+
+@front.route("/first_five_batch", methods=["GET"])
+def first_five_batch():
     """
     [{
         "pph": str, // 品牌号
@@ -226,7 +274,7 @@ def manual_control():
     if request.method == "GET":
         resp = RgControlSchema().dump(last)
         return response(data=resp)
-
+    
     data = request.get_json()
     err = RgControlSchema().validate(data)
     ljjsl = None

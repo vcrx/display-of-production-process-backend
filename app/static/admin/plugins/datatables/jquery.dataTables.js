@@ -4683,7 +4683,7 @@
 			if ( col.bSortable ) {
 				if ( aSort.length > 0 && aSort[0].col == i ) {
 					th.setAttribute('aria-sort', aSort[0].dir=="asc" ? "ascending" : "descending" );
-					nextSort = asSorting[ aSort[0].old_index+1 ] || asSorting[0];
+					nextSort = asSorting[ aSort[0].index+1 ] || asSorting[0];
 				}
 				else {
 					nextSort = asSorting[0];
@@ -5807,10 +5807,10 @@
 			var nodeName = node.nodeName.toUpperCase();
 		
 			if ( nodeName == 'TR' ) {
-				return api.row( node ).old_index();
+				return api.row( node ).index();
 			}
 			else if ( nodeName == 'TD' || nodeName == 'TH' ) {
-				var cell = api.cell( node ).old_index();
+				var cell = api.cell( node ).index();
 		
 				return [
 					cell.row,
@@ -7653,7 +7653,7 @@
 						return $.inArray( el, displayFiltered ) === -1 ? el : null;
 					} );
 		}
-		else if ( order == 'old_index.html' || order == 'original' ) {
+		else if ( order == 'index' || order == 'original' ) {
 			for ( i=0, ien=settings.aoData.length ; i<ien ; i++ ) {
 				if ( search == 'none' ) {
 					a.push( i );

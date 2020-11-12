@@ -2,7 +2,40 @@
 
 
 {% block content %}
-<!--内容-->
+    <style>
+        .box-body {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-around;
+            padding: 15px 0 20px;
+        }
+
+        .nav-card {
+            cursor: pointer;
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            align-items: center; /* 垂直居中 */
+            width: 20rem;
+            height: 10rem;
+            padding: 20px;
+            border-radius: .5rem;
+            background: #0d6aad;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05) !important;
+        }
+
+        .nav-card > .nav-title {
+            margin-left: auto;
+            font-size: 1.6em;
+        }
+
+        .nav-card > .glyphicon {
+            border-radius: 50%;
+            padding: 6px;
+            margin-left: auto;
+            border: 2px dashed #fff;
+        }
+    </style>
     <section class="content-header">
         <h1>生丝水分控制后台管理系统</h1>
         <ol class="breadcrumb">
@@ -10,8 +43,75 @@
             <li class="active">控制面板</li>
         </ol>
     </section>
-
-<!--内容-->
+    <section class="content" id="showcontent">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-warning">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">生丝水分控制</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="nav-card" data-route="{{ url_for('admin.alarm') }}" style="background: #f39c12">
+                            <span class="nav-title">报警管理</span>
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </div>
+                        <div class="nav-card" data-route="{{ url_for('admin.manual', page=1) }}"
+                             style="background: #f39c12">
+                            <span class="nav-title">人工干预</span>
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="box box-success">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">可视化分析</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="nav-card" data-route="{{ url_for('admin.temp_visual') }}"
+                             style="background: #00a65a">
+                            <span class="nav-title" style="font-size: 1.5em">温度可视化</span>
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </div>
+                        <div class="nav-card" data-route="{{ url_for('admin.humidity_visual') }}"
+                             style="background: #00a65a">
+                            <span class="nav-title" style="font-size: 1.5em">湿度可视化</span>
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="box box-info">
+                    <div class="box-header with-border">
+                        <h3 class="box-title">统计查询</h3>
+                        <div class="box-tools pull-right">
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="nav-card" data-route="{{ url_for("admin.query", page=1) }}"
+                             style="background: #00c0ef">
+                            <span class="nav-title" style="font-size: 1.4em">实时数据查询</span>
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </div>
+                        <div class="nav-card" data-route="{{ url_for("admin.statistics") }}"
+                             style="background: #00c0ef">
+                            <span class="nav-title" style="font-size: 1.4em">历史数据查询</span>
+                            <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--内容-->
 {% endblock %}
 
 {% block js %}
@@ -20,6 +120,9 @@
             $("#g-1").addClass("active");
             $("#g-1-1").addClass("active");
         })
+        $(".nav-card").click(function () {
+            const pathname = $(this).attr("data-route")
+            location.href = location.origin + pathname
+        })
     </script>
 {% endblock %}
-

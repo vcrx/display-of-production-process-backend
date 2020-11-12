@@ -27,6 +27,7 @@
     "skin-purple-light",
     "skin-green-light"
   ];
+
   //Create the new tab
   var tab_pane = $("<div />", {
     "id": "control-sidebar-theme-demo-options-tab",
@@ -50,55 +51,55 @@
   //Layout options
   demo_settings.append(
       "<h4 class='control-sidebar-heading'>"
-      + "布局选项"
+      + "Layout Options"
       + "</h4>"
         //Fixed layout
       + "<div class='form-group'>"
       + "<label class='control-sidebar-subheading'>"
       + "<input type='checkbox' data-layout='fixed' class='pull-right'/> "
-      + "固定宽度"
+      + "Fixed layout"
       + "</label>"
-      + "<p>激活固定布局，您不能同时使用固定和盒装布局</p>"
+      + "<p>Activate the fixed layout. You can't use fixed and boxed layouts together</p>"
       + "</div>"
         //Boxed layout
       + "<div class='form-group'>"
       + "<label class='control-sidebar-subheading'>"
       + "<input type='checkbox' data-layout='layout-boxed'class='pull-right'/> "
-      + "盒子布局"
+      + "Boxed Layout"
       + "</label>"
-      + "<p>激活盒装布局</p>"
+      + "<p>Activate the boxed layout</p>"
       + "</div>"
         //Sidebar Toggle
       + "<div class='form-group'>"
       + "<label class='control-sidebar-subheading'>"
       + "<input type='checkbox' data-layout='sidebar-collapse' class='pull-right'/> "
-      + "切换左侧边栏"
+      + "Toggle Sidebar"
       + "</label>"
-      + "<p>切换到左边栏状态（开启或取消）</p>"
+      + "<p>Toggle the left sidebar's state (open or collapse)</p>"
       + "</div>"
         //Sidebar mini expand on hover toggle
       + "<div class='form-group'>"
       + "<label class='control-sidebar-subheading'>"
       + "<input type='checkbox' data-enable='expandOnHover' class='pull-right'/> "
-      + "侧边栏展开悬停"
+      + "Sidebar Expand on Hover"
       + "</label>"
-      + "<p>侧边栏迷你效果展开悬停</p>"
+      + "<p>Let the sidebar mini expand on hover</p>"
       + "</div>"
         //Control Sidebar Toggle
       + "<div class='form-group'>"
       + "<label class='control-sidebar-subheading'>"
       + "<input type='checkbox' data-controlsidebar='control-sidebar-open' class='pull-right'/> "
-      + "切换右侧边栏"
+      + "Toggle Right Sidebar Slide"
       + "</label>"
-      + "<p>在内容和内容推送之间切换</p>"
+      + "<p>Toggle between slide over content and push content effects</p>"
       + "</div>"
         //Control Sidebar Skin Toggle
       + "<div class='form-group'>"
       + "<label class='control-sidebar-subheading'>"
       + "<input type='checkbox' data-sidebarskin='toggle' class='pull-right'/> "
-      + "切换右侧边栏皮肤"
+      + "Toggle Right Sidebar Skin"
       + "</label>"
-      + "<p>切换黑白皮肤右侧工具栏</p>"
+      + "<p>Toggle between dark and light skins for the right sidebar</p>"
       + "</div>"
   );
   var skins_list = $("<ul />", {"class": 'list-unstyled clearfix'});
@@ -110,7 +111,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px; background: #367fa9;'></span><span class='bg-light-blue' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #222d32;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin'>蓝色</p>");
+          + "<p class='text-center no-margin'>Blue</p>");
   skins_list.append(skin_blue);
   var skin_black =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -118,7 +119,7 @@
           + "<div style='box-shadow: 0 0 2px rgba(0,0,0,0.1)' class='clearfix'><span style='display:block; width: 20%; float: left; height: 7px; background: #fefefe;'></span><span style='display:block; width: 80%; float: left; height: 7px; background: #fefefe;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #222;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin'>黑色</p>");
+          + "<p class='text-center no-margin'>Black</p>");
   skins_list.append(skin_black);
   var skin_purple =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -126,7 +127,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-purple-active'></span><span class='bg-purple' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #222d32;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin'>紫色</p>");
+          + "<p class='text-center no-margin'>Purple</p>");
   skins_list.append(skin_purple);
   var skin_green =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -134,7 +135,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-green-active'></span><span class='bg-green' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #222d32;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin'>绿色</p>");
+          + "<p class='text-center no-margin'>Green</p>");
   skins_list.append(skin_green);
   var skin_red =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -142,7 +143,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-red-active'></span><span class='bg-red' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #222d32;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin'>红色</p>");
+          + "<p class='text-center no-margin'>Red</p>");
   skins_list.append(skin_red);
   var skin_yellow =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -150,7 +151,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-yellow-active'></span><span class='bg-yellow' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #222d32;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin'>黄色</p>");
+          + "<p class='text-center no-margin'>Yellow</p>");
   skins_list.append(skin_yellow);
 
   //Light sidebar skins
@@ -160,7 +161,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px; background: #367fa9;'></span><span class='bg-light-blue' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #f9fafc;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin' style='font-size: 12px'>浅蓝色</p>");
+          + "<p class='text-center no-margin' style='font-size: 12px'>Blue Light</p>");
   skins_list.append(skin_blue_light);
   var skin_black_light =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -168,7 +169,7 @@
           + "<div style='box-shadow: 0 0 2px rgba(0,0,0,0.1)' class='clearfix'><span style='display:block; width: 20%; float: left; height: 7px; background: #fefefe;'></span><span style='display:block; width: 80%; float: left; height: 7px; background: #fefefe;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #f9fafc;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin' style='font-size: 12px'>浅黑色</p>");
+          + "<p class='text-center no-margin' style='font-size: 12px'>Black Light</p>");
   skins_list.append(skin_black_light);
   var skin_purple_light =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -176,7 +177,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-purple-active'></span><span class='bg-purple' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #f9fafc;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin' style='font-size: 12px'>浅紫色</p>");
+          + "<p class='text-center no-margin' style='font-size: 12px'>Purple Light</p>");
   skins_list.append(skin_purple_light);
   var skin_green_light =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -184,7 +185,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-green-active'></span><span class='bg-green' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #f9fafc;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin' style='font-size: 12px'>浅绿色</p>");
+          + "<p class='text-center no-margin' style='font-size: 12px'>Green Light</p>");
   skins_list.append(skin_green_light);
   var skin_red_light =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -192,7 +193,7 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-red-active'></span><span class='bg-red' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #f9fafc;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin' style='font-size: 12px'>浅红色</p>");
+          + "<p class='text-center no-margin' style='font-size: 12px'>Red Light</p>");
   skins_list.append(skin_red_light);
   var skin_yellow_light =
       $("<li />", {style: "float:left; width: 33.33333%; padding: 5px;"})
@@ -200,10 +201,10 @@
           + "<div><span style='display:block; width: 20%; float: left; height: 7px;' class='bg-yellow-active'></span><span class='bg-yellow' style='display:block; width: 80%; float: left; height: 7px;'></span></div>"
           + "<div><span style='display:block; width: 20%; float: left; height: 20px; background: #f9fafc;'></span><span style='display:block; width: 80%; float: left; height: 20px; background: #f4f5f7;'></span></div>"
           + "</a>"
-          + "<p class='text-center no-margin' style='font-size: 12px;'>浅黄色</p>");
+          + "<p class='text-center no-margin' style='font-size: 12px;'>Yellow Light</p>");
   skins_list.append(skin_yellow_light);
 
-  demo_settings.append("<h4 class='control-sidebar-heading'>皮肤</h4>");
+  demo_settings.append("<h4 class='control-sidebar-heading'>Skins</h4>");
   demo_settings.append(skins_list);
 
   tab_pane.append(demo_settings);
@@ -287,6 +288,8 @@
 
     //Add the change skin listener
     $("[data-skin]").on('click', function (e) {
+      if($(this).hasClass('knob'))
+        return;
       e.preventDefault();
       change_skin($(this).data('skin'));
     });

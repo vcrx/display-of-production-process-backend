@@ -458,7 +458,7 @@ Responsive.prototype = {
 					dt.columns().eq(0).length + target :
 					target;
 
-				if ( dt.cell( this ).old_index().column !== targetIdx ) {
+				if ( dt.cell( this ).index().column !== targetIdx ) {
 					return;
 				}
 			}
@@ -743,7 +743,7 @@ Responsive.defaults = {
 		renderer: function ( api, rowIdx ) {
 			var data = api.cells( rowIdx, ':hidden' ).eq(0).map( function ( cell ) {
 				var header = $( api.column( cell.column ).header() );
-				var idx = api.cell( cell ).old_index();
+				var idx = api.cell( cell ).index();
 
 				if ( header.hasClass( 'control' ) || header.hasClass( 'never' ) ) {
 					return '';

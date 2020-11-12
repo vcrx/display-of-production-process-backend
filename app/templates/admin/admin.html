@@ -1,224 +1,234 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>生丝水分控制后台管理系统</title>
     <meta
-            content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-            name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
+      name="viewport"
     />
     <link
-            rel="shortcut icon"
-            href="{{ url_for('static', filename='base/images/mylogo.png') }}"
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='images/mylogo.png') }}"
     />
     <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='css/custom.css') }}"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/custom.css') }}"
     />
     <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='admin/bootstrap/css/bootstrap.min.css') }}"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/bootstrap/css/bootstrap.min.css') }}"
     />
     <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='fonts/css/font-awesome.min.css') }}"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='fonts/css/font-awesome.min.css') }}"
     />
     <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='ionicons/css/ionicons.min.css') }}"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/ionicons.min.css') }}"
     />
     <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='admin/dist/css/AdminLTE.min.css') }}"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/plugins/iCheck/flat/blue.css') }}"
     />
     <link
-            rel="stylesheet"
-            href="{{ url_for('static', filename='admin/dist/css/skins/_all-skins.min.css') }}"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/plugins/morris/morris.css') }}"
     />
     <link
-            rel="stylesheet"
-            type="text/css"
-            href="{{ url_for('static', filename='admin/plugins/datepicker/datepicker3.css') }}"
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/plugins/jvectormap/jquery-jvectormap-1.2.2.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/dist/css/AdminLTE.min.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/dist/css/skins/_all-skins.min.css') }}"
     />
     <style>
-        * {
-            font-family: "Microsoft YaHei";
-        }
+      * {
+        font-family: "Microsoft YaHei", serif;
+      }
 
-        .table > tbody > tr > td,
-        .table > tbody > tr > th,
-        .table > tfoot > tr > td,
-        .table > tfoot > tr > th,
-        .table > thead > tr > td,
-        .table > thead > tr > th {
-            vertical-align: middle;
-            text-align: center;
-        }
+      .table > tbody > tr > td,
+      .table > tbody > tr > th,
+      .table > tfoot > tr > td,
+      .table > tfoot > tr > th,
+      .table > thead > tr > td,
+      .table > thead > tr > th {
+        vertical-align: middle;
+        text-align: center;
+      }
     </style>
     {% block css %}{% endblock %}
-</head>
-<body class="hold-transition skin-blue sidebar-mini">
-<div class="wrapper">
-    <header class="main-header">
+  </head>
+  <body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+      <header class="main-header">
         <a href="{{ url_for('admin.index') }}" class="logo">
-            <span class="logo-lg">生丝水分控制</span>
+          <span class="logo-lg">生丝水分控制</span>
         </a>
         <nav class="navbar navbar-static-top">
-            <a
-                    href="#"
-                    class="sidebar-toggle"
-                    data-toggle="offcanvas"
-                    role="button"
-            >
-                <span class="sr-only">下拉菜单</span>
-            </a>
-            <div class="navbar-custom-menu">
-                <ul class="nav navbar-nav">
-                    <li class="dropdown user user-menu">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                            <img
-                                    src="{{ url_for('static', filename='admin/dist/img/user1-128x128.jpg') }}"
-                                    class="user-image"
-                                    alt="User Image"
-                            />
-                            <span class="hidden-xs">{{ session['admin'] }}</span>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <li class="user-header">
-                                <img
-                                        src="{{ url_for('static', filename='admin/dist/img/user1-128x128.jpg') }}"
-                                        class="img-circle"
-                                        alt="User Image"
-                                />
-                                <p>
-                                    {{ session['admin'] }}
-                                    <small>{{ online_time }}</small>
-                                </p>
-                            </li>
-                            <li class="user-footer">
-                                <div class="pull-left">
-                                    <a
-                                            href="{{ url_for('admin.pwd') }}"
-                                            class="btn btn-default btn-flat"
-                                    >修改密码</a
-                                    >
-                                </div>
-                                <div class="pull-right">
-                                    <a
-                                            href="{{ url_for('admin.login') }}"
-                                            class="btn btn-default btn-flat"
-                                    >退出系统</a
-                                    >
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
-    <aside class="main-sidebar">
-        <section class="sidebar">
-            <div class="user-panel">
-                <div class="pull-left image">
+          <a
+            href="#"
+            class="sidebar-toggle"
+            data-toggle="offcanvas"
+            role="button"
+          >
+            <span class="sr-only">切换侧边栏</span>
+          </a>
+          <div class="navbar-custom-menu">
+            <ul class="nav navbar-nav">
+              <li class="dropdown user user-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  <img
+                    src="{{ url_for('static', filename='admin/dist/img/user1-128x128.jpg') }}"
+                    class="user-image"
+                    alt="User Image"
+                  />
+                  <span class="hidden-xs">{{ session['admin'] }}</span>
+                </a>
+                <ul class="dropdown-menu">
+                  <li class="user-header">
                     <img
-                            src="{{ url_for('static', filename='admin/dist/img/user1-128x128.jpg') }}"
-                            class="img-circle"
-                            alt="User Image"
+                      src="{{ url_for('static', filename='admin/dist/img/user1-128x128.jpg') }}"
+                      class="img-circle"
+                      alt="User Image"
                     />
-                </div>
-                <div class="pull-left info">
-                    <p>{{ session['admin'] }}</p>
-                    欢迎使用
-                </div>
-            </div>
-            <form action="#" method="get" class="sidebar-form">
-                <div class="input-group">
-                    <input
-                            type="text"
-                            name="q"
-                            class="form-control"
-                            placeholder="搜索..."
-                    />
-                    <span class="input-group-btn">
+                    <p>
+                      {{ session['admin'] }}
+                      <small>{{ online_time }}</small>
+                    </p>
+                  </li>
+                  <li class="user-footer">
+                    <div class="pull-left">
+                      <a
+                        href="{{ url_for('admin.pwd') }}"
+                        class="btn btn-default btn-flat"
+                        >修改密码</a
+                      >
+                    </div>
+                    <div class="pull-right">
+                      <a
+                        href="{{ url_for('admin.login') }}"
+                        class="btn btn-default btn-flat"
+                        >退出系统</a
+                      >
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </header>
+      <aside class="main-sidebar">
+        <section class="sidebar">
+          <form action="#" method="get" class="sidebar-form">
+            <div class="input-group">
+              <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="搜索..."
+              />
+              <span class="input-group-btn">
                 <button
-                        type="submit"
-                        name="search"
-                        id="search-btn"
-                        class="btn btn-flat"
+                  type="submit"
+                  name="search"
+                  id="search-btn"
+                  class="btn btn-flat"
                 >
                   <i class="fa fa-search"></i>
                 </button>
               </span>
-                </div>
-            </form>
-            {% include "admin/grid.html" %}
+            </div>
+          </form>
+          {% include "admin/grid.html" %}
         </section>
-    </aside>
-    <div class="content-wrapper">
+      </aside>
+      <div class="content-wrapper">
         <!--内容-->
         {% block content %}{% endblock %}
         <!--内容-->
-    </div>
-    <footer class="main-footer">
+      </div>
+      <footer class="main-footer">
         <div class="pull-right hidden-xs"><b>版本</b> 1.0</div>
         <strong>版权 &copy; 2019-2020 归<a href="">四川</a>.</strong> 所有
-    </footer>
-    <div class="control-sidebar-bg"></div>
-</div>
-<script src="{{ url_for('static', filename='admin/plugins/jQuery/jQuery-2.2.0.min.js') }}"></script>
-<script src="{{ url_for('static', filename='admin/bootstrap/js/bootstrap.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/jquery.form.min.js') }}"></script>
-<script src="{{ url_for('static', filename='admin/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
-<script src="{{ url_for('static', filename='admin/plugins/fastclick/fastclick.js') }}"></script>
-<script src="{{ url_for('static', filename='admin/dist/js/app.min.js') }}"></script>
-<script src="{{ url_for('static', filename='admin/dist/js/demo.js') }}"></script>
-<script src="//cdn.bootcss.com/holder/2.9.4/holder.min.js"></script>
-<script src="{{ url_for('static', filename='admin/plugins/datepicker/bootstrap-datepicker.js') }}"></script>
-<script
-        src="{{ url_for('static', filename='admin/plugins/datepicker/locales/bootstrap-datepicker.zh-CN.js') }}"
-        charset="UTF-8"
-></script>
-<script>
-    /**
-     * 弹出式提示框，默认1.2秒自动消失
-     * @param message 提示信息
-     * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
-     * @param time 消失时间
-     */
-    var prompt = function (message, style, time) {
-        style = (style === undefined) ? 'alert-success' : style;
-        time = (time === undefined) ? 1200 : time;
-        $('<div>')
-            .appendTo('body')
-            .addClass('alert ' + style)
-            .html(message)
-            .show()
-            .delay(time)
-            .fadeOut();
-    };
+      </footer>
+      <div class="control-sidebar-bg"></div>
+    </div>
 
-    // 成功提示
-    var success_prompt = function (message, time) {
-        prompt(message, 'alert-success', time);
-    };
+    <script src="{{ url_for('static', filename='js/jquery-2.2.3.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-ui-1.11.4.min.js') }}"></script>
+    <script>
+      $.widget.bridge("uibutton", $.ui.button);
+    </script>
+    <script src="{{ url_for('static', filename='admin/bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.form.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='admin/plugins/slimScroll/jquery.slimscroll.min.js') }}"></script>
+    <script>
+      var AdminLTEOptions = {
+        //Enable sidebar expand on hover effect for sidebar mini
+        //This option is forced to true if both the fixed layout and sidebar mini
+        //are used together
+        sidebarExpandOnHover: true,
+        //BoxRefresh Plugin
+        enableBoxRefresh: true,
+        //Bootstrap.js tooltip
+        enableBSToppltip: true,
+      };
+    </script>
+    <script src="{{ url_for('static', filename='admin/dist/js/app.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/custom.js') }}"></script>
+    <script src="//cdn.bootcss.com/holder/2.9.4/holder.min.js"></script>
 
-    // 失败提示
-    var fail_prompt = function (message, time) {
-        prompt(message, 'alert-danger', time);
-    };
+    <script>
+      /**
+       * 弹出式提示框，默认1.2秒自动消失
+       * @param message 提示信息
+       * @param style 提示样式，有alert-success、alert-danger、alert-warning、alert-info
+       * @param time 消失时间
+       */
+      var prompt = function (message, style, time) {
+        style = style === undefined ? "alert-success" : style;
+        time = time === undefined ? 1200 : time;
+        $("<div>")
+          .appendTo("body")
+          .addClass("alert " + style)
+          .html(message)
+          .show()
+          .delay(time)
+          .fadeOut();
+      };
 
-    // 提醒
-    var warning_prompt = function (message, time) {
-        prompt(message, 'alert-warning', time);
-    };
+      // 成功提示
+      var success_prompt = function (message, time) {
+        prompt(message, "alert-success", time);
+      };
 
-    // 信息提示
-    var info_prompt = function (message, time) {
-        prompt(message, 'alert-info', time);
-    };
-</script>
-{% block js %}{% endblock %}
-</body>
+      // 失败提示
+      var fail_prompt = function (message, time) {
+        prompt(message, "alert-danger", time);
+      };
+
+      // 提醒
+      var warning_prompt = function (message, time) {
+        prompt(message, "alert-warning", time);
+      };
+
+      // 信息提示
+      var info_prompt = function (message, time) {
+        prompt(message, "alert-info", time);
+      };
+    </script>
+    {% block js %}{% endblock %}
+  </body>
 </html>
