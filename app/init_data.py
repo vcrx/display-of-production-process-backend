@@ -1,11 +1,16 @@
-import pandas as pd
-from app.models import *
 from pathlib import Path
+
 import arrow
+import pandas as pd
+
 from app import create_app
+from app.models import *
 
 app = create_app("db")
 app.app_context().push()
+
+data_dir = Path(__file__).parent.parent / "data"
+print("data_dir:", data_dir)
 
 
 def get_data(csv_name):
@@ -39,9 +44,9 @@ def get_data(csv_name):
     return result
 
 
-z1 = get_data("../data/Z1（松散回潮工段）.csv")
-z2 = get_data("../data/Z2（润叶加料工段）.csv")
-kld = get_data("../data/KLD（烘丝工段）.csv")
+z1 = get_data(data_dir / "Z1（松散回潮工段）.csv")
+z2 = get_data(data_dir / "Z2（润叶加料工段）.csv")
+kld = get_data(data_dir / "KLD（烘丝工段）.csv")
 
 Sshc.add_many(z1)
 Yjl.add_many(z2)
@@ -114,7 +119,7 @@ def gen_data_list(type_dict, whole_df: pd.DataFrame) -> list:
     return result
 
 
-root = Path("../data/生丝水分数据csv/")
+root = data_dir / "生丝水分数据csv/"
 for file in root.iterdir():
     if file.suffix == ".csv":
         df = pd.read_csv(file, encoding="gbk")
