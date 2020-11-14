@@ -1,9 +1,12 @@
 from flask import jsonify
 
 
-def resp_wrapper(code=200, msg="success", data=None):
+def resp_wrapper(code=200, msg="success", data=None, inherit_code=True):
     obj = {"code": code, "msg": msg, "data": data}
-    return jsonify(obj), code
+    if inherit_code:
+        return jsonify(obj), code
+    else:
+        return jsonify(obj)
 
 
 response = resp_wrapper
@@ -16,8 +19,12 @@ def safe_cast(val, to_type, default=None):
         return default
 
 
-def safe_float(value, default=0):
+def safe_float(value, default=None):
     return safe_cast(value, float, default)
+
+
+def safe_int(value, default=None):
+    return safe_cast(value, int, default)
 
 
 def normalize_query_param(value):
@@ -30,8 +37,6 @@ def normalize_query_param(value):
     :return: a normalized query parameter value
     """
     value: str = value if len(value) > 1 else value[0]
-    if value.isdecimal():
-        value = safe_cast(value, int, 0)
     return value
 
 

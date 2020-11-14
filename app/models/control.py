@@ -71,9 +71,9 @@ class BjControl(Base, db.Model):
 class RgControl(Base, db.Model):
     __tablename__ = "rg_control"
     id = db.Column(db.Integer, primary_key=True)  # 编号
-    rg_ljjsl = db.Column(db.Float)  # 人工计算的累积加水量
-    rg_sssf = db.Column(db.Float)  # 生丝水分目标值
-    
+    ljjsl = db.Column(db.Float)  # 人工计算的累积加水量
+    sssf = db.Column(db.Float)  # 生丝水分目标值
+    cysc = db.Column(db.DateTime)  # 储叶时长，这里存的是预计储叶结束时间
     sssf_controls = db.relationship("SssfControl",
                                     backref="rg_control")  # 生丝水分控制外键关系关联
     
@@ -86,7 +86,7 @@ class RgControl(Base, db.Model):
         return obj
     
     @classmethod
-    def add_one(cls, ljjsl, sssf):
-        obj = RgControl(rg_ljjsl=ljjsl, rg_sssf=sssf)
+    def add_one(cls, **kwargs):
+        obj = RgControl(**kwargs)
         db.session.add(obj)
         db.session.commit()

@@ -20,11 +20,9 @@ def create_app(mode) -> Flask:
         CORS(app)
         from app.admin import admin as admin_blueprint  # noqa: E402
         from app.front_api import front as front_blueprint  # noqa: E402
-        from app.end_api import end as end_blueprint  # noqa: E402
         
         app.register_blueprint(admin_blueprint)
         app.register_blueprint(front_blueprint)
-        app.register_blueprint(end_blueprint)
         
         @app.errorhandler(404)
         def page_not_found(error):

@@ -203,7 +203,7 @@
         $("<div>")
           .appendTo("body")
           .addClass("alert " + style)
-          .html(message)
+          .html(message.toString())
           .show()
           .delay(time)
           .fadeOut();

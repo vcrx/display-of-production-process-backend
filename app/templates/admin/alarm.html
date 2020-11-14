@@ -1,6 +1,17 @@
 {% extends "admin/admin.html" %}
 
-
+{% macro render_field(field) %}
+    <td>
+        {{ field(class_="form-control", placeholder=field.label.text, value=data.get(field.name),**kwargs)|safe }}
+        {% if field.errors %}
+            <ul class=errors>
+                {% for error in field.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </td>
+{% endmacro %}
 
 {% block content %}
     <style>
@@ -8,6 +19,10 @@
             float: right;
             margin-right: 10px;
             margin-bottom: 10px;
+        }
+
+        .errors {
+            color: red;
         }
     </style>
     <section class="content-header">
@@ -48,7 +63,8 @@
                     <div class="tab-content">
                         <div role="tabpanel" class="tab-pane active" id="sshc">
                             <div class="box-body table-responsive no-padding">
-                                <form class="form_sub" action="/modify_alert/sshc" method="POST">
+                                <form method="POST">
+                                    {{ form.csrf_token }}
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -58,16 +74,10 @@
                                             <th>控制范围上限</th>
                                         </tr>
                                         <tr>
-                                            <th>松散回潮</th>
-                                            <th>出口水分</th>
-                                            <th>
-                                                <input class="form-control" name="sshc_cksfdown"
-                                                       placeholder="控制范围下限" value="{{ data.sshc_cksfdown }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="sshc_cksfup"
-                                                       placeholder="控制范围上限" value="{{ data.sshc_cksfup }}">
-                                            </th>
+                                            <td>松散回潮</td>
+                                            <td>出口水分</td>
+                                            {{ render_field(form.sshc_cksfdown) }}
+                                            {{ render_field(form.sshc_cksfup) }}
                                         </tr>
                                         </tbody>
                                     </table>
@@ -77,110 +87,63 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="ryjl">
                             <div class="box-body table-responsive no-padding">
-                                <form class="form_sub" action="/modify_alert/ryjl" method="POST">
+                                <form method="POST">
+                                    {{ form.csrf_token }}
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
                                             <th>生产阶段</th>
                                             <th>影响因素名称</th>
-                                            <th>控制范围上限</th>
                                             <th>控制范围下限</th>
+                                            <th>控制范围上限</th>
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>入口水分</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_rksfup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_rksfup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_rksfdown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_rksfdown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>入口水分</td>
+                                            {{ render_field(form.yjl_rksfdown) }}
+                                            {{ render_field(form.yjl_rksfup) }}
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>物料累计重量</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_wlljzlup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_wlljzlup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_wlljzldown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_wlljzldown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>物料累计重量</td>
+                                            {{ render_field(form.yjl_wlljzldown) }}
+                                            {{ render_field(form.yjl_wlljzlup) }}
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>瞬时加水量</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_ssjslup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_ssjslup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_ssjsldown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_ssjsldown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>瞬时加水量</td>
+                                            {{ render_field(form.yjl_ssjsldown) }}
+                                            {{ render_field(form.yjl_ssjslup) }}
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>料液温度</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_lywdup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_lywdup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_lywddown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_lywddown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>料液温度</td>
+                                            {{ render_field(form.yjl_lywddown) }}
+                                            {{ render_field(form.yjl_lywdup) }}
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>环境温度</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_wdup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_wdup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_wddown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_wddown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>环境温度</td>
+                                            {{ render_field(form.yjl_wddown) }}
+                                            {{ render_field(form.yjl_wdup) }}
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>环境湿度</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_sdup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_sdup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_sddown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_sddown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>环境湿度</td>
+                                            {{ render_field(form.yjl_sddown) }}
+                                            {{ render_field(form.yjl_sdup) }}
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>出口温度</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_ckwdup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_ckwdup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_ckwddown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_ckwddown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>出口温度</td>
+                                            {{ render_field(form.yjl_ckwddown) }}
+                                            {{ render_field(form.yjl_ckwdup) }}
                                         </tr>
                                         <tr>
-                                            <th>润叶加料</th>
-                                            <th>出口水分</th>
-                                            <th>
-                                                <input class="form-control" name="yjl_cksfup"
-                                                       placeholder="控制范围上限" value="{{ data.yjl_cksfup }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="yjl_cksfdown"
-                                                       placeholder="控制范围下限" value="{{ data.yjl_cksfdown }}">
-                                            </th>
+                                            <td>润叶加料</td>
+                                            <td>出口水分</td>
+                                            {{ render_field(form.yjl_cksfdown) }}
+                                            {{ render_field(form.yjl_cksfup) }}
                                         </tr>
                                         </tbody>
                                     </table>
@@ -190,7 +153,8 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="cy">
                             <div class="box-body table-responsive no-padding">
-                                <form class="form_sub" action="/modify_alert/cy" method="POST">
+                                <form method="POST">
+                                    {{ form.csrf_token }}
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -200,28 +164,16 @@
                                             <th>控制范围上限</th>
                                         </tr>
                                         <tr>
-                                            <th>储叶</th>
-                                            <th>温度</th>
-                                            <th>
-                                                <input class="form-control" name="cy_wddown"
-                                                       placeholder="控制范围下限" value="{{ data.cy_wddown }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="cy_wdup"
-                                                       placeholder="控制范围上限" value="{{ data.cy_wdup }}">
-                                            </th>
+                                            <td>储叶</td>
+                                            <td>温度</td>
+                                            {{ render_field(form.cy_wddown) }}
+                                            {{ render_field(form.cy_wdup) }}
                                         </tr>
                                         <tr>
-                                            <th>储叶</th>
-                                            <th>湿度</th>
-                                            <th>
-                                                <input class="form-control" name="cy_sddown"
-                                                       placeholder="控制范围下限" value="{{ data.cy_sddown }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="cy_sdup"
-                                                       placeholder="控制范围上限" value="{{ data.cy_sdup }}">
-                                            </th>
+                                            <td>储叶</td>
+                                            <td>湿度</td>
+                                            {{ render_field(form.cy_sddown) }}
+                                            {{ render_field(form.cy_sdup) }}
                                         </tr>
                                         </tbody>
                                     </table>
@@ -231,7 +183,8 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="qs">
                             <div class="box-body table-responsive no-padding">
-                                <form class="form_sub" action="/modify_alert/qs" method="POST">
+                                <form method="POST">
+                                    {{ form.csrf_token }}
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -241,28 +194,16 @@
                                             <th>控制范围上限</th>
                                         </tr>
                                         <tr>
-                                            <th>切丝</th>
-                                            <th>温度</th>
-                                            <th>
-                                                <input class="form-control" name="qs_wddown"
-                                                       placeholder="控制范围下限" value="{{ data.qs_wddown }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="qs_wdup"
-                                                       placeholder="控制范围上限" value="{{ data.qs_wdup }}">
-                                            </th>
+                                            <td>切丝</td>
+                                            <td>温度</td>
+                                            {{ render_field(form.qs_wddown) }}
+                                            {{ render_field(form.qs_wdup) }}
                                         </tr>
                                         <tr>
-                                            <th>切丝</th>
-                                            <th>湿度</th>
-                                            <th>
-                                                <input class="form-control" name="qs_sddown"
-                                                       placeholder="控制范围下限" value="{{ data.qs_sddown }}">
-                                            </th>
-                                            <th>
-                                                <input class="form-control" name="qs_sdup"
-                                                       placeholder="控制范围上限" value="{{ data.qs_sdup }}">
-                                            </th>
+                                            <td>切丝</td>
+                                            <td>湿度</td>
+                                            {{ render_field(form.qs_sddown) }}
+                                            {{ render_field(form.qs_sdup) }}
                                         </tr>
                                         </tbody>
                                     </table>
@@ -272,7 +213,8 @@
                         </div>
                         <div role="tabpanel" class="tab-pane" id="sssf">
                             <div class="box-body table-responsive no-padding">
-                                <form>
+                                <form method="POST">
+                                    {{ form.csrf_token }}
                                     <table class="table table-hover">
                                         <tbody>
                                         <tr>
@@ -302,14 +244,11 @@
             $("#g-2").addClass("active");
             $("#g-2-2").addClass("active");
         })
-        $(".form_sub").submit(function (event) {
-            event.preventDefault();
-            $(this).ajaxSubmit({
-                success: function (data) { // data 保存提交后返回的数据，一般为 json 数据
-                    console.log(data)
-                    success_prompt("保存成功")
-                }
-            });
-        });
+        {% for msg1 in get_flashed_messages(category_filter=["alarm-success"]) %}
+            success_prompt(`{{ msg1|safe }}`);
+        {% endfor %}
+        {% for msg2 in get_flashed_messages(category_filter=["alarm-error"]) %}
+            fail_prompt(`{{ msg2|safe }}`);
+        {% endfor %}
     </script>
 {% endblock %}

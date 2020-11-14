@@ -1,5 +1,5 @@
 from app import db
-from typing import Dict
+from typing import Dict, Any
 from .base import Base
 from sqlalchemy import exc
 
@@ -21,8 +21,8 @@ class Sshc(Base, db.Model):
         return "<Sshc {}>".format(self.id)
     
     @classmethod
-    def add_many(cls, data_dict: Dict[str, Dict[str, Dict[str, float]]]):
-        map = {
+    def add_many(cls, data_dict: Dict[Any, Dict[str, Dict[str, float]]]):
+        mapping = {
             "wlssll": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_PV_Massflow",
             "wlljzl": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_Total_Massflow",
             "hfwd": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.TB101_PV_Temperature",
@@ -32,9 +32,9 @@ class Sshc(Base, db.Model):
         try:
             for time, data in data_dict.items():
                 kwargs = {}
-                for name in map.keys():
+                for name in mapping.keys():
                     try:
-                        kwargs[name] = data[map[name]]["_VALUE"]
+                        kwargs[name] = data[mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
                 obj = Sshc(time=time, **kwargs)
@@ -76,7 +76,7 @@ class Yjl(Base, db.Model):
     
     @classmethod
     def add_many(cls, data_dict):
-        map = {
+        mapping = {
             "wlsjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_PV_Massflow",
             "wlljzl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_Total_Massflow",
             "ljjsl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ST201_Total_Waterflow",
@@ -90,9 +90,9 @@ class Yjl(Base, db.Model):
         try:
             for time, data in data_dict.items():
                 kwargs = {}
-                for name in map.keys():
+                for name in mapping.keys():
                     try:
-                        kwargs[name] = data[map[name]]["_VALUE"]
+                        kwargs[name] = data[mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
                 obj = Yjl(time=time, **kwargs)
@@ -101,6 +101,42 @@ class Yjl(Base, db.Model):
         except exc.SQLAlchemyError:
             db.session.rollback()
             raise
+    
+    @classmethod
+    def get_index_data(cls):
+        """
+        {
+            "rksf": {
+                value: number,
+                up: number,
+                down: number,
+            },   //入口水分
+            "wlljzl":...,  //物料累积重量
+            "cssll":...,  //物料瞬时流量
+            "lywd":...,  //料液温度
+            "ljjsl":...,  //累积加水量
+            "ssjsl":...,  /瞬时加水量
+            "wd":...,  // 环境温度
+            "sd":...,  // 环境湿度
+            "ckwd":...,  //出口温度
+            "cksf":...,  //出口水分
+        }
+        """
+        from . import BjControl
+        from ..schemas import YjlSchema, BjControlSchema
+        
+        yjl: Yjl = Yjl.query.order_by(Yjl.id.desc()).first()
+        yjl_dumped: dict = YjlSchema().dump(yjl)
+        bj_control: BjControl = BjControl.get_last_one()
+        bj_dumped: dict = BjControlSchema().dump(bj_control)
+        yjl_dct = {}
+        for attr, value in yjl_dumped.items():
+            yjl_dct[attr] = {
+                "value": value,
+                "up": bj_dumped.get("yjl_{}up".format(attr)),
+                "down": bj_dumped.get("yjl_{}down".format(attr)),
+            }
+        return yjl_dct
 
 
 # 烘丝
@@ -129,7 +165,7 @@ class Hs(Base, db.Model):
     
     @classmethod
     def add_many(cls, data_dict):
-        map = {
+        mapping = {
             "sssf": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.MOIST_PV",
             "zqll": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamMaFl",
             "fhzqyl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamPressAft",
@@ -143,9 +179,9 @@ class Hs(Base, db.Model):
         try:
             for time, data in data_dict.items():
                 kwargs = {}
-                for name in map.keys():
+                for name in mapping.keys():
                     try:
-                        kwargs[name] = data[map[name]]["_VALUE"]
+                        kwargs[name] = data[mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
                 obj = Hs(time=time, **kwargs)

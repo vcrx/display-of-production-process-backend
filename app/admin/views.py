@@ -1,18 +1,22 @@
-from . import admin
-from flask import render_template, redirect, url_for, flash, session, request, \
-    abort
-from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm
-from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, BjControl, \
-    RgControl, Yjl
-from app.schemas import BjControlSchema
-from functools import wraps
-from app import db
 import datetime
+import pprint
+from functools import wraps
 
-# 上下文应用处理器
+from flask import render_template, redirect, url_for, flash, session, abort, \
+    request
+
+from app import db
+from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm, \
+    AlarmForm
+from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, RgControl, Yjl
+from app.models import BjControl
+from app.schemas import BjControlSchema
+from app.utils import response, safe_float
+from . import admin
 from ..utils.time import from_mills_timestamp_to_min
 
 
+# 上下文应用处理器
 @admin.context_processor
 def tpl_extra():
     data = dict(
@@ -52,14 +56,6 @@ def admin_auth(func):
         return func(*args, **kwargs)
     
     return decorated_function
-
-
-"""----------视图函数----------"""
-
-
-# @admin.route("/flot_chart/")
-# def flot_chart():
-#     return render_template("admin/flot_chart.html")
 
 
 # 登录
@@ -105,15 +101,33 @@ def index():
     return render_template("admin/index.html")
 
 
-"""生丝水分控制"""
-
-
 # 报警控制
-@admin.route("/alarm/")
+@admin.route("/alarm/", methods=('GET', 'POST'))
 @admin_login_req
 @admin_auth
 def alarm():
-    Oplog.add_one("进行报警控制")
+    form = AlarmForm()
+    print(request.form)
+    if request.method == "GET":
+        Oplog.add_one("查看报警控制")
+    else:
+        Oplog.add_one("修改报警控制")
+        if form.validate_on_submit():
+            form_data = {}
+            for key, value in request.form.items():
+                if key != "csrf_token":
+                    form_data[key] = safe_float(form.data.get(key))
+            print(form_data)
+            print("validate_on_submit")
+            obj = BjControl.get_last_one() or BjControl()
+            obj.update(**form_data)
+            db.session.add(obj)
+            db.session.commit()
+            flash("修改成功", "alarm-success")
+        else:
+            print(form.errors)
+            flash("修改失败", "alarm-error")
+    
     bj_control: BjControl = BjControl.get_last_one()
     data = {}
     if bj_control is not None:
@@ -122,7 +136,7 @@ def alarm():
         for k, v in data.items():
             if v is None:
                 data[k] = ""
-    return render_template("admin/alarm.html", data=data)
+    return render_template("admin/alarm.html", data=data, form=form)
 
 
 # 人工干预
@@ -142,7 +156,7 @@ def manual(page=None):
     if time_from is not None and time_to is not None:
         search["from"] = time_from
         search["to"] = time_to
-
+        
         time_from = from_mills_timestamp_to_min(time_from)
         time_to = from_mills_timestamp_to_min(time_to)
         # 查后一分钟之前的，所以要加一
@@ -155,10 +169,8 @@ def manual(page=None):
         rg_query.order_by(RgControl.create_at.desc()).paginate(page=page,
                                                                per_page=10)
     )
-    return render_template("admin/manual.html", page_data=page_data, search=search)
-
-
-"""可视化分析"""
+    return render_template("admin/manual.html", page_data=page_data,
+                           search=search)
 
 
 # 温度可视化
