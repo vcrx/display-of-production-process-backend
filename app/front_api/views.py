@@ -308,7 +308,10 @@ def manual_control():
     if not err:
         ljjsl = data.get("ljjsl", ljjsl)
         sssf = data.get("sssf", sssf)
-        cysc = data.get("cysc", cysc)
+        cysc_str = data.get("cysc")
+        if cysc_str:
+            cysc = arrow.get(cysc_str).datetime
+        
         RgControl.add_one(ljjsl=ljjsl, sssf=sssf, cysc=cysc)
         return response()
     else:

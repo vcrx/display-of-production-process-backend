@@ -109,7 +109,6 @@ def alarm():
     form = AlarmForm()
     bj_control: BjControl = BjControl.get_last_one()
     
-    print(request.form)
     if request.method == "GET":
         Oplog.add_one("查看报警控制")
     else:
@@ -119,15 +118,12 @@ def alarm():
             for key, value in request.form.items():
                 if key != "csrf_token":
                     form_data[key] = safe_float(form.data.get(key))
-            print(form_data)
-            print("validate_on_submit")
             obj = bj_control or BjControl()
             obj.update(**form_data)
             db.session.add(obj)
             db.session.commit()
             flash("修改成功", "alarm-success")
         else:
-            print(form.errors)
             flash("修改失败", "alarm-error")
     
     data = {}

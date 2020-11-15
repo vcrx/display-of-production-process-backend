@@ -240,7 +240,6 @@ class NumberRange(object):
         if (math.isnan(data)) or \
                 (self.min is not None and data < self.min):
             message = self.message
-            print("self.min", self.min)
             raise ValidationError(message % dict(min=self.min))
 
 
