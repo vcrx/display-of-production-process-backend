@@ -33,5 +33,6 @@ class RgControlSchema(ma.SQLAlchemySchema):
     class Meta:
         model = RgControl
     
-    rg_ljjsl = ma.auto_field()
-    rg_sssf = ma.auto_field()
+    ljjsl = ma.auto_field()
+    sssf = ma.auto_field()
+    cysc = ma.auto_field()

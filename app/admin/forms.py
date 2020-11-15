@@ -240,14 +240,19 @@ class NumberRange(object):
         if (math.isnan(data)) or \
                 (self.min is not None and data < self.min):
             message = self.message
+            print("self.min", self.min)
             raise ValidationError(message % dict(min=self.min))
 
 
 class AlarmField(FloatField):
-    def __init__(self, label, **kwargs):
+    def __init__(self, label, require_min=0.0, **kwargs):
+        validates = [Optional()]
+        if require_min is not None:
+            validates.append(
+                NumberRange(min=require_min, message=label + "不得小于 %(min)s"))
         super(AlarmField, self).__init__(
             label,
-            [Optional(), NumberRange(min=0.0, message=label + "不得小于 %f")],
+            validates,
             **kwargs
         )
     
@@ -286,6 +291,8 @@ class AlarmForm(FlaskForm):
     qs_wddown = AlarmField("切丝温度下限")
     qs_sdup = AlarmField("切丝湿度上限")
     qs_sddown = AlarmField("切丝湿度下限")
+    sssf_up = AlarmField("生丝水分控制值上限", require_min=None)
+    sssf_down = AlarmField("生丝水分控制值下限", require_min=None)
     
     def __init__(self):
         super(AlarmForm, self).__init__()

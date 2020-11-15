@@ -223,6 +223,12 @@
                                             <th>控制范围下限</th>
                                             <th>控制范围上限</th>
                                         </tr>
+                                        <tr>
+                                            <td>生丝水分</td>
+                                            <td>控制值</td>
+                                            {{ render_field(form.sssf_down) }}
+                                            {{ render_field(form.sssf_up) }}
+                                        </tr>
                                         </tbody>
                                     </table>
                                     <button type="submit" class="btn btn-default btn-submit">保存</button>
@@ -240,10 +246,22 @@
 
 {% block js %}
     <script type="text/javascript">
+
         $(document).ready(function () {
             $("#g-2").addClass("active");
             $("#g-2-2").addClass("active");
         })
+        $(function () {
+            const hash = window.location.hash;
+            hash && $('ul.nav a[href="' + hash + '"]').tab('show');
+
+            $('.nav-tabs a').click(function (e) {
+                $(this).tab('show');
+                var scrollmem = $('body').scrollTop() || $('html').scrollTop();
+                window.location.hash = this.hash;
+                $('html,body').scrollTop(scrollmem);
+            });
+        });
         {% for msg1 in get_flashed_messages(category_filter=["alarm-success"]) %}
             success_prompt(`{{ msg1|safe }}`);
         {% endfor %}

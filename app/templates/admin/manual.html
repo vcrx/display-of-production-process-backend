@@ -28,36 +28,24 @@
                         <div class="container" id="search-container">
                             <div class="row">
                                 <div class="col-sm-3" style="padding-right: 0">
-                                    <input
-                                            type="text"
-                                            class="form-control datetimepicker"
-                                            id="datetimepicker1"
+                                    <input type="text"
+                                           class="form-control datetimepicker"
+                                           id="datetimepicker1"
                                     />
                                 </div>
-                                <div
-                                        class="col-sm-1"
-                                        style="
-                  height: 100%;
-                  padding: 10px 0;
-                  line-height: 100%;
-                  text-align: center;
-                "
-                                >
-                <span
-                        class="glyphicon glyphicon-arrow-right"
-                        aria-hidden="true"
-                ></span>
+                                <div class="col-sm-1"
+                                     style="height: 100%;padding: 10px 0;line-height: 100%;text-align: center;">
+                                    <span class="glyphicon glyphicon-arrow-right"
+                                          aria-hidden="true"></span>
                                 </div>
                                 <div class="col-sm-3" style="padding-left: 0">
-                                    <input
-                                            type="text"
-                                            class="form-control datetimepicker"
-                                            id="datetimepicker2"
+                                    <input type="text"
+                                           class="form-control datetimepicker"
+                                           id="datetimepicker2"
                                     />
                                 </div>
                                 <button class="btn btn-default" id="search">查询</button>
-                                <button
-                                        class="btn btn-default"
+                                <button class="btn btn-default"
                                         id="clear-search"
                                         style="visibility: hidden"
                                 >
@@ -71,28 +59,33 @@
                                 <th>时间</th>
                                 <th>累计加水量</th>
                                 <th>生丝水分</th>
+                                <th>（预计）储叶时长</th>
                             </tr>
                             {% for v in page_data.items %}
                                 <tr>
                                     <td>{{ v.create_at }}</td>
-                                    <td>{{ v.rg_ljjsl }}</td>
-                                    <td>{{ v.rg_sssf }}</td>
+                                    <td>{{ v.ljjsl }}</td>
+                                    <td>{{ v.sssf }}</td>
+                                    <td>{{ v.cysc }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
                         </table>
                     </div>
                     <div class="box-footer clearfix">
-                        {% if search %} {{ pg.page(page_data, "admin.manual",
-          from=search.from, to=search.to) }} {% else %} {{ pg.page(page_data,
-          "admin.manual") }} {% endif %}
+                        {% if search %}
+                            {{ pg.page(page_data, "admin.manual", from=search.from, to=search.to) }}
+                        {% else %}
+                            {{ pg.page(page_data, "admin.manual") }}
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </div>
     </section>
-{% endblock %} {% block js %}
+{% endblock %}
 
+{% block js %}
     <script src="{{ url_for('static', filename='js/moment.js') }}"></script>
     <script src="{{ url_for('static', filename='js/moment-zh-cn.js') }}"></script>
     <link
@@ -116,8 +109,6 @@
                 $("#clear-search").css("visibility", "visible");
             }
         });
-    </script>
-    <script type="text/javascript">
         $(".datetimepicker").datetimepicker({
             locale: "zh-CN",
         });

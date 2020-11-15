@@ -107,6 +107,8 @@ def index():
 @admin_auth
 def alarm():
     form = AlarmForm()
+    bj_control: BjControl = BjControl.get_last_one()
+    
     print(request.form)
     if request.method == "GET":
         Oplog.add_one("查看报警控制")
@@ -119,7 +121,7 @@ def alarm():
                     form_data[key] = safe_float(form.data.get(key))
             print(form_data)
             print("validate_on_submit")
-            obj = BjControl.get_last_one() or BjControl()
+            obj = bj_control or BjControl()
             obj.update(**form_data)
             db.session.add(obj)
             db.session.commit()
@@ -128,11 +130,10 @@ def alarm():
             print(form.errors)
             flash("修改失败", "alarm-error")
     
-    bj_control: BjControl = BjControl.get_last_one()
     data = {}
     if bj_control is not None:
         data: dict = BjControlSchema().dump(bj_control)
-        # 不过滤一次的话，前端留空的显示的就是 None
+        # 让前端展示 None 为 空字符串
         for k, v in data.items():
             if v is None:
                 data[k] = ""

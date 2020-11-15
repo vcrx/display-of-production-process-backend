@@ -54,7 +54,9 @@ class BjControl(Base, db.Model):
     qs_wddown = db.Column(db.Float)  # 切丝温度下限
     qs_sdup = db.Column(db.Float)  # 切丝湿度上限
     qs_sddown = db.Column(db.Float)  # 切丝湿度下限
-    
+    sssf_up = db.Column(db.Float)  # 生丝水分控制值上限
+    sssf_down = db.Column(db.Float)  # 生丝水分控制值下限
+
     sssf_controls = db.relationship("SssfControl",
                                     backref="bj_control")  # 生丝水分控制外键关系关联
     

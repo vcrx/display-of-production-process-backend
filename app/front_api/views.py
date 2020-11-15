@@ -7,7 +7,7 @@ from flask import request
 from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl, Hs, Sshc
 from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema, \
     RgControlSchema, HsSchema, SshcSchema
-from app.utils import response, get_query
+from app.utils import response, get_query, safe_int
 from . import front
 
 
@@ -77,80 +77,42 @@ def index_data():
         "qs": {},
         "time": int(datetime.timestamp(datetime.now())),
     }
-    yjl: Yjl = Yjl.query.order_by(Yjl.id.desc()).first()
-    yjl_attr_list = ("wlljzl", "rksf", "ssjsl", "lywd", "ckwd", "cksf")
-    yjl_dumped = YjlSchema(only=yjl_attr_list).dump(yjl)
     bj_control: BjControl = BjControl.get_last_one()
     bj_dumped = BjControlSchema().dump(bj_control)
-    print(bj_dumped)
-    yjl_dct = {}
-    for attr in yjl_attr_list:
-        yjl_dct[attr] = {
-            "value": yjl_dumped[attr],
-            "up": bj_dumped.get("yjl_{}up".format(attr)),
-            "down": bj_dumped.get("yjl_{}down".format(attr)),
-        }
-    print(yjl_dct)
+    # yjl_attr_list = ("wlljzl", "rksf", "ssjsl", "lywd", "ckwd", "cksf")
+    yjl_dct = Yjl.get_index_data()
     data["yjl"] = yjl_dct
     # 储叶时长
     data["cy"]["sc"] = {
-        "value": "",
+        "value": None,
         "up": None,
         "down": None,
     }
     # 储叶温度
     data["cy"]["wd"] = {
-        "value": "",
-        "up": bj_control.cy_wdup,
-        "down": bj_control.cy_wddown,
+        "value": None,
+        "up": bj_dumped.get("cy_wdup"),
+        "down": bj_dumped.get("cy_wddown"),
     }
     # 储叶湿度
     data["cy"]["sd"] = {
-        "value": "",
-        "up": bj_control.cy_sdup,
-        "down": bj_control.cy_sddown,
+        "value": None,
+        "up": bj_dumped.get("cy_sdup"),
+        "down": bj_dumped.get("cy_sddown"),
     }
     # 切丝温度
     data["qs"]["wd"] = {
-        "value": "",
-        "up": bj_control.qs_wdup,
-        "down": bj_control.qs_wddown,
+        "value": None,
+        "up": bj_dumped.get("qs_wdup"),
+        "down": bj_dumped.get("qs_wddown"),
     }
     # 切丝湿度
     data["qs"]["sd"] = {
-        "value": "",
-        "up": bj_control.qs_sdup,
-        "down": bj_control.qs_sddown,
+        "value": None,
+        "up": bj_dumped.get("qs_sdup"),
+        "down": bj_dumped.get("qs_sddown"),
     }
     return response(data=data)
-
-
-# 生丝水分控制的影响因素：
-@front.route("/influence", methods=["GET"])
-def influence():
-    """
-    type 可选值为：
-        sshc:松散回潮
-        yjl:润叶加料
-        cy:储叶
-        qs:切丝
-        sssf:生丝水分
-    ----------------------------------------------------
-    {
-        "process": type,
-        "value":[
-            {
-                "ysys":str,
-                "current_value":number,
-                "range":str,
-                "time": timestamp
-            },
-            ... //表示还有多个以上的结构
-        ]
-    }
-    """
-    query_type = request.args.get("type")
-    return response()
 
 
 @front.route("/alarm", methods=["GET"])
@@ -172,11 +134,19 @@ def alarm():
 @front.route("/factor/<name>", methods=["GET"])
 def factor(name):
     """
-    name: (sshc|yjl|cy|qs|sssf)
+    生丝水分控制的影响因素：
+        name可选值:
+            sshc:松散回潮
+            yjl:润叶加料
+            cy:储叶
+            qs:切丝
+            sssf:生丝水分
     """
     query_params = get_query(request.args)
     page = query_params.get("page", 1)
+    page = safe_int(page, 1)
     per_page = query_params.get("per_page", 10)
+    per_page = safe_int(per_page, 1)
     if name == "sshc":
         # 生丝水分
         data = Sshc.query.order_by(Sshc.time.desc()).paginate(page=page,
@@ -199,10 +169,10 @@ def factor(name):
         return response(data=resp_dict)
     elif name == "cy":
         # 储叶
-        ...
+        return response(code=404, msg="未实现")
     elif name == "qs":
         # 切丝
-        ...
+        return response(code=404, msg="未实现")
     elif name == "sssf":
         # 生丝水分
         data = Hs.query.order_by(Hs.time.desc()).paginate(page=page,
@@ -257,17 +227,19 @@ def first_five_batch():
 def manual_control():
     """
     GET 是获取动作
-    返回一个 JSON：
-    {
-        "rg_ljjsl": 100,  # 累计加水量
-        "rg_sssf": 100,  # 生丝水分控制
-    }
+        返回一个 JSON：
+        {
+            "ljjsl": 100,  # 累计加水量
+            "sssf": 100,  # 生丝水分控制
+            "cysc": 100  # 储叶时长
+        }
     PUT 和 PATCH 是修改动作
-    接受一个 JSON：
-    {
-        "rg_ljjsl": 100,  # 累计加水量
-        "rg_sssf": 100,  # 生丝水分控制
-    }
+        接受一个 JSON：
+        {
+            "ljjsl": 100,  # 累计加水量
+            "sssf": 100,  # 生丝水分控制
+            "cysc": 100  # 储叶时长
+        }
     """
     last = RgControl.get_last_one()
     
@@ -279,16 +251,19 @@ def manual_control():
     err = RgControlSchema().validate(data)
     ljjsl = None
     sssf = None
+    cysc = None
+    
     # 实现 partial 更新，即只传需要改变的值即可
-    if request.method == "PATCH":
-        if last:
-            ljjsl = last.rg_ljjsl
-            sssf = last.rg_sssf
+    if request.method == "PATCH" and last:
+        ljjsl = last.ljjsl
+        sssf = last.sssf
+        cysc = last.cysc
     
     if not err:
-        ljjsl = data.get("rg_ljjsl", ljjsl)
-        sssf = data.get("rg_sssf", sssf)
-        RgControl.add_one(ljjsl, sssf)
+        ljjsl = data.get("ljjsl", ljjsl)
+        sssf = data.get("sssf", sssf)
+        cysc = data.get("cysc", cysc)
+        RgControl.add_one(ljjsl=ljjsl, sssf=sssf, cysc=cysc)
         return response()
     else:
         return response(code=400, msg=err)
