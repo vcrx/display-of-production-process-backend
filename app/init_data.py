@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import arrow
@@ -48,8 +49,11 @@ z1 = get_data(data_dir / "Z1（松散回潮工段）.csv")
 z2 = get_data(data_dir / "Z2（润叶加料工段）.csv")
 kld = get_data(data_dir / "KLD（烘丝工段）.csv")
 
+print("正在添加：Z1（松散回潮工段）.csv")
 Sshc.add_many(z1)
+print("正在添加：Z2（润叶加料工段）.csv")
 Yjl.add_many(z2)
+print("正在添加：KLD（烘丝工段）.csv")
 Hs.add_many(kld)
 
 sshc_columns = {
@@ -122,6 +126,7 @@ def gen_data_list(type_dict, whole_df: pd.DataFrame) -> list:
 root = data_dir / "生丝水分数据csv/"
 for file in root.iterdir():
     if file.suffix == ".csv":
+        print("正在处理： " + str(file))
         df = pd.read_csv(file, encoding="gbk")
         # 过滤 nan
         df = df.where(pd.notnull(df), None)
@@ -133,3 +138,5 @@ for file in root.iterdir():
         YjlInfo.add_many(yjl_result)
         CyInfo.add_many(cy_result)
         QsInfo.add_many(qs_result)
+
+sys.exit(0)

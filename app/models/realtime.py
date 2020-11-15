@@ -1,7 +1,9 @@
-from app import db
 from typing import Dict, Any
-from .base import Base
+
 from sqlalchemy import exc
+
+from app import db
+from .base import Base
 
 
 # 松散回潮
@@ -43,6 +45,11 @@ class Sshc(Base, db.Model):
         except exc.SQLAlchemyError:
             db.session.rollback()
             raise
+    
+    @classmethod
+    def get_last_one(cls):
+        obj: cls = cls.query.order_by(cls.id.desc()).first()
+        return obj
 
 
 # 叶加料
@@ -56,7 +63,7 @@ class Yjl(Base, db.Model):
     ljjsl = db.Column(db.Float)  # 累计加水量
     rksf = db.Column(db.Float)  # 入口水分
     ssjsl = db.Column(db.Float)  # 瞬时加水量
-    ssjlj = db.Column(db.Float)  # 瞬时加料量
+    ssjll = db.Column(db.Float)  # 瞬时加料量
     lywd = db.Column(db.Float)  # 料液温度
     ckwd = db.Column(db.Float)  # 出口温度
     cksf = db.Column(db.Float)  # 出口水分
@@ -82,7 +89,7 @@ class Yjl(Base, db.Model):
             "ljjsl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ST201_Total_Waterflow",
             "rksf": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF201_PV_Moisture",
             "ssjsl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV",
-            "ssjlj": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_04.OutPhyPV",
+            "ssjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_04.OutPhyPV",
             "lywd": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.KA104_PV_ST201_Temperature",
             "ckwd": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Temp",
             "cksf": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Moisture",
@@ -103,40 +110,12 @@ class Yjl(Base, db.Model):
             raise
     
     @classmethod
-    def get_index_data(cls):
+    def get_last_one(cls):
         """
-        {
-            "rksf": {
-                value: number,
-                up: number,
-                down: number,
-            },   //入口水分
-            "wlljzl":...,  //物料累积重量
-            "cssll":...,  //物料瞬时流量
-            "lywd":...,  //料液温度
-            "ljjsl":...,  //累积加水量
-            "ssjsl":...,  /瞬时加水量
-            "wd":...,  // 环境温度
-            "sd":...,  // 环境湿度
-            "ckwd":...,  //出口温度
-            "cksf":...,  //出口水分
-        }
+        返回最新的一个值
         """
-        from . import BjControl
-        from ..schemas import YjlSchema, BjControlSchema
-        
         yjl: Yjl = Yjl.query.order_by(Yjl.id.desc()).first()
-        yjl_dumped: dict = YjlSchema().dump(yjl)
-        bj_control: BjControl = BjControl.get_last_one()
-        bj_dumped: dict = BjControlSchema().dump(bj_control)
-        yjl_dct = {}
-        for attr, value in yjl_dumped.items():
-            yjl_dct[attr] = {
-                "value": value,
-                "up": bj_dumped.get("yjl_{}up".format(attr)),
-                "down": bj_dumped.get("yjl_{}down".format(attr)),
-            }
-        return yjl_dct
+        return yjl
 
 
 # 烘丝
@@ -190,6 +169,11 @@ class Hs(Base, db.Model):
         except exc.SQLAlchemyError:
             db.session.rollback()
             raise
+    
+    @classmethod
+    def get_last_one(cls):
+        obj: cls = cls.query.order_by(cls.id.desc()).first()
+        return obj
 
 
 # 预测

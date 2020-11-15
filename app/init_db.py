@@ -1,3 +1,5 @@
+import sys
+
 from werkzeug.security import generate_password_hash
 
 from app import create_app, db
@@ -45,3 +47,5 @@ admin = Admin(name="admin", pwd=generate_password_hash("admin"),
 db.session.add(role)
 db.session.add(admin)
 db.session.commit()
+
+sys.exit(0)

@@ -2,7 +2,7 @@
 
 {% macro render_field(field) %}
     <td>
-        {{ field(class_="form-control", placeholder=field.label.text, value=data.get(field.name),**kwargs)|safe }}
+        {{ field(class_="form-control", placeholder=field.label.text, value=data.get(field.name, ''),**kwargs)|safe }}
         {% if field.errors %}
             <ul class=errors>
                 {% for error in field.errors %}

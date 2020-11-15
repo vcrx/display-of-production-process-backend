@@ -37,6 +37,7 @@ def index_data():
             "sd":...,  // 环境湿度
             "ckwd":...,  //出口温度
             "cksf":...,  //出口水分
+            time:
         },
         "sssf":{
             "yc_sssf"：number //预测的生丝水分值
@@ -73,15 +74,60 @@ def index_data():
     data = {
         "yjl": {},
         "sssf": {},
+        "sshc": {},
         "cy": {},
         "qs": {},
         "time": int(datetime.timestamp(datetime.now())),
     }
     bj_control: BjControl = BjControl.get_last_one()
-    bj_dumped = BjControlSchema().dump(bj_control)
-    # yjl_attr_list = ("wlljzl", "rksf", "ssjsl", "lywd", "ckwd", "cksf")
-    yjl_dct = Yjl.get_index_data()
+    bj_dumped: dict = BjControlSchema().dump(bj_control)
+    
+    yjl: Yjl = Yjl.get_last_one()
+    yjl_dumped: dict = YjlSchema().dump(yjl)
+    yjl_dct = {}
+    for attr, value in yjl_dumped.items():
+        if attr == "time":
+            yjl_dct["time"] = {
+                "value": arrow.get(value).timestamp,
+            }
+        else:
+            yjl_dct[attr] = {
+                "value": value,
+                "up": bj_dumped.get("yjl_{}up".format(attr)),
+                "down": bj_dumped.get("yjl_{}down".format(attr)),
+            }
     data["yjl"] = yjl_dct
+    
+    sshc = Sshc.get_last_one()
+    sshc_dumped = SshcSchema().dump(sshc)
+    sshc_dct = {}
+    for attr, value in sshc_dumped.items():
+        if attr == "time":
+            sshc_dct["time"] = {
+                "value": arrow.get(value).timestamp,
+            }
+        else:
+            sshc_dct[attr] = {
+                "value": value,
+                "up": bj_dumped.get("sshc_{}up".format(attr)),
+                "down": bj_dumped.get("sshc_{}down".format(attr)),
+            }
+    data["sshc"] = sshc_dct
+    
+    hs = Hs.get_last_one()
+    hs_dumped = HsSchema().dump(hs)
+    sssf_dct = {
+        "time": {
+            "value": arrow.get(hs_dumped["time"]).timestamp,
+        },
+        "sssf": {
+            "value": hs_dumped["sssf"],
+            "up": bj_dumped.get("sssf_up"),
+            "down": bj_dumped.get("sssf_down"),
+        }
+    }
+    data["sssf"] = sssf_dct
+    
     # 储叶时长
     data["cy"]["sc"] = {
         "value": None,
@@ -140,7 +186,7 @@ def factor(name):
             yjl:润叶加料
             cy:储叶
             qs:切丝
-            sssf:生丝水分
+            hs:生丝水分
     """
     query_params = get_query(request.args)
     page = query_params.get("page", 1)
@@ -169,11 +215,11 @@ def factor(name):
         return response(data=resp_dict)
     elif name == "cy":
         # 储叶
-        return response(code=404, msg="未实现")
+        return response(code=500, msg="未实现")
     elif name == "qs":
         # 切丝
-        return response(code=404, msg="未实现")
-    elif name == "sssf":
+        return response(code=500, msg="未实现")
+    elif name == "hs":
         # 生丝水分
         data = Hs.query.order_by(Hs.time.desc()).paginate(page=page,
                                                           per_page=per_page,
