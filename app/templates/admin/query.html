@@ -1,6 +1,15 @@
 {% extends "admin/admin.html" %}
 {% import "ui/admin_page.html" as pg %}
 
+{% macro render_page(data) %}
+    <div class="box-footer clearfix">
+        {% if search %}
+            {{ pg.page(data, "admin.query", factor=hash, from=search.from, to=search.to) }}
+        {% else %}
+            {{ pg.page(data, "admin.query", factor=hash) }}
+        {% endif %}
+    </div>
+{% endmacro %}
 
 {% block content %}
     <!--内容-->
@@ -24,68 +33,195 @@
                         <div class="container" id="search-container">
                             <div class="row">
                                 <div class='col-sm-3' style="padding-right: 0">
-                                    <input type='text' class="form-control datetimepicker" id='datetimepicker1'/>
+                                    <label for='datetimepicker1'>开始时间</label>
+                                    <input type='text'
+                                           class="form-control datetimepicker"
+                                           id='datetimepicker1'/>
                                 </div>
                                 <div class='col-sm-1'
                                      style="height: 100%;padding: 10px 0;line-height: 100%;text-align: center;">
                                     <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                                 </div>
                                 <div class='col-sm-3' style="padding-left: 0">
-                                    <input type='text' class="form-control datetimepicker" id='datetimepicker2'/>
+                                    <label for='datetimepicker2'>结束时间</label>
+                                    <input type='text'
+                                           class="form-control datetimepicker"
+                                           id='datetimepicker2'/>
                                 </div>
-                                <button class="btn btn-default" id="search">查询</i>
+                                <button class="btn btn-default" id="search">查询</button>
+                                <button class="btn btn-default"
+                                        id="clear-search"
+                                        style="visibility: hidden"
+                                >
+                                    清除
                                 </button>
                             </div>
                         </div>
-                        <table class="table table-condensed">
-                            <tbody>
-                            <tr>
-                                <th rowspan="3">时间</th>
-                                <th colspan="12">润叶加料</th>
-                            </tr>
-                            <tr>
-                                <td colspan="2">入口水分</td>
-                                <td colspan="2">物料累计重量</td>
-                                <td colspan="2">瞬时加水量</td>
-                                <td colspan="2">料液温度</td>
-                                <td colspan="2">出口温度</td>
-                                <td colspan="2">出口水分</td>
-                            </tr>
-                            <tr>
-                                <td>实际值</td>
-                                <td>控制值</td>
-                                <td>实际值</td>
-                                <td>控制值</td>
-                                <td>实际值</td>
-                                <td>控制值</td>
-                                <td>实际值</td>
-                                <td>控制值</td>
-                                <td>实际值</td>
-                                <td>控制值</td>
-                                <td>实际值</td>
-                                <td>控制值</td>
-                            </tr>
-                            {% for v in page_data.items %}
-                                <tr>
-                                    <td>{{ v.time.strftime('%Y-%m-%d %H:%M') }}</td>
-                                    <td>{{ v.rksf }}</td>
-                                    <td></td>
-                                    <td>{{ v.wlljzl }}</td>
-                                    <td></td>
-                                    <td>{{ v.ssjsl }}</td>
-                                    <td></td>
-                                    <td>{{ v.lywd }}</td>
-                                    <td></td>
-                                    <td>{{ v.ckwd }}</td>
-                                    <td></td>
-                                    <td>{{ v.cksf }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="box-footer clearfix">
-                        {{ pg.page(page_data, "admin.query") }}
+                        <ul class="nav nav-tabs" role="tablist" style="margin-left: 10px">
+                            <li role="presentation" class="active">
+                                <a data-target="#sshc" href="{{ url_for("admin.query", factor="sshc", page=1) }}"
+                                   role="tab"
+                                   data-toggle="tab"
+                                >松散回潮</a>
+                            </li>
+                            <li role="presentation">
+                                <a data-target="#ryjl" href="{{ url_for("admin.query", factor="ryjl", page=1) }}"
+                                   role="tab"
+                                   data-toggle="tab"
+                                >润叶加料</a>
+                            </li>
+                            <li role="presentation">
+                                <a data-target="#hs" href="{{ url_for("admin.query", factor="hs", page=1) }}"
+                                   role="tab"
+                                   data-toggle="tab"
+                                >烘丝</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            {% if sshc_data %}
+                                <div role="tabpanel" class="tab-pane active" id="sshc">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table class="table table-condensed">
+                                            <tbody>
+                                            <tr>
+                                                <th rowspan="3">时间</th>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">物料累计重量</td>
+                                                <td colspan="2">物料实时流量</td>
+                                                <td colspan="2">回风温度</td>
+                                                <td colspan="2">出口温度</td>
+                                                <td colspan="2">出口水分</td>
+                                            </tr>
+                                            <tr>
+                                                {% for n in range(5) %}
+                                                    <td>实际值</td>
+                                                    <td>控制值</td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% for v in sshc_data.items %}
+                                                <tr>
+                                                    <td>{{ v.time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                                    <td>{{ v.wlljzl }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.wlssll }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.hfwd }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.ckwd }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.cksf }}</td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {{ render_page(sshc_data) }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if yjl_data %}
+                                <div role="tabpanel" class="tab-pane" id="ryjl">
+                                    <div class="box-body table-responsive no-padding">
+
+                                        <table class="table table-condensed">
+                                            <tbody>
+                                            <tr>
+                                                <th rowspan="3">时间</th>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">入口水分</td>
+                                                <td colspan="2">物料累计重量</td>
+                                                <td colspan="2">瞬时加水量</td>
+                                                <td colspan="2">料液温度</td>
+                                                <td colspan="2">出口温度</td>
+                                                <td colspan="2">出口水分</td>
+                                            </tr>
+                                            <tr>
+                                                {% for n in range(6) %}
+                                                    <td>实际值</td>
+                                                    <td>控制值</td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% for v in yjl_data.items %}
+                                                <tr>
+                                                    <td>{{ v.time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                                    <td>{{ v.rksf }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.wlljzl }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.ssjsl }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.lywd }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.ckwd }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.cksf }}</td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+
+                                        {{ render_page(yjl_data) }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                            {% if hs_data %}
+                                <div role="tabpanel" class="tab-pane" id="hs">
+                                    <div class="box-body table-responsive no-padding">
+                                        <table class="table table-condensed">
+                                            <tbody>
+                                            <tr>
+                                                <th rowspan="3">时间</th>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">生丝水分</td>
+                                                <td colspan="2">阀后蒸汽压力</td>
+                                                <td colspan="2">阀前蒸汽压力</td>
+                                                <td colspan="2">蒸汽流量</td>
+                                                <td colspan="2">蒸汽流量阀门开度</td>
+                                                <td colspan="2">蒸汽体积</td>
+                                                <td colspan="2">Y32阀门值</td>
+                                                <td colspan="2">物料实际流量</td>
+                                                <td colspan="2">物料累计重量</td>
+                                            </tr>
+                                            <tr>
+                                                {% for n in range(9) %}
+                                                    <td>实际值</td>
+                                                    <td>控制值</td>
+                                                {% endfor %}
+                                            </tr>
+                                            {% for v in hs_data.items %}
+                                                <tr>
+                                                    <td>{{ v.time.strftime('%Y-%m-%d %H:%M') }}</td>
+                                                    <td>{{ v.sssf }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.fhzqyl }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.fqzqyl }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.zqll }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.zqllfmkd }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.zqtj }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.y32fmz }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.wlsjll }}</td>
+                                                    <td></td>
+                                                    <td>{{ v.wlljzl }}</td>
+                                                    <td></td>
+                                                </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {{ render_page(hs_data) }}
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -93,15 +229,7 @@
     </section>
     <!--内容-->
 {% endblock %}
-
-
 {% block js %}
-    <script>
-        $(document).ready(function () {
-            $("#g-4").addClass("active");
-            $("#g-4-1").addClass("active");
-        })
-    </script>
     <script src="{{ url_for('static', filename='js/moment.js') }}"></script>
     <script src="{{ url_for('static', filename='js/moment-zh-cn.js') }}"></script>
     <link
@@ -109,7 +237,23 @@
             href="{{ url_for('static', filename='css/bootstrap-datetimepicker.min.css') }}"
     />
     <script src="{{ url_for('static', filename='js/bootstrap-datetimepicker.min.js') }}"></script>
-
+    <script>
+        $(document).ready(function () {
+            $("#g-4").addClass("active");
+            $("#g-4-1").addClass("active");
+            const queryString = window.location.search;
+            const params = new URLSearchParams(queryString);
+            if (params.get("from")) {
+                const from = parseInt(params.get("from"));
+                $("#datetimepicker1").data("DateTimePicker").date(moment(from));
+            }
+            if (params.get("to")) {
+                const to = parseInt(params.get("to"));
+                $("#datetimepicker2").data("DateTimePicker").date(moment(to));
+                $("#clear-search").css("visibility", "visible");
+            }
+        })
+    </script>
     <script type="text/javascript">
         $('.datetimepicker').datetimepicker({
             locale: 'zh-CN',
@@ -117,7 +261,19 @@
         $("#search").click(() => {
             let time1 = $("#datetimepicker1").data("DateTimePicker").viewDate()
             let time2 = $("#datetimepicker2").data("DateTimePicker").viewDate()
-            prompt(time1.format("YYYY/MM/DD HH:mm") + "~" + time2.format("YYYY/MM/DD HH:mm"))
+            // 转换为时间戳
+            changeUrlParams({from: time1.format("x"), to: time2.format("x")});
         })
+        $(function () {
+            const hash = "#{{ hash or "sshc" }}";
+            hash && $('ul.nav a[data-target="' + hash + '"]').tab('show');
+            $('.nav-tabs a').click(function (e) {
+                console.log($(this).attr("href"))
+                window.location.href = $(this).attr("href")
+            });
+        });
+        $("#clear-search").click(() => {
+            clearUrlParams();
+        });
     </script>
 {% endblock %}

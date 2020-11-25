@@ -246,22 +246,10 @@
 
 {% block js %}
     <script type="text/javascript">
-
         $(document).ready(function () {
             $("#g-2").addClass("active");
             $("#g-2-2").addClass("active");
         })
-        $(function () {
-            const hash = window.location.hash;
-            hash && $('ul.nav a[href="' + hash + '"]').tab('show');
-
-            $('.nav-tabs a').click(function (e) {
-                $(this).tab('show');
-                var scrollmem = $('body').scrollTop() || $('html').scrollTop();
-                window.location.hash = this.hash;
-                $('html,body').scrollTop(scrollmem);
-            });
-        });
         {% for msg1 in get_flashed_messages(category_filter=["alarm-success"]) %}
             success_prompt(`{{ msg1|safe }}`);
         {% endfor %}
@@ -269,4 +257,5 @@
             fail_prompt(`{{ msg2|safe }}`);
         {% endfor %}
     </script>
+    {% include 'utils/tab_hash.html' %}
 {% endblock %}

@@ -8,7 +8,8 @@ from flask import render_template, redirect, url_for, flash, session, abort, \
 from app import db
 from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm, \
     AlarmForm
-from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, RgControl, Yjl
+from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, RgControl, Yjl, \
+    Sshc, Hs
 from app.models import BjControl
 from app.schemas import BjControlSchema
 from app.utils import response, safe_float
@@ -48,11 +49,20 @@ def admin_auth(func):
         auths = admin.role.auths
         auths = list(map(lambda x: int(x), auths.split(",")))
         auth_list = Auth.query.all()
+        # 当前用户可访问的 url
         urls = [v.url for v in auth_list for val in auths if val == v.id]
         rule = request.url_rule
-        if str(rule) not in urls:
+        block_flag = True
+        for url in urls:
+            # 只要求前缀存在就行。
+            # 比如 /hello/<name> 和 /hello 两个规则只需要设置 /hello 就行
+            # if str(rule) == url:
+            if str(rule).startswith(url):
+                block_flag = False
+                break
+        if block_flag:
             print(str(rule) + " is blocked because auth fail")
-            abort(404)
+            abort(401)
         return func(*args, **kwargs)
     
     return decorated_function
@@ -193,18 +203,51 @@ def humidity_visual():
 
 # 查询
 @admin.route("/query/list/<int:page>/")
+@admin.route("/query/list/<int:page>/<factor>/")
 @admin_login_req
 @admin_auth
-def query(page=None):
+def query(page=None, factor=None):
     if page is None:
         page = 1
+    if factor is None:
+        factor = "sshc"
     Oplog.add_one("查询数据情况")
-    page_data = (
-        Yjl.query
-            .order_by(Yjl.id.desc())
-            .paginate(page=page, per_page=10)
-    )
-    return render_template("admin/query.html", page_data=page_data)
+    params = request.args
+    time_from = params.get("from")
+    time_to = params.get("to")
+    search = {}
+    if time_from is not None and time_to is not None:
+        search["from"] = time_from
+        search["to"] = time_to
+        time_from = from_mills_timestamp_to_min(time_from)
+        time_to = from_mills_timestamp_to_min(time_to)
+        # 查后一分钟之前的，所以要加一
+        time_to = time_to.replace(minute=time_to.minute + 1)
+
+    yjl_data = None
+    if factor == "ryjl":
+        yjl_data = (
+            Yjl.query
+                .order_by(Yjl.id.desc())
+                .paginate(page=page, per_page=10)
+        )
+    sshc_data = None
+    if factor == "sshc":
+        sshc_data = (
+            Sshc.query
+                .order_by(Sshc.id.desc())
+                .paginate(page=page, per_page=10)
+        )
+    hs_data = None
+    if factor == "hs":
+        hs_data = (
+            Hs.query
+                .order_by(Hs.id.desc())
+                .paginate(page=page, per_page=10)
+        )
+    
+    return render_template("admin/query.html", hash=factor, yjl_data=yjl_data,
+                           sshc_data=sshc_data, hs_data=hs_data, search=search)
 
 
 # 统计
