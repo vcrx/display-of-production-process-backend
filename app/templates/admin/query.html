@@ -4,7 +4,7 @@
 {% macro render_page(data) %}
     <div class="box-footer clearfix">
         {% if search %}
-            {{ pg.page(data, "admin.query", factor=hash, from=search.from, to=search.to) }}
+            {{ pg.page(data, "admin.query", factor=hash, **search) }}
         {% else %}
             {{ pg.page(data, "admin.query", factor=hash) }}
         {% endif %}
@@ -12,7 +12,6 @@
 {% endmacro %}
 
 {% block content %}
-    <!--内容-->
     <section class="content-header">
         <h1>生丝水分控制后台管理系统</h1>
         <ol class="breadcrumb">
@@ -33,7 +32,6 @@
                         <div class="container" id="search-container">
                             <div class="row">
                                 <div class='col-sm-3' style="padding-right: 0">
-                                    <label for='datetimepicker1'>开始时间</label>
                                     <input type='text'
                                            class="form-control datetimepicker"
                                            id='datetimepicker1'/>
@@ -43,7 +41,6 @@
                                     <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span>
                                 </div>
                                 <div class='col-sm-3' style="padding-left: 0">
-                                    <label for='datetimepicker2'>结束时间</label>
                                     <input type='text'
                                            class="form-control datetimepicker"
                                            id='datetimepicker2'/>
@@ -59,19 +56,22 @@
                         </div>
                         <ul class="nav nav-tabs" role="tablist" style="margin-left: 10px">
                             <li role="presentation" class="active">
-                                <a data-target="#sshc" href="{{ url_for("admin.query", factor="sshc", page=1) }}"
+                                <a data-target="#sshc"
+                                   href="{{ url_for("admin.query", factor="sshc", page=1, **search) }}"
                                    role="tab"
                                    data-toggle="tab"
                                 >松散回潮</a>
                             </li>
                             <li role="presentation">
-                                <a data-target="#ryjl" href="{{ url_for("admin.query", factor="ryjl", page=1) }}"
+                                <a data-target="#ryjl"
+                                   href="{{ url_for("admin.query", factor="ryjl", page=1, **search) }}"
                                    role="tab"
                                    data-toggle="tab"
                                 >润叶加料</a>
                             </li>
                             <li role="presentation">
-                                <a data-target="#hs" href="{{ url_for("admin.query", factor="hs", page=1) }}"
+                                <a data-target="#hs"
+                                   href="{{ url_for("admin.query", factor="hs", page=1, **search) }}"
                                    role="tab"
                                    data-toggle="tab"
                                 >烘丝</a>

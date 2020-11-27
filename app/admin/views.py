@@ -1,5 +1,4 @@
 import datetime
-import pprint
 from functools import wraps
 
 from flask import render_template, redirect, url_for, flash, session, abort, \
@@ -12,9 +11,9 @@ from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, RgControl, Yjl, 
     Sshc, Hs
 from app.models import BjControl
 from app.schemas import BjControlSchema
-from app.utils import response, safe_float
+from app.utils import safe_float
 from . import admin
-from ..utils.time import from_mills_timestamp_to_min
+from ..utils.time import extract_search_from_args
 
 
 # 上下文应用处理器
@@ -155,22 +154,14 @@ def manual(page=None):
     if page is None:
         page = 1
     
-    params = request.args
-    time_from = params.get("from")
-    time_to = params.get("to")
     rg_query = RgControl.query
-    search = {}
-    if time_from is not None and time_to is not None:
-        search["from"] = time_from
-        search["to"] = time_to
-        
-        time_from = from_mills_timestamp_to_min(time_from)
-        time_to = from_mills_timestamp_to_min(time_to)
-        # 查后一分钟之前的，所以要加一
-        time_to = time_to.replace(minute=time_to.minute + 1)
+    search, dt = extract_search_from_args()
+    if dt.get("from"):
         rg_query = rg_query.filter(
-            RgControl.create_at >= time_from).filter(
-            RgControl.create_at <= time_to)
+            RgControl.create_at >= dt.get("from"))
+    if dt.get("to"):
+        rg_query = rg_query.filter(
+            RgControl.create_at <= dt.get("to"))
     
     page_data = (
         rg_query.order_by(RgControl.create_at.desc()).paginate(page=page,
@@ -198,9 +189,6 @@ def humidity_visual():
     return render_template("admin/humidity_visual.html")
 
 
-"""统计查询"""
-
-
 # 查询
 @admin.route("/query/list/<int:page>/")
 @admin.route("/query/list/<int:page>/<factor>/")
@@ -211,40 +199,36 @@ def query(page=None, factor=None):
         page = 1
     if factor is None:
         factor = "sshc"
+    if factor not in ["sshc", "ryjl", "hs"]:
+        print(factor)
+        abort(404)
+    
     Oplog.add_one("查询数据情况")
-    params = request.args
-    time_from = params.get("from")
-    time_to = params.get("to")
-    search = {}
-    if time_from is not None and time_to is not None:
-        search["from"] = time_from
-        search["to"] = time_to
-        time_from = from_mills_timestamp_to_min(time_from)
-        time_to = from_mills_timestamp_to_min(time_to)
-        # 查后一分钟之前的，所以要加一
-        time_to = time_to.replace(minute=time_to.minute + 1)
-
+    
+    search, dt = extract_search_from_args()
+    
+    def query_wrapper(model):
+        tmp_query = model.query
+        print(11111)
+        if dt.get("from"):
+            tmp_query = tmp_query.filter(
+                model.time >= dt.get("from"))
+        if dt.get("to"):
+            tmp_query = tmp_query.filter(
+                model.time <= dt.get("to"))
+        tmp_data = tmp_query.order_by(model.id.desc()).paginate(page=page,
+                                                                per_page=10)
+        return tmp_data
+    
     yjl_data = None
     if factor == "ryjl":
-        yjl_data = (
-            Yjl.query
-                .order_by(Yjl.id.desc())
-                .paginate(page=page, per_page=10)
-        )
+        yjl_data = query_wrapper(Yjl)
     sshc_data = None
     if factor == "sshc":
-        sshc_data = (
-            Sshc.query
-                .order_by(Sshc.id.desc())
-                .paginate(page=page, per_page=10)
-        )
+        sshc_data = query_wrapper(Sshc)
     hs_data = None
     if factor == "hs":
-        hs_data = (
-            Hs.query
-                .order_by(Hs.id.desc())
-                .paginate(page=page, per_page=10)
-        )
+        hs_data = query_wrapper(Hs)
     
     return render_template("admin/query.html", hash=factor, yjl_data=yjl_data,
                            sshc_data=sshc_data, hs_data=hs_data, search=search)
