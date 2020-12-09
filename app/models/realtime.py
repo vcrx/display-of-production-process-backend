@@ -16,12 +16,11 @@ class Sshc(Base, db.Model):
     hfwd = db.Column(db.Float)  # 回风温度
     ckwd = db.Column(db.Float)  # 出口温度
     cksf = db.Column(db.Float)  # 出口水分
-    sssf_controls = db.relationship("SssfControl",
-                                    backref="sshc")  # 生丝水分控制外键关系关联
-    
+    sssf_controls = db.relationship("SssfControl", backref="sshc")  # 生丝水分控制外键关系关联
+
     def __repr__(self):
         return "<Sshc {}>".format(self.id)
-    
+
     @classmethod
     def add_many(cls, data_dict: Dict[Any, Dict[str, Dict[str, float]]]):
         mapping = {
@@ -45,7 +44,7 @@ class Sshc(Base, db.Model):
         except exc.SQLAlchemyError:
             db.session.rollback()
             raise
-    
+
     @classmethod
     def get_last_one(cls):
         obj: cls = cls.query.order_by(cls.id.desc()).first()
@@ -57,7 +56,7 @@ class Yjl(Base, db.Model):
     __tablename__ = "yjl"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
-    
+
     wlsjll = db.Column(db.Float)  # 物料实际流量
     wlljzl = db.Column(db.Float)  # 物料累计重量
     ljjsl = db.Column(db.Float)  # 累计加水量
@@ -67,20 +66,19 @@ class Yjl(Base, db.Model):
     lywd = db.Column(db.Float)  # 料液温度
     ckwd = db.Column(db.Float)  # 出口温度
     cksf = db.Column(db.Float)  # 出口水分
-    
+
     kshs = db.relationship("Ksh", backref="yjl")  # 可视化外键关系关联
     ycs = db.relationship("Yc", backref="yjl")  # 预测外键关系关联
-    sssf_controls = db.relationship("SssfControl",
-                                    backref="yjl")  # 生丝水分控制外键关系关联
-    
+    sssf_controls = db.relationship("SssfControl", backref="yjl")  # 生丝水分控制外键关系关联
+
     def __repr__(self):
         return "<Yjl {}>".format(self.id)
-    
+
     @classmethod
     def get_last_one(cls):
         obj: cls = cls.query.order_by(cls.id.desc()).first()
         return obj
-    
+
     @classmethod
     def add_many(cls, data_dict):
         mapping = {
@@ -108,7 +106,7 @@ class Yjl(Base, db.Model):
         except exc.SQLAlchemyError:
             db.session.rollback()
             raise
-    
+
     @classmethod
     def get_last_one(cls):
         """
@@ -123,7 +121,7 @@ class Hs(Base, db.Model):
     __tablename__ = "hs"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
-    
+
     sssf = db.Column(db.Float)  # 生丝水分
     fhzqyl = db.Column(db.Float)  # 阀后蒸汽压力
     fqzqyl = db.Column(db.Float)  # 阀前蒸汽压力
@@ -133,15 +131,15 @@ class Hs(Base, db.Model):
     y32fmz = db.Column(db.Float)  # Y32阀门值
     wlsjll = db.Column(db.Float)  # 物料实际流量
     wlljzl = db.Column(db.Float)  # 物料累计重量
-    
+
     kshs = db.relationship("Ksh", backref="hs")  # 可视化外键关系关联
     ycs = db.relationship("Yc", backref="hs")  # 切丝外键关系关联
-    
+
     sssf_controls = db.relationship("SssfControl", backref="hs")  # 生丝水分控制外键关系关联
-    
+
     def __repr__(self):
         return "<Hs {}>".format(self.id)
-    
+
     @classmethod
     def add_many(cls, data_dict):
         mapping = {
@@ -169,7 +167,7 @@ class Hs(Base, db.Model):
         except exc.SQLAlchemyError:
             db.session.rollback()
             raise
-    
+
     @classmethod
     def get_last_one(cls):
         obj: cls = cls.query.order_by(cls.id.desc()).first()
@@ -184,10 +182,10 @@ class Yc(Base, db.Model):
     yc_sssf = db.Column(db.Float)  # 预测的生丝水分值
     yc_sssfup = db.Column(db.Float)  # 预测的生丝水分上限
     yc_sssfdown = db.Column(db.Float)  # 预测的生丝水分下限
-    
+
     yjl_id = db.Column(db.Integer, db.ForeignKey("yjl.id"))  # 叶加料
     hs_id = db.Column(db.Integer, db.ForeignKey("hs.id"))  # 烘丝
-    
+
     def __repr__(self):
         return "<Yc {}>".format(self.id)
 
@@ -196,9 +194,9 @@ class Yc(Base, db.Model):
 class Ksh(Base, db.Model):
     __tablename__ = "ksh"
     id = db.Column(db.Integer, primary_key=True)  # 编号
-    
+
     yjl_id = db.Column(db.Integer, db.ForeignKey("yjl.id"))  # 叶加料
     hs_id = db.Column(db.Integer, db.ForeignKey("hs.id"))  # 烘丝
-    
+
     def __repr__(self):
         return "<Ksh {}>".format(self.id)

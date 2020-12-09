@@ -5,8 +5,14 @@ import arrow
 from flask import request
 
 from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl, Hs, Sshc
-from app.schemas import YjlSchema, BjControlSchema, YjlInfoSchema, \
-    RgControlSchema, HsSchema, SshcSchema
+from app.schemas import (
+    YjlSchema,
+    BjControlSchema,
+    YjlInfoSchema,
+    RgControlSchema,
+    HsSchema,
+    SshcSchema,
+)
 from app.utils import response, get_query, safe_int
 from . import front
 
@@ -81,7 +87,7 @@ def index_data():
     }
     bj_control: BjControl = BjControl.get_last_one()
     bj_dumped: dict = BjControlSchema().dump(bj_control)
-    
+
     yjl: Yjl = Yjl.get_last_one()
     yjl_dumped: dict = YjlSchema().dump(yjl)
     yjl_dct = {}
@@ -97,7 +103,7 @@ def index_data():
                 "down": bj_dumped.get("yjl_{}down".format(attr)),
             }
     data["yjl"] = yjl_dct
-    
+
     sshc = Sshc.get_last_one()
     sshc_dumped = SshcSchema().dump(sshc)
     sshc_dct = {}
@@ -113,7 +119,7 @@ def index_data():
                 "down": bj_dumped.get("sshc_{}down".format(attr)),
             }
     data["sshc"] = sshc_dct
-    
+
     hs = Hs.get_last_one()
     hs_dumped = HsSchema().dump(hs)
     sssf_dct = {
@@ -124,10 +130,10 @@ def index_data():
             "value": hs_dumped["sssf"],
             "up": bj_dumped.get("sssf_up"),
             "down": bj_dumped.get("sssf_down"),
-        }
+        },
     }
     data["sssf"] = sssf_dct
-    
+
     # 储叶时长
     data["cy"]["sc"] = {
         "value": None,
@@ -195,23 +201,31 @@ def factor(name):
     per_page = safe_int(per_page, 1)
     if name == "sshc":
         # 生丝水分
-        data = Sshc.query.order_by(Sshc.time.desc()).paginate(page=page,
-                                                              per_page=per_page,
-                                                              max_per_page=20)
+        data = Sshc.query.order_by(Sshc.time.desc()).paginate(
+            page=page, per_page=per_page, max_per_page=20
+        )
         items = SshcSchema(many=True).dump(data.items)
-        resp_dict = {"items": items, "page": data.page,
-                     "pages": data.pages, "per_page": data.per_page,
-                     "total": data.total}
+        resp_dict = {
+            "items": items,
+            "page": data.page,
+            "pages": data.pages,
+            "per_page": data.per_page,
+            "total": data.total,
+        }
         return response(data=resp_dict)
     elif name == "yjl":
         # 润叶加料
-        data = Yjl.query.order_by(Yjl.time.desc()).paginate(page=page,
-                                                            per_page=per_page,
-                                                            max_per_page=20)
+        data = Yjl.query.order_by(Yjl.time.desc()).paginate(
+            page=page, per_page=per_page, max_per_page=20
+        )
         items = YjlSchema(many=True).dump(data.items)
-        resp_dict = {"items": items, "page": data.page,
-                     "pages": data.pages, "per_page": data.per_page,
-                     "total": data.total}
+        resp_dict = {
+            "items": items,
+            "page": data.page,
+            "pages": data.pages,
+            "per_page": data.per_page,
+            "total": data.total,
+        }
         return response(data=resp_dict)
     elif name == "cy":
         # 储叶
@@ -221,13 +235,17 @@ def factor(name):
         return response(code=500, msg="未实现")
     elif name == "hs":
         # 生丝水分
-        data = Hs.query.order_by(Hs.time.desc()).paginate(page=page,
-                                                          per_page=per_page,
-                                                          max_per_page=20)
+        data = Hs.query.order_by(Hs.time.desc()).paginate(
+            page=page, per_page=per_page, max_per_page=20
+        )
         items = HsSchema(many=True).dump(data.items)
-        resp_dict = {"items": items, "page": data.page,
-                     "pages": data.pages, "per_page": data.per_page,
-                     "total": data.total}
+        resp_dict = {
+            "items": items,
+            "page": data.page,
+            "pages": data.pages,
+            "per_page": data.per_page,
+            "total": data.total,
+        }
         return response(data=resp_dict)
     else:
         return response(code=400, msg="unknown factor name")
@@ -243,22 +261,21 @@ def first_five_batch():
     }]
     """
     yjls: List[YjlInfo] = YjlInfo.query.order_by(YjlInfo.id.desc()).slice(0, 5)
-    
+
     # [{'pph': '利群(新版)烟丝', 'pch': 195, 'rq': '2020-05-31', 'ljjsl': 58.1}, ...]
-    yjl_dcts = YjlInfoSchema(many=True,
-                             only=("pch", "rq", "pph", "ljjsl")).dump(yjls)
+    yjl_dcts = YjlInfoSchema(many=True, only=("pch", "rq", "pph", "ljjsl")).dump(yjls)
     result = []
-    
+
     def f(name):
         return list(map(lambda x: x[name], yjl_dcts))
-    
+
     sssfs = (
         CyInfo.query.filter(CyInfo.rq.in_(f("rq")))
-            .filter(CyInfo.pph.in_(f("pph")))
-            .filter(CyInfo.pch.in_(f("pch")))
-            .with_entities(CyInfo.sssf)
-            .order_by(CyInfo.id.desc())
-            .all()
+        .filter(CyInfo.pph.in_(f("pph")))
+        .filter(CyInfo.pch.in_(f("pch")))
+        .with_entities(CyInfo.sssf)
+        .order_by(CyInfo.id.desc())
+        .all()
     )
     # [ {'sssf': 18.5307}, {'sssf': 18.5465}, ...]
     sssf_dcts = [dict(zip(i.keys(), i)) for i in sssfs]
@@ -288,30 +305,30 @@ def manual_control():
         }
     """
     last = RgControl.get_last_one()
-    
+
     if request.method == "GET":
         resp = RgControlSchema().dump(last)
         return response(data=resp)
-    
+
     data = request.get_json()
     err = RgControlSchema().validate(data)
     ljjsl = None
     sssf = None
     cysc = None
-    
+
     # 实现 partial 更新，即只传需要改变的值即可
     if request.method == "PATCH" and last:
         ljjsl = last.ljjsl
         sssf = last.sssf
         cysc = last.cysc
-    
+
     if not err:
         ljjsl = data.get("ljjsl", ljjsl)
         sssf = data.get("sssf", sssf)
         cysc_str = data.get("cysc")
         if cysc_str:
             cysc = arrow.get(cysc_str).datetime
-        
+
         RgControl.add_one(ljjsl=ljjsl, sssf=sssf, cysc=cysc)
         return response()
     else:

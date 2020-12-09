@@ -7,7 +7,7 @@ from wtforms import (
     SubmitField,
     SelectField,
     SelectMultipleField,
-    FloatField
+    FloatField,
 )
 from wtforms.validators import (
     EqualTo,
@@ -31,7 +31,7 @@ class LoginForm(FlaskForm):
             # "required": "required"      # 必填项
         },
     )
-    
+
     pwd = PasswordField(
         label="密码",
         validators=[DataRequired("请输入密码！")],
@@ -42,14 +42,14 @@ class LoginForm(FlaskForm):
             # "required": "required"
         },
     )
-    
+
     submit = SubmitField(
         "登录",
         render_kw={
             "class": "btn btn-primary btn-block btn-flat",
         },
     )
-    
+
     def validate_account(self, field):
         account = field.data
         admin = Admin.query.filter_by(name=account).count()
@@ -67,7 +67,7 @@ class PwdForm(FlaskForm):
         description="旧密码",
         render_kw={"class": "form-control", "placeholder": "请输入旧密码！"},
     )
-    
+
     new_pwd = PasswordField(
         label="新密码",
         validators=[
@@ -82,10 +82,10 @@ class PwdForm(FlaskForm):
             "class": "btn btn-primary",
         },
     )
-    
+
     def validate_old_pwd(self, field):
         from flask import session
-        
+
         pwd = field.data
         name = session["admin"]
         admin = Admin.query.filter_by(name=name).first()
@@ -103,7 +103,7 @@ class AuthForm(FlaskForm):
         description="权限",
         render_kw={"class": "form-control", "placeholder": "请输入权限！"},
     )
-    
+
     url = StringField(
         label="权限地址",
         validators=[
@@ -130,7 +130,7 @@ class RoleForm(FlaskForm):
         description="角色名称",
         render_kw={"class": "form-control", "placeholder": "请输入角色名称！"},
     )
-    
+
     auths = SelectMultipleField(
         label="权限列表",
         validators=[
@@ -148,7 +148,7 @@ class RoleForm(FlaskForm):
             "class": "btn btn-primary",
         },
     )
-    
+
     def __init__(self):
         super().__init__()
         auth_list = Auth.query.all()
@@ -165,7 +165,7 @@ class AdminForm(FlaskForm):
         description="管理员名称",
         render_kw={"class": "form-control", "placeholder": "请输入管理员名称！"},
     )
-    
+
     pwd = PasswordField(
         label="管理员密码",
         validators=[DataRequired("请输入管理员密码!")],
@@ -176,7 +176,7 @@ class AdminForm(FlaskForm):
             "required": "required",
         },
     )
-    
+
     repwd = PasswordField(
         label="管理员重复密码",
         validators=[
@@ -190,7 +190,7 @@ class AdminForm(FlaskForm):
             "required": "required",
         },
     )
-    
+
     role_id = SelectField(
         label="所属角色",
         validators=[DataRequired("请选择角色!")],
@@ -200,14 +200,14 @@ class AdminForm(FlaskForm):
             "class": "form-control",
         },
     )
-    
+
     submit = SubmitField(
         "提交",
         render_kw={
             "class": "btn btn-primary",
         },
     )
-    
+
     def __init__(self):
         super().__init__()
         role_list = Role.query.all()
@@ -228,17 +228,16 @@ class NumberRange(object):
         interpolated using `%(min)s` and `%(max)s` if desired. Useful defaults
         are provided depending on the existence of min and max.
     """
-    
+
     def __init__(self, min=None, message=None):
         self.min = min
         self.message = message
-    
+
     def __call__(self, form, field):
         data = field.data
         if data is None:
             return
-        if (math.isnan(data)) or \
-                (self.min is not None and data < self.min):
+        if (math.isnan(data)) or (self.min is not None and data < self.min):
             message = self.message
             raise ValidationError(message % dict(min=self.min))
 
@@ -248,13 +247,10 @@ class AlarmField(FloatField):
         validates = [Optional()]
         if require_min is not None:
             validates.append(
-                NumberRange(min=require_min, message=label + "不得小于 %(min)s"))
-        super(AlarmField, self).__init__(
-            label,
-            validates,
-            **kwargs
-        )
-    
+                NumberRange(min=require_min, message=label + "不得小于 %(min)s")
+            )
+        super(AlarmField, self).__init__(label, validates, **kwargs)
+
     def gettext(self, _):
         return "不是有效的浮点数"
 
@@ -292,6 +288,6 @@ class AlarmForm(FlaskForm):
     qs_sddown = AlarmField("切丝湿度下限")
     sssf_up = AlarmField("生丝水分控制值上限", require_min=None)
     sssf_down = AlarmField("生丝水分控制值下限", require_min=None)
-    
+
     def __init__(self):
         super(AlarmForm, self).__init__()

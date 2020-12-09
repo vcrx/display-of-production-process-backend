@@ -16,10 +16,10 @@ class SshcInfo(Base, db.Model):
     hfwd = db.Column(db.Float)  # 回风温度
     ckwd = db.Column(db.Float)  # 出口温度
     cksf = db.Column(db.Float)  # 出口水分
-    
+
     def __repr__(self):
         return "<SshcInfo {}>".format(self.id)
-    
+
     @classmethod
     def add_many(cls, datas):
         """
@@ -57,10 +57,10 @@ class YjlInfo(Base, db.Model):
     ly_ssll = db.Column(db.Float)  # 料液实时流量
     ly_ljjl = db.Column(db.Float)  # 料液流量累计加料量
     ly_wd = db.Column(db.Float)  # 料液温度
-    
+
     def __repr__(self):
         return "<YjlInfo {}>".format(self.id)
-    
+
     @classmethod
     def add_many(cls, datas):
         """
@@ -92,10 +92,10 @@ class CyInfo(Base, db.Model):
     wd = db.Column(db.Float)  # 储叶房温度
     sd = db.Column(db.Float)  # 储叶房湿度
     sssf = db.Column(db.Float)  # 生丝水分
-    
+
     def __repr__(self):
         return "<CyInfo {}>".format(self.id)
-    
+
     @classmethod
     def add_many(cls, datas):
         """
@@ -126,10 +126,10 @@ class QsInfo(Base, db.Model):
     rq = db.Column(db.DateTime)  # 日期
     wd = db.Column(db.Float)  # 储丝房温度
     sd = db.Column(db.Float)  # 储丝房湿度
-    
+
     def __repr__(self):
         return "<QsInfo {}>".format(self.id)
-    
+
     @classmethod
     def add_many(cls, datas):
         """

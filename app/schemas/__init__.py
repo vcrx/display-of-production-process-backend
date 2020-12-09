@@ -32,7 +32,7 @@ class YjlInfoSchema(ma.SQLAlchemyAutoSchema):
 class RgControlSchema(ma.SQLAlchemySchema):
     class Meta:
         model = RgControl
-    
+
     ljjsl = ma.auto_field()
     sssf = ma.auto_field()
     cysc = ma.auto_field()

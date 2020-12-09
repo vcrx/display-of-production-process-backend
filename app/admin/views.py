@@ -1,14 +1,11 @@
 import datetime
 from functools import wraps
 
-from flask import render_template, redirect, url_for, flash, session, abort, \
-    request
+from flask import render_template, redirect, url_for, flash, session, abort, request
 
 from app import db
-from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm, \
-    AlarmForm
-from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, RgControl, Yjl, \
-    Sshc, Hs
+from app.admin.forms import LoginForm, PwdForm, AuthForm, RoleForm, AdminForm, AlarmForm
+from app.models import Admin, Auth, Role, AdminLoginLog, Oplog, RgControl, Yjl, Sshc, Hs
 from app.models import BjControl
 from app.schemas import BjControlSchema
 from app.utils import safe_float
@@ -19,8 +16,7 @@ from ..utils.time import extract_search_from_args
 # 上下文应用处理器
 @admin.context_processor
 def tpl_extra():
-    data = dict(
-        online_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    data = dict(online_time=datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
     return data
 
 
@@ -31,7 +27,7 @@ def admin_login_req(func):
         if "admin" not in session:
             return redirect(url_for("admin.login", next=request.url))
         return func(*args, **kwargs)
-    
+
     return decorated_function
 
 
@@ -41,9 +37,8 @@ def admin_auth(func):
     def decorated_function(*args, **kwargs):
         admin = (
             Admin.query.join(Role)
-                .filter(Role.id == Admin.role_id,
-                        Admin.id == session["admin_id"])
-                .first()
+            .filter(Role.id == Admin.role_id, Admin.id == session["admin_id"])
+            .first()
         )
         auths = admin.role.auths
         auths = list(map(lambda x: int(x), auths.split(",")))
@@ -63,7 +58,7 @@ def admin_auth(func):
             print(str(rule) + " is blocked because auth fail")
             abort(401)
         return func(*args, **kwargs)
-    
+
     return decorated_function
 
 
@@ -103,21 +98,20 @@ def logout():
 @admin_auth
 def index():
     """首页"""
-    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr,
-                  reason="查看主页")
+    oplog = Oplog(admin_id=session["admin_id"], ip=request.remote_addr, reason="查看主页")
     db.session.add(oplog)
     db.session.commit()
     return render_template("admin/index.html")
 
 
 # 报警控制
-@admin.route("/alarm/", methods=('GET', 'POST'))
+@admin.route("/alarm/", methods=("GET", "POST"))
 @admin_login_req
 @admin_auth
 def alarm():
     form = AlarmForm()
     bj_control: BjControl = BjControl.get_last_one()
-    
+
     if request.method == "GET":
         Oplog.add_one("查看报警控制")
     else:
@@ -134,7 +128,7 @@ def alarm():
             flash("修改成功", "alarm-success")
         else:
             flash("修改失败", "alarm-error")
-    
+        return redirect(url_for("alarm"))
     data = {}
     if bj_control is not None:
         data: dict = BjControlSchema().dump(bj_control)
@@ -153,22 +147,18 @@ def manual(page=None):
     Oplog.add_one("人工干预")
     if page is None:
         page = 1
-    
+
     rg_query = RgControl.query
     search, dt = extract_search_from_args()
     if dt.get("from"):
-        rg_query = rg_query.filter(
-            RgControl.create_at >= dt.get("from"))
+        rg_query = rg_query.filter(RgControl.create_at >= dt.get("from"))
     if dt.get("to"):
-        rg_query = rg_query.filter(
-            RgControl.create_at <= dt.get("to"))
-    
-    page_data = (
-        rg_query.order_by(RgControl.create_at.desc()).paginate(page=page,
-                                                               per_page=10)
+        rg_query = rg_query.filter(RgControl.create_at <= dt.get("to"))
+
+    page_data = rg_query.order_by(RgControl.create_at.desc()).paginate(
+        page=page, per_page=10
     )
-    return render_template("admin/manual.html", page_data=page_data,
-                           search=search)
+    return render_template("admin/manual.html", page_data=page_data, search=search)
 
 
 # 温度可视化
@@ -202,24 +192,21 @@ def query(page=None, factor=None):
     if factor not in ["sshc", "ryjl", "hs"]:
         print(factor)
         abort(404)
-    
+
     Oplog.add_one("查询数据情况")
-    
+
     search, dt = extract_search_from_args()
-    
+
     def query_wrapper(model):
         tmp_query = model.query
         print(11111)
         if dt.get("from"):
-            tmp_query = tmp_query.filter(
-                model.time >= dt.get("from"))
+            tmp_query = tmp_query.filter(model.time >= dt.get("from"))
         if dt.get("to"):
-            tmp_query = tmp_query.filter(
-                model.time <= dt.get("to"))
-        tmp_data = tmp_query.order_by(model.id.desc()).paginate(page=page,
-                                                                per_page=10)
+            tmp_query = tmp_query.filter(model.time <= dt.get("to"))
+        tmp_data = tmp_query.order_by(model.id.desc()).paginate(page=page, per_page=10)
         return tmp_data
-    
+
     yjl_data = None
     if factor == "ryjl":
         yjl_data = query_wrapper(Yjl)
@@ -229,9 +216,15 @@ def query(page=None, factor=None):
     hs_data = None
     if factor == "hs":
         hs_data = query_wrapper(Hs)
-    
-    return render_template("admin/query.html", hash=factor, yjl_data=yjl_data,
-                           sshc_data=sshc_data, hs_data=hs_data, search=search)
+
+    return render_template(
+        "admin/query.html",
+        hash=factor,
+        yjl_data=yjl_data,
+        sshc_data=sshc_data,
+        hs_data=hs_data,
+        search=search,
+    )
 
 
 # 统计
@@ -253,7 +246,7 @@ def statistics():
 def admin_add():
     form = AdminForm()
     from werkzeug.security import generate_password_hash
-    
+
     if form.validate_on_submit():
         data = form.data
         admin = Admin(
@@ -279,9 +272,9 @@ def admin_list(page=None):
         page = 1
     page_data = (
         Admin.query.join(Role)
-            .filter(Role.id == Admin.role_id)
-            .order_by(Admin.create_at.desc())
-            .paginate(page=page, per_page=10)
+        .filter(Role.id == Admin.role_id)
+        .order_by(Admin.create_at.desc())
+        .paginate(page=page, per_page=10)
     )
     Oplog.add_one("查看管理员列表")
     return render_template("admin/admin_list.html", page_data=page_data)
@@ -297,7 +290,7 @@ def pwd():
         data = form.data
         admin = Admin.query.filter_by(name=session["admin"]).first()
         from werkzeug.security import generate_password_hash
-        
+
         admin.pwd = generate_password_hash(data["new_pwd"])
         db.session.add(admin)
         db.session.commit()
@@ -394,8 +387,7 @@ def role_add():
     if form.validate_on_submit():
         data = form.data
         role = Role(
-            name=data["name"],
-            auths=",".join(map(lambda v: str(v), data["auths"]))
+            name=data["name"], auths=",".join(map(lambda v: str(v), data["auths"]))
         )
         db.session.add(role)
         db.session.commit()
@@ -463,9 +455,12 @@ def oplog_list(page=None):
     if page is None:
         page = 1
     page_data = (
-        Oplog.query.join(Admin).filter(
+        Oplog.query.join(Admin)
+        .filter(
             Admin.id == Oplog.admin_id,
-        ).order_by(Oplog.create_at.desc()).paginate(page=page, per_page=10)
+        )
+        .order_by(Oplog.create_at.desc())
+        .paginate(page=page, per_page=10)
     )
     return render_template("admin/oplog_list.html", page_data=page_data)
 
@@ -478,8 +473,9 @@ def adminloginlog_list(page=None):
     if page is None:
         page = 1
     page_data = (
-        AdminLoginLog.query.join(Admin).filter(
-            Admin.id == AdminLoginLog.admin_id).order_by(
-            AdminLoginLog.create_at.desc()).paginate(page=page, per_page=10)
+        AdminLoginLog.query.join(Admin)
+        .filter(Admin.id == AdminLoginLog.admin_id)
+        .order_by(AdminLoginLog.create_at.desc())
+        .paginate(page=page, per_page=10)
     )
     return render_template("admin/adminloginlog_list.html", page_data=page_data)

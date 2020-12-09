@@ -70,5 +70,3 @@ z2_mapping = {
     "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Moisture": "润叶加料 出口水分 实际值",
     "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Temp": "润叶加料 出口温度 实际值",
 }
-
-

@@ -13,16 +13,16 @@ def from_mills_timestamp_to_min(mills):
 
 def extract_search_from_args():
     params = request.args
-    
+
     search = {}
     dt = {}
     time_from = params.get("from")
     time_to = params.get("to")
-    
+
     if time_from is not None and time_to is not None:
         search["from"] = time_from
         search["to"] = time_to
-        
+
         from_ = from_mills_timestamp_to_min(time_from)
         to = from_mills_timestamp_to_min(time_to)
         # 查后一分钟之前的，所以要加一

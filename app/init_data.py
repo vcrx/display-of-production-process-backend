@@ -29,16 +29,16 @@ def get_data(csv_name):
     """
     df = pd.read_csv(csv_name, encoding="gbk")
     df.drop(df.columns[-1], axis=1, inplace=True)
-    
+
     grouped_by_time = df.groupby("_TIMESTAMP")
     result = {}
     for time_str in grouped_by_time.groups.keys():
         data = (
             grouped_by_time.get_group(time_str)
-                .groupby("_BATCHID")
-                .mean()
-                .drop("id", axis=1)
-                .T.to_dict()
+            .groupby("_BATCHID")
+            .mean()
+            .drop("id", axis=1)
+            .T.to_dict()
         )
         time_arrow = arrow.get(time_str).datetime
         result[time_arrow] = data
@@ -65,7 +65,7 @@ sshc_columns = {
     "松散回潮累计加水量": "ljjsl",
     "松散回潮回风温度均值": "hfwd",
     "松散回潮出口温度均值": "ckwd",
-    "松散回潮出口水分均值": "cksf"
+    "松散回潮出口水分均值": "cksf",
 }
 yjl_columns = {
     "日期": "rq",
@@ -79,7 +79,7 @@ yjl_columns = {
     "润叶加料累计加水量": "ljjsl",
     "润叶加料料液流量实时流量均值": "ly_ssll",
     "润叶加料料液流量累计加料量": "ly_ljjl",
-    "润叶加料料液温度均值": "ly_wd"
+    "润叶加料料液温度均值": "ly_wd",
 }
 cy_columns = {
     "日期": "rq",
@@ -88,22 +88,15 @@ cy_columns = {
     "润叶加料贮叶时间": "cysc",
     "sirox增温增湿sirox入口水分均值": "sssf",
     "储叶房温度": "wd",
-    "储叶房湿度": "sd"
+    "储叶房湿度": "sd",
 }
-qs_columns = {
-    "日期": "rq",
-    "品牌号": "pph",
-    "批次号": "pch",
-    "储丝房温度": "wd",
-    "储丝房湿度": "sd"
-}
+qs_columns = {"日期": "rq", "品牌号": "pph", "批次号": "pch", "储丝房温度": "wd", "储丝房湿度": "sd"}
 
 
 def gen_data_list(type_dict, whole_df: pd.DataFrame) -> list:
     result = []
     # 确保 type_dict.keys() 的值都在 df 里面，手动过滤一遍
-    available_keys = list(
-        filter(lambda x: x in whole_df.columns, type_dict.keys()))
+    available_keys = list(filter(lambda x: x in whole_df.columns, type_dict.keys()))
     for idx, data in whole_df[available_keys].iterrows():
         data_dict = data.to_dict()
         tmp = {}

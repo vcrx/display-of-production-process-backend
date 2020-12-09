@@ -6,15 +6,13 @@ from .base import Base
 class SssfControl(Base, db.Model):
     __tablename__ = "sssf_control"
     id = db.Column(db.Integer, primary_key=True)  # 编号
-    
+
     sshc_id = db.Column(db.Integer, db.ForeignKey("sshc.id"))  # 松散回潮
     yjl_id = db.Column(db.Integer, db.ForeignKey("yjl.id"))  # 叶加料
     hs_id = db.Column(db.Integer, db.ForeignKey("hs.id"))  # 叶加料
-    bj_control_id = db.Column(db.Integer,
-                              db.ForeignKey("bj_control.id"))  # 报警控制
-    rg_control_id = db.Column(db.Integer,
-                              db.ForeignKey("rg_control.id"))  # 人工控制
-    
+    bj_control_id = db.Column(db.Integer, db.ForeignKey("bj_control.id"))  # 报警控制
+    rg_control_id = db.Column(db.Integer, db.ForeignKey("rg_control.id"))  # 人工控制
+
     def __repr__(self):
         return "<SssfControl {}>".format(self.id)
 
@@ -57,12 +55,11 @@ class BjControl(Base, db.Model):
     sssf_up = db.Column(db.Float)  # 生丝水分控制值上限
     sssf_down = db.Column(db.Float)  # 生丝水分控制值下限
 
-    sssf_controls = db.relationship("SssfControl",
-                                    backref="bj_control")  # 生丝水分控制外键关系关联
-    
+    sssf_controls = db.relationship("SssfControl", backref="bj_control")  # 生丝水分控制外键关系关联
+
     def __repr__(self):
         return "<BjControl {}>".format(self.id)
-    
+
     @classmethod
     def get_last_one(cls):
         bj_control: cls = cls.query.order_by(cls.id.desc()).first()
@@ -76,17 +73,16 @@ class RgControl(Base, db.Model):
     ljjsl = db.Column(db.Float)  # 人工计算的累积加水量
     sssf = db.Column(db.Float)  # 生丝水分目标值
     cysc = db.Column(db.DateTime)  # 储叶时长，这里存的是预计储叶结束时间
-    sssf_controls = db.relationship("SssfControl",
-                                    backref="rg_control")  # 生丝水分控制外键关系关联
-    
+    sssf_controls = db.relationship("SssfControl", backref="rg_control")  # 生丝水分控制外键关系关联
+
     def __repr__(self):
         return "<RgControl {}>".format(self.id)
-    
+
     @classmethod
     def get_last_one(cls):
         obj: cls = cls.query.order_by(cls.id.desc()).first()
         return obj
-    
+
     @classmethod
     def add_one(cls, **kwargs):
         obj = RgControl(**kwargs)
