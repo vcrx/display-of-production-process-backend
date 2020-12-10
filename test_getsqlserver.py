@@ -14,5 +14,5 @@ app.app_context().push()
 
 dm = DatabaseManagement()
 
-max_time_item = Z1Tags.query.order_by(Z1Tags.time).first()
-print('max_time_item: ', max_time_item)
+max_time_item = dm.query(Z1Tags).order_by(Z1Tags._TIMESTAMP).first()
+print("max_time_item: ", max_time_item)

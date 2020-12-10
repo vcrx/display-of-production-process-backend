@@ -3,7 +3,7 @@
 1. 设置 sqlserver 数据库地址
   修改 app/pull/db.py 里第8行的地址
 
-2. 运行 test_getsqlserver.py 这个文件，有输出就表示
+2. 运行 test_getsqlserver.py 这个文件，有输出就表示能获取 sqlserver 里的数据。
 
 
 
