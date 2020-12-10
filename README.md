@@ -50,4 +50,3 @@ python manage.py
 
 
 ## 其他信息
-

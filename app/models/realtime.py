@@ -174,6 +174,33 @@ class Hs(Base, db.Model):
         return obj
 
 
+# 批次号分配器
+class Pch(db.Model):
+    __tablename__ = "pch"
+    # sshc yjl hs
+    name = db.Column(db.String(100), unique=True, primary_key=True)  # 名称
+    value = db.Column(db.Integer, default=0)
+
+    def __repr__(self):
+        return "<Pch {} {}>".format(self.name, self.value)
+
+    @classmethod
+    def get(cls, name):
+        item = cls.query.filter_by(name=name).first()
+        return item.value if item else 0
+
+    @classmethod
+    def set(cls, name, value):
+        item = cls.query.filter_by(name=name).first()
+        print("item: ", item)
+        if item:
+            cls.query.filter_by(name=name).update({Pch.value: value})
+        else:
+            obj = cls(name=name, value=value)
+            db.session.add(obj)
+        db.session.commit()
+
+
 # 预测
 class Yc(Base, db.Model):
     __tablename__ = "yc"

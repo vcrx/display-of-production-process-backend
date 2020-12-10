@@ -1,0 +1,16 @@
+像 README 说的那样安装好 python 包环境（依赖在：`pyproject.toml` 这个文件 `[tool.poetry.dependencies]` 的字段下面。）：
+
+1. 设置 sqlserver 数据库地址
+  修改 app/pull/db.py 里第8行的地址
+
+2. 运行 test_getsqlserver.py 这个文件，有输出就表示
+
+
+
+如果你想测试一下完整的从 sqlserver 取回来放到 MySQL 数据库中的 demo，你需要设置好 mysql（配置好数据库密码，然后填入 `app/__init__.py` 中的 `app.config["SQLALCHEMY_DATABASE_URI"]` 中），然后看下面的：
+
+执行完 app/init_db.py 之后，直接执行 test_migrate.py ，就会发现数据已经读取成功并保存到 mysql 的实时数据表。
+
+定时读取并转换的 demo:
+
+test_apscheduler.py 里是一个每3秒执行一次转换的 demo，执行查看效果即可。
