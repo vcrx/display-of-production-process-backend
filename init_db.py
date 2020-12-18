@@ -1,12 +1,36 @@
+from app.constants import origin_db_uri, yancao_db_uri
+
+from sqlalchemy.exc import InterfaceError
+from sqlalchemy_utils import database_exists, create_database
+
+
+def database_exists_(url):
+    try:
+        return database_exists(url)
+    except InterfaceError:
+        return False
+
+
+def init_database(db_uri):
+    if not database_exists_(db_uri):
+        print(f"create {db_uri}")
+        create_database(db_uri)
+    print(f"{db_uri} exists:", database_exists_(db_uri))
+
+
+init_database(origin_db_uri)
+init_database(yancao_db_uri)
+
 import sys
 
 from werkzeug.security import generate_password_hash
-
 from app import create_app, db
 from app.models import *
 
+
 app = create_app("db")
-app.app_context().push()
+context = app.app_context()
+context.push()
 
 db.create_all()
 db.session.add(Auth(id="1", name="主路由", url="/"))
@@ -47,4 +71,4 @@ db.session.add(role)
 db.session.add(admin)
 db.session.commit()
 
-sys.exit(0)
+context.pop()

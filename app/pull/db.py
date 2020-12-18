@@ -1,12 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Query
+from app.constants import origin_db_uri
 
 
 class DatabaseManagement:
     def __init__(self):
-        self.engine = create_engine(
-            "mssql+pymssql://sa:My.Password@127.0.0.1:1433/test"
-        )  # 初始化数据库连接
+        self.engine = create_engine(origin_db_uri)  # 初始化数据库连接
         DBsession = sessionmaker(bind=self.engine)  # 创建DBsession类
         self.session = DBsession()  # 创建对象
 

@@ -2,6 +2,7 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
+from app.constants import yancao_db_uri
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -9,7 +10,7 @@ ma = Marshmallow()
 
 def create_app(mode) -> Flask:
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@127.0.0.1/yancao"
+    app.config["SQLALCHEMY_DATABASE_URI"] = yancao_db_uri
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
     app.config["SECRET_KEY"] = "7edb4f4bf4324848b0c68a3a4c6e3543"
     app.debug = True

@@ -19,7 +19,7 @@ flask-marshmallow = "^0.14.0"
 marshmallow-sqlalchemy = "^0.24.0"
 arrow = "^0.17.0"
 sqlalchemy-utils = "^0.36.8"
-pymssql = "^2.1.5"
+pyodbc = "^4.0.30"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
