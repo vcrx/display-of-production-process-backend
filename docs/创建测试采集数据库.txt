@@ -1,0 +1,7 @@
+创建测试的采集数据库，在项目根目录下执行：
+
+python -m app.pull.models
+
+这个命令会在 `app/constants.py` 里设置的原有的采集数据的数据库 `origin_db_uri` 中建立 Z1Tags 和 Z2Tags 两个表。
+
+你可以用 navicat 之类的来把 csv 之类的导入进去。

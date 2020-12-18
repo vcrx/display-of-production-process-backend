@@ -1,11 +1,8 @@
-from app.models.realtime import Pch
 from datetime import timedelta
 
 import arrow
 import pandas as pd
-from app.models import Hs, Sshc, Yjl
-from app.pull.db import DatabaseManagement
-from app.pull.models import Z1Tags, Z2Tags
+
 from sqlalchemy import desc
 
 # Z1（松散回潮工段） Sshc
@@ -16,6 +13,10 @@ N_MINITES = 1
 
 
 def migrate_into(SqlserverDatabaseModel, MysqlDatabaseModel):
+    from app.models import Hs, Sshc, Yjl, Pch
+    from app.pull.db import DatabaseManagement
+    from app.pull.models import Z1Tags, Z2Tags
+
     """
     SqlserverDatabaseModel: Z1Tags, Z2Tags
     MysqlDatabaseModel: Sshc, Yjl, Hs

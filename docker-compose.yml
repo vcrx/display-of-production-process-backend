@@ -8,9 +8,9 @@ services:
     volumes:
       - sql_data:/var/opt/mssql
     environment:
-      TZ: Asia/Shanghai
+      TZ: "Asia/Shanghai"
       ACCEPT_EULA: "Y"
-      SA_PASSWORD: My.Password
-      MSSQL_COLLATION: Chinese_PRC_CI_AS
+      SA_PASSWORD: ${SA_PASSWORD}
+      MSSQL_COLLATION: "Chinese_PRC_CI_AS"
 volumes:
   sql_data: {}
