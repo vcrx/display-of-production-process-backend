@@ -20,6 +20,7 @@ arrow = "^0.17.0"
 sqlalchemy-utils = "^0.36.8"
 pyodbc = "^4.0.30"
 pymysql = "^0.10.1"
+loguru = "^0.5.3"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"

@@ -1,5 +1,5 @@
 from sqlalchemy import Column, String, Integer, Float, DateTime
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
+from sqlalchemy.ext.declarative import declarative_base
 
 
 class Base(object):

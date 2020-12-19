@@ -4,6 +4,11 @@ import arrow
 import pandas as pd
 
 from sqlalchemy import desc
+from flask import current_app
+
+from typing import Union, Type
+from .db import DatabaseManagement
+from .models import Z1Tags, Z2Tags, KLDTags
 
 # Z1（松散回潮工段） Sshc
 # Z2（润叶加料工段） Yjl
@@ -12,63 +17,76 @@ from sqlalchemy import desc
 N_MINITES = 1
 
 
-def migrate_into(SqlserverDatabaseModel, MysqlDatabaseModel):
+def migrate_into(MSSQL: Type[Union[Z1Tags, Z2Tags, KLDTags]]):
     from app.models import Hs, Sshc, Yjl, Pch
-    from app.pull.db import DatabaseManagement
-    from app.pull.models import Z1Tags, Z2Tags, KLDTags
 
     """
-    SqlserverDatabaseModel: Z1Tags, Z2Tags, KLDTags
-    MysqlDatabaseModel: Sshc, Yjl, Hs
+    MSSQL: Z1Tags, Z2Tags, KLDTags
+    MYSQL: Sshc, Yjl, Hs
     """
-    assert SqlserverDatabaseModel in (Z1Tags, Z2Tags, KLDTags)
-    assert MysqlDatabaseModel in (Sshc, Yjl, Hs)
-    s_name = SqlserverDatabaseModel.__tablename__
-    m_name = MysqlDatabaseModel.__tablename__
-    print(f" {s_name} -> {m_name} ")
+    log_message = ""
+    # 每个数据库的对应关系
+    if MSSQL == Z1Tags:
+        MYSQL = Sshc
+    elif MSSQL == Z2Tags:
+        MYSQL = Yjl
+    elif MSSQL == KLDTags:
+        MYSQL = Hs
+    else:
+        return "无法识别的采集数据库表名"
+
+    s_name = MSSQL.__tablename__
+    m_name = MYSQL.__tablename__
+    log_message += f" {s_name} -> {m_name} \n"
 
     dm = DatabaseManagement()
 
-    max_time_item = MysqlDatabaseModel.query.order_by(
-        desc(MysqlDatabaseModel.time)
-    ).first()
+    max_time_item = MYSQL.query.order_by(desc(MYSQL.time)).first()
 
-    query_ = dm.query(SqlserverDatabaseModel)
+    query_ = dm.query(MSSQL)
 
-    # 获取大于已有数据库时间的 N_MINITES 条数据
     if max_time_item:
         max_time = max_time_item.time
     else:
         # 说明此时实时数据库中并没有数据
-        # 所以直接获取 SQLServer 数据库中的几分钟的数据
-        # s_item = query_.order_by(desc(SqlserverDatabaseModel._TIMESTAMP)).first()
-        s_item = query_.order_by((SqlserverDatabaseModel._TIMESTAMP)).first()
+        # 所以直接获取 SQLServer 数据库中的数据
+        # 这里是要判断当前数据库中最新的时间
+        if current_app.config["SCHEDULER_COLLECTION_FROM_SCRATCH"]:
+            # 如果允许了从头取，那就取数据库中最小的时间
+            s_item = query_.order_by((MSSQL._TIMESTAMP)).first()
+        else:
+            # 降序取，取数据库中最大的时间
+            s_item = query_.order_by(desc(MSSQL._TIMESTAMP)).first()
         if not s_item:
             #  SQLServer 数据库中没数据，直接返回
-            return
+            log_message += f"{s_name} 表中无数据"
+            return log_message
         # 因为后面的时间判断使用 > 号，所以这里要让 max_time 小一点
         max_time = s_item._TIMESTAMP - timedelta(minutes=1)
 
-    query_ = query_.filter(SqlserverDatabaseModel._TIMESTAMP > max_time).filter(
-        max_time + timedelta(minutes=N_MINITES) >= SqlserverDatabaseModel._TIMESTAMP
+    # 获取大于已有数据库时间的 N_MINITES 条数据
+    query_ = query_.filter(MSSQL._TIMESTAMP > max_time).filter(
+        max_time + timedelta(minutes=N_MINITES) >= MSSQL._TIMESTAMP
     )
-    print(f"实时 {m_name} 数据库最新时间: ", max_time)
+    log_message += f"实时 {m_name} 数据库最新时间: {max_time}\n"
     df = pd.read_sql_query(
         query_.statement,
         con=dm.session.connection(),
     )
     if df.empty:
-        print("无新增数据")
-        return 0
+        log_message += f"判断无新增数据\n"
+        return log_message
+
     pch = Pch.get(m_name)
     qualified = (df["_QUALITY"] == 192).all()
-    print("采集数据是否合格: ", qualified)
-    print("pch: ", pch)
+    log_message += f"采集数据是否合格: {qualified}"
     # 合格数据将放到上一批，否则批次号将+1
     if not qualified:
         Pch.set(m_name, pch + 1)
         pch = pch + 1
-        print("批次号+1", pch)
+        log_message += f"分发批次号： {pch}\n"
+    else:
+        log_message += f"批次号： {pch}\n"
     grouped_by_time = df.groupby("_TIMESTAMP")
     result = {}
     """
@@ -85,7 +103,7 @@ def migrate_into(SqlserverDatabaseModel, MysqlDatabaseModel):
     }
     """
     for time_str in grouped_by_time.groups.keys():
-        print("新增时间:", time_str)
+        log_message += f"新增时间 {time_str}\n"
         data = (
             grouped_by_time.get_group(time_str)
             .groupby("_BATCHID")
@@ -95,4 +113,5 @@ def migrate_into(SqlserverDatabaseModel, MysqlDatabaseModel):
         )
         time_arrow = arrow.get(time_str).datetime
         result[time_arrow] = data
-    MysqlDatabaseModel.add_many(result)
+    MYSQL.add_many(result)
+    return "成功执行转换"
