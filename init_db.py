@@ -1,4 +1,4 @@
-from app.constants import origin_db_uri, yancao_db_uri
+from app.constants import sqlserver_uri, mysql_uri
 
 from sqlalchemy.exc import InterfaceError
 from sqlalchemy_utils import database_exists, create_database
@@ -18,8 +18,8 @@ def init_database(db_uri):
     print(f"{db_uri} exists:", database_exists_(db_uri))
 
 
-init_database(origin_db_uri)
-init_database(yancao_db_uri)
+init_database(sqlserver_uri)
+init_database(mysql_uri)
 
 import sys
 

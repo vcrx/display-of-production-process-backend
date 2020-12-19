@@ -11,7 +11,8 @@ from app import create_app
 from app.models import *
 
 app = create_app("db")
-app.app_context().push()
+context = app.app_context()
+context.push()
 
 data_dir = Path(__file__).parent / "data"
 print("data_dir:", data_dir)
@@ -135,4 +136,4 @@ for file in root.iterdir():
         CyInfo.add_many(cy_result)
         QsInfo.add_many(qs_result)
 
-sys.exit(0)
+context.pop()

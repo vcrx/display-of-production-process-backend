@@ -10,11 +10,15 @@ PyODBC默认情况下使用内部池，这意味着连接的生存期将比SQLAl
 """
 pyodbc.pooling = False
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
-from app.constants import yancao_db_uri
+from app.config import init_config
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -22,10 +26,7 @@ ma = Marshmallow()
 
 def create_app(mode) -> Flask:
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = yancao_db_uri
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-    app.config["SECRET_KEY"] = "7edb4f4bf4324848b0c68a3a4c6e3543"
-    app.debug = True
+    init_config(app)
     db.init_app(app)
     ma.init_app(app)
     if mode == "app":

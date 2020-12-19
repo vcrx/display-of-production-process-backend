@@ -15,13 +15,13 @@ N_MINITES = 1
 def migrate_into(SqlserverDatabaseModel, MysqlDatabaseModel):
     from app.models import Hs, Sshc, Yjl, Pch
     from app.pull.db import DatabaseManagement
-    from app.pull.models import Z1Tags, Z2Tags
+    from app.pull.models import Z1Tags, Z2Tags, KLDTags
 
     """
-    SqlserverDatabaseModel: Z1Tags, Z2Tags
+    SqlserverDatabaseModel: Z1Tags, Z2Tags, KLDTags
     MysqlDatabaseModel: Sshc, Yjl, Hs
     """
-    assert SqlserverDatabaseModel in (Z1Tags, Z2Tags)
+    assert SqlserverDatabaseModel in (Z1Tags, Z2Tags, KLDTags)
     assert MysqlDatabaseModel in (Sshc, Yjl, Hs)
     s_name = SqlserverDatabaseModel.__tablename__
     m_name = MysqlDatabaseModel.__tablename__

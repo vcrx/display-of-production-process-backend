@@ -199,7 +199,6 @@ def query(page=None, factor=None):
 
     def query_wrapper(model):
         tmp_query = model.query
-        print(11111)
         if dt.get("from"):
             tmp_query = tmp_query.filter(model.time >= dt.get("from"))
         if dt.get("to"):
