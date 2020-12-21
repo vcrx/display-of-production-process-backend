@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  db:
+  mysql:
     image: mysql
     command:
       --default-authentication-plugin=mysql_native_password
@@ -17,6 +17,18 @@ services:
       TZ: Asia/Shanghai
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       MYSQL_DATABASE: yancao
+  mssql:
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 1433:1433
+    volumes:
+      - mssql_data:/var/opt/mssql
+    environment:
+      TZ: "Asia/Shanghai"
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: ${SA_PASSWORD}
+      MSSQL_COLLATION: "Chinese_PRC_CI_AS"
 
 volumes:
   mysql_data: {}
+  mssql_data: {}
