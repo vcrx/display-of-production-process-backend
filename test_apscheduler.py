@@ -9,7 +9,6 @@ from app.pull import migrate_into
 
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED
 from apscheduler.executors.pool import ProcessPoolExecutor, ThreadPoolExecutor
-from apscheduler.jobstores.sqlalchemy import SQLAlchemyJobStore
 from apscheduler.schedulers.background import BackgroundScheduler
 from pytz import utc
 
@@ -18,19 +17,18 @@ logging.basicConfig()
 logging.getLogger("apscheduler").setLevel(logging.INFO)
 app = create_app("db")
 
-jobstores = {"default": SQLAlchemyJobStore(url=app.config["SQLALCHEMY_DATABASE_URI"])}
 executors = {"default": ThreadPoolExecutor(20), "processpool": ProcessPoolExecutor(5)}
 job_defaults = {"coalesce": False, "max_instances": 3}
 
 scheduler = BackgroundScheduler(
-    jobstores=jobstores, executors=executors, job_defaults=job_defaults, timezone=utc
+    executors=executors, job_defaults=job_defaults, timezone=utc
 )
 
 
 def migrate_job():
     with app.app_context():
-        migrate_into(Z1Tags, Sshc)
-        migrate_into(Z2Tags, Yjl)
+        r = migrate_into(Z1Tags)
+        print(r)
 
 
 def my_listener(event):

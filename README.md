@@ -13,6 +13,16 @@
 
 ### 数据准备
 
+注意，因为为了防止误修改了 mssql 数据库，如果想初始化 mssql 数据库，需要设置一个环境变量才行，放在 `.env` 或者环境变量中都可以：
+
+为了防止误修改了 mssql 数据库！
+为了防止误修改了 mssql 数据库！
+为了防止误修改了 mssql 数据库！
+
+```dotenv
+NEED_INIT_MSSQL=True
+```
+
 执行 `init_db.py` 即可初始化程序需要的数据库：
 
 ```bash
@@ -21,13 +31,11 @@ python init_db.py
 
 即可创建好数据库。
 
-想初始化 mysql 的数据，直接执行：
+想初始化的数据，直接执行：
 
 ```bash
 python init_data/init_data.py
 ```
-
-想初始化 mssql 中的数据就得通过 navicat 之类的应用手动导入 csv。
 
 ### 启动 APP
 
@@ -37,7 +45,17 @@ python init_data/init_data.py
 
 ```dotenv
 SECRET_KEY="自己设置一个"
+PLC_PASSWORD=My.Password
+MES_PASSWORD=My.Password
+MYSQL_ROOT_PASSWORD=root
 ```
+
+`PLC_PASSWORD` 和 `MES_PASSWORD` 是实时采集数据库的密码。
+最后一个是 mysql 的数据库密码。
+
+数据库的地址什么的可以直接先改 `app/constants.py` 里面的信息
+
+还有一些配置在 `__init__.py` 中的 `init_config` 中。
 
 两种启动方式：
 
@@ -57,4 +75,4 @@ SECRET_KEY="自己设置一个"
 
     然后执行 `flask run` 就可以启动了，如果运行在生产环境，请把 `FLASK_ENV` 设置为 `production`
 
-然后打开后端页面： <http://localhost:5000/> 即可。
+然后打开后端页面： <http://localhost:5000> 即可。

@@ -10,7 +10,8 @@
 
 ```dotenv
 MYSQL_ROOT_PASSWORD="想设置的 mysql 数据库密码"
-SA_PASSWORD="想设置的 sqlserver 数据库密码"
+PLC_PASSWORD="plc密码"
+MES_PASSWORD="mes密码"
 ```
 
 首先启动数据库，设置好账户密码。
@@ -29,15 +30,7 @@ python init_data/init_data.py
 
 ## 填充 mssql 测试数据库
 
-在项目根目录下执行：
-
-```bash
-python -m app.pull.models
-```
-
-这个命令会在 `app/constants.py` 里设置的原有的采集数据的数据库 `sqlserver_uri` 中建立三个数据库表。
-
-你可以用 navicat 之类的来把 csv 的数据导入进去。
+如果你想填充 mssql 数据库，那就要设置 `NEED_INIT_MSSQL` 环境变量。
 
 ## 删除数据库
 

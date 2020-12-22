@@ -1,11 +1,11 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Query
-from app.constants import sqlserver_uri
 
 
 class DatabaseManagement:
-    def __init__(self):
-        self.engine = create_engine(sqlserver_uri)  # 初始化数据库连接
+    def __init__(self, db_uri):
+        # db_uri: plc_uri mes_uri
+        self.engine = create_engine(db_uri)  # 初始化数据库连接
         DBsession = sessionmaker(bind=self.engine)  # 创建DBsession类
         self.session = DBsession()  # 创建对象
 

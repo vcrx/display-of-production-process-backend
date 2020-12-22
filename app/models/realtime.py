@@ -1,9 +1,39 @@
-from typing import Dict, Any
+from typing import Any, Dict
 
+import arrow
+import pandas as pd
+from app import db
 from sqlalchemy import exc
 
-from app import db
 from .base import Base
+
+
+def get_data(df):
+    """
+    {
+        '2020/10/12 13:06': {
+            'qualified': 1,
+            'DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV': {
+                '_NUMERICID': 0.0,
+                '_VALUE': 18.793315889,
+                '_QUALITY': 192.0
+            },
+            ...
+        },
+    }
+    """
+
+    grouped_by_time = df.groupby("_TIMESTAMP")
+    result = {}
+    for time_str in grouped_by_time.groups.keys():
+        _df = grouped_by_time.get_group(time_str)
+        data = _df.groupby("_BATCHID").mean().drop("id", axis=1).T.to_dict()
+        _qualified = (_df["_QUALITY"] == 192).all()
+        qualified = 1 if _qualified else 0
+        data["qualified"] = qualified
+        time_arrow = arrow.get(time_str).datetime
+        result[time_arrow] = data
+    return result
 
 
 # 松散回潮
@@ -11,6 +41,8 @@ class Sshc(Base, db.Model):
     __tablename__ = "sshc"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
+    qualified = db.Column(db.Integer, default=0)  # 质量， 1 为符合， 0 为不符合
+
     wlssll = db.Column(db.Float)  # 物料实时流量
     wlljzl = db.Column(db.Float)  # 物料累计重量
     hfwd = db.Column(db.Float)  # 回风温度
@@ -22,7 +54,7 @@ class Sshc(Base, db.Model):
         return "<Sshc {}>".format(self.id)
 
     @classmethod
-    def add_many(cls, data_dict: Dict[Any, Dict[str, Dict[str, float]]]):
+    def add_many(cls, df: pd.DataFrame):
         mapping = {
             "wlssll": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_PV_Massflow",
             "wlljzl": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_Total_Massflow",
@@ -30,6 +62,7 @@ class Sshc(Base, db.Model):
             "cksf": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.ZF102_PV_Moisture",
             "ckwd": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.ZF102_PV_Temp",
         }
+        data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
         try:
             for time, data in data_dict.items():
                 kwargs = {}
@@ -38,7 +71,8 @@ class Sshc(Base, db.Model):
                         kwargs[name] = data[mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
-                obj = Sshc(time=time, **kwargs)
+
+                obj = Sshc(time=time, qualified=data.get("qualified"), **kwargs)
                 db.session.add(obj)
             db.session.commit()
         except exc.SQLAlchemyError:
@@ -56,6 +90,7 @@ class Yjl(Base, db.Model):
     __tablename__ = "yjl"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
+    qualified = db.Column(db.Integer, default=0)  # 质量， 1 为符合， 0 为不符合
 
     wlsjll = db.Column(db.Float)  # 物料实际流量
     wlljzl = db.Column(db.Float)  # 物料累计重量
@@ -67,7 +102,6 @@ class Yjl(Base, db.Model):
     ckwd = db.Column(db.Float)  # 出口温度
     cksf = db.Column(db.Float)  # 出口水分
 
-    kshs = db.relationship("Ksh", backref="yjl")  # 可视化外键关系关联
     ycs = db.relationship("Yc", backref="yjl")  # 预测外键关系关联
     sssf_controls = db.relationship("SssfControl", backref="yjl")  # 生丝水分控制外键关系关联
 
@@ -80,7 +114,7 @@ class Yjl(Base, db.Model):
         return obj
 
     @classmethod
-    def add_many(cls, data_dict):
+    def add_many(cls, df):
         mapping = {
             "wlsjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_PV_Massflow",
             "wlljzl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_Total_Massflow",
@@ -92,6 +126,8 @@ class Yjl(Base, db.Model):
             "ckwd": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Temp",
             "cksf": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Moisture",
         }
+        data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
+
         try:
             for time, data in data_dict.items():
                 kwargs = {}
@@ -100,7 +136,8 @@ class Yjl(Base, db.Model):
                         kwargs[name] = data[mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
-                obj = Yjl(time=time, **kwargs)
+
+                obj = Yjl(time=time, qualified=data.get("qualified"), **kwargs)
                 db.session.add(obj)
             db.session.commit()
         except exc.SQLAlchemyError:
@@ -121,6 +158,7 @@ class Hs(Base, db.Model):
     __tablename__ = "hs"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
+    qualified = db.Column(db.Integer, default=0)  # 质量， 1 为符合， 0 为不符合
 
     sssf = db.Column(db.Float)  # 生丝水分
     fhzqyl = db.Column(db.Float)  # 阀后蒸汽压力
@@ -132,7 +170,6 @@ class Hs(Base, db.Model):
     wlsjll = db.Column(db.Float)  # 物料实际流量
     wlljzl = db.Column(db.Float)  # 物料累计重量
 
-    kshs = db.relationship("Ksh", backref="hs")  # 可视化外键关系关联
     ycs = db.relationship("Yc", backref="hs")  # 切丝外键关系关联
 
     sssf_controls = db.relationship("SssfControl", backref="hs")  # 生丝水分控制外键关系关联
@@ -141,7 +178,7 @@ class Hs(Base, db.Model):
         return "<Hs {}>".format(self.id)
 
     @classmethod
-    def add_many(cls, data_dict):
+    def add_many(cls, df):
         mapping = {
             "sssf": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.MOIST_PV",
             "zqll": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamMaFl",
@@ -153,6 +190,8 @@ class Hs(Base, db.Model):
             "wlljzl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.FLOW_TOT",
             "zqllfmkd": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.CV_SteamMaFl",
         }
+        data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
+
         try:
             for time, data in data_dict.items():
                 kwargs = {}
@@ -161,7 +200,8 @@ class Hs(Base, db.Model):
                         kwargs[name] = data[mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
-                obj = Hs(time=time, **kwargs)
+
+                obj = Hs(time=time, qualified=data.get("qualified"), **kwargs)
                 db.session.add(obj)
             db.session.commit()
         except exc.SQLAlchemyError:
@@ -186,13 +226,19 @@ class Pch(db.Model):
 
     @classmethod
     def get(cls, name):
+        if name == "sshc":
+            ...
+        elif name == "yjl":
+            ...
+        elif name == "":
+            ...
+
         item = cls.query.filter_by(name=name).first()
-        return item.value if item else 0
+        return item.value if item else None
 
     @classmethod
     def set(cls, name, value):
         item = cls.query.filter_by(name=name).first()
-        print("item: ", item)
         if item:
             cls.query.filter_by(name=name).update({Pch.value: value})
         else:
@@ -215,15 +261,3 @@ class Yc(Base, db.Model):
 
     def __repr__(self):
         return "<Yc {}>".format(self.id)
-
-
-# 可视化
-class Ksh(Base, db.Model):
-    __tablename__ = "ksh"
-    id = db.Column(db.Integer, primary_key=True)  # 编号
-
-    yjl_id = db.Column(db.Integer, db.ForeignKey("yjl.id"))  # 叶加料
-    hs_id = db.Column(db.Integer, db.ForeignKey("hs.id"))  # 烘丝
-
-    def __repr__(self):
-        return "<Ksh {}>".format(self.id)

@@ -33,13 +33,11 @@ def scheduler_wrapper(app: Flask, _from):
 
 
 def get_color(tablename):
-    if tablename == "Z1Tags":
-        return "m"
-    elif tablename == "Z2Tags":
-        return "e"
-    elif tablename == "KLDTags":
-        return "g"
-    return "c"
+    return {
+        "Z1Tags": "m",
+        "Z2Tags": "e",
+        "KLDTags": "g",
+    }.get(tablename, "c")
 
 
 logger.add(

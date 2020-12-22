@@ -254,33 +254,37 @@ def factor(name):
 @front.route("/first_five_batch", methods=["GET"])
 def first_five_batch():
     """
+    九个字段：批次、时间、品牌、入口水分、出口水分、出口温度、加水总量、温度、湿度
+    pch rq pph rksf cksf ckwd ljjsl wd sd
     [{
         "pph": str, // 品牌号
-        "pch": str, //批次号
+        "pch": str, // 批次号
         ...
     }]
     """
     yjls: List[YjlInfo] = YjlInfo.query.order_by(YjlInfo.id.desc()).slice(0, 5)
 
     # [{'pph': '利群(新版)烟丝', 'pch': 195, 'rq': '2020-05-31', 'ljjsl': 58.1}, ...]
-    yjl_dcts = YjlInfoSchema(many=True, only=("pch", "rq", "pph", "ljjsl")).dump(yjls)
+    yjl_dcts = YjlInfoSchema(
+        many=True, only=("pch", "rq", "pph", "rksf", "cksf", "ckwd", "ljjsl")
+    ).dump(yjls)
     result = []
 
     def f(name):
         return list(map(lambda x: x[name], yjl_dcts))
 
-    sssfs = (
-        CyInfo.query.filter(CyInfo.rq.in_(f("rq")))
-        .filter(CyInfo.pph.in_(f("pph")))
-        .filter(CyInfo.pch.in_(f("pch")))
-        .with_entities(CyInfo.sssf)
-        .order_by(CyInfo.id.desc())
-        .all()
-    )
     # [ {'sssf': 18.5307}, {'sssf': 18.5465}, ...]
-    sssf_dcts = [dict(zip(i.keys(), i)) for i in sssfs]
-    for yjl, sssf in zip(yjl_dcts, sssf_dcts):
-        yjl["sssf"] = sssf["sssf"]
+    # sssfs = (
+    #     CyInfo.query.filter(CyInfo.rq.in_(f("rq")))
+    #     .filter(CyInfo.pph.in_(f("pph")))
+    #     .filter(CyInfo.pch.in_(f("pch")))
+    #     .with_entities(CyInfo.sssf)
+    #     .order_by(CyInfo.id.desc())
+    #     .all()
+    # )
+    # sssf_dcts = [dict(zip(i.keys(), i)) for i in sssfs]
+    for yjl in yjl_dcts:
+        # yjl["sssf"] = sssf["sssf"]
         yjl["rq"] = arrow.get(yjl["rq"]).format("YYYY-MM-DD")
         result.append(yjl)
     return response(data=result)

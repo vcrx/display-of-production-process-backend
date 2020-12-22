@@ -8,7 +8,10 @@ import arrow
 import pandas as pd
 
 from app import create_app
-from app.models import *
+from app.models import Sshc, Yjl, Hs
+from app.models import SshcInfo, YjlInfo, CyInfo, QsInfo
+from app.pull.models import KLDTags, Z1Tags, Z2Tags
+
 
 app = create_app("db")
 context = app.app_context()
@@ -18,47 +21,30 @@ data_dir = Path(__file__).parent / "data"
 print("data_dir:", data_dir)
 
 
-def get_data(csv_name):
-    """
-    {
-        '2020/10/12 13:06': {
-            'DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV': {
-                '_NUMERICID': 0.0,
-                '_VALUE': 18.793315889,
-                '_QUALITY': 192.0
-            },
-            ...
-        },
-    }
-    """
-    df = pd.read_csv(csv_name, encoding="gbk")
-    df.drop(df.columns[-1], axis=1, inplace=True)
+z1_df = pd.read_csv(data_dir / "Z1（松散回潮工段）.csv", encoding="gbk")
+z2_df = pd.read_csv(data_dir / "Z2（润叶加料工段）.csv", encoding="gbk")
+kld_df = pd.read_csv(data_dir / "KLD（烘丝工段）.csv", encoding="gbk")
 
-    grouped_by_time = df.groupby("_TIMESTAMP")
-    result = {}
-    for time_str in grouped_by_time.groups.keys():
-        data = (
-            grouped_by_time.get_group(time_str)
-            .groupby("_BATCHID")
-            .mean()
-            .drop("id", axis=1)
-            .T.to_dict()
-        )
-        time_arrow = arrow.get(time_str).datetime
-        result[time_arrow] = data
-    return result
+if os.getenv("NEED_INIT_MSSQL"):
+    from app.constants import plc_uri
+    from app.pull import DatabaseManagement
+
+    dm = DatabaseManagement(plc_uri)
+
+    z1_df.to_sql(Z1Tags.__tablename__, dm.engine, if_exists="replace", index=False)
+    print("正在添加：Z1（松散回潮工段）.csv -> Z1Tags")
+    z2_df.to_sql(Z2Tags.__tablename__, dm.engine, if_exists="replace", index=False)
+    print("正在添加：Z2（润叶加料工段）.csv -> Z2Tags")
+    kld_df.to_sql(KLDTags.__tablename__, dm.engine, if_exists="replace", index=False)
+    print("正在添加：KLD（烘丝工段）.csv -> KLDTags")
 
 
-z1 = get_data(data_dir / "Z1（松散回潮工段）.csv")
-z2 = get_data(data_dir / "Z2（润叶加料工段）.csv")
-kld = get_data(data_dir / "KLD（烘丝工段）.csv")
-
-print("正在添加：Z1（松散回潮工段）.csv")
-Sshc.add_many(z1)
-print("正在添加：Z2（润叶加料工段）.csv")
-Yjl.add_many(z2)
-print("正在添加：KLD（烘丝工段）.csv")
-Hs.add_many(kld)
+print("正在添加：Z1（松散回潮工段）.csv -> Sshc")
+Sshc.add_many(z1_df)
+print("正在添加：Z2（润叶加料工段）.csv -> Yjl")
+Yjl.add_many(z2_df)
+print("正在添加：KLD（烘丝工段）.csv -> Hs")
+Hs.add_many(kld_df)
 
 sshc_columns = {
     "日期": "rq",

@@ -2,7 +2,7 @@ from sqlalchemy import Column, String, Integer, Float, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 
 
-class Base(object):
+class _Base(object):
     def __repr__(self) -> str:
         return "<{} id={} batchid={} timestamp={}>".format(
             self.__tablename__, self.id, self._BATCHID, self._TIMESTAMP
@@ -12,7 +12,7 @@ class Base(object):
         return {c.name: getattr(self, c.name, None) for c in self.__table__.columns}
 
 
-Base = declarative_base(cls=Base)
+Base = declarative_base(cls=_Base)
 
 
 class Z1Tags(Base):
@@ -49,10 +49,3 @@ class KLDTags(Base):
     _VALUE = Column(Float())
     _TIMESTAMP = Column(DateTime())
     _QUALITY = Column(Integer())
-
-
-if __name__ == "__main__":
-    from .db import DatabaseManagement
-
-    dm = DatabaseManagement()
-    dm.create_database(Base.metadata)

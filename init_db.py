@@ -1,5 +1,6 @@
-from app.constants import sqlserver_uri, mysql_uri
+from os import getenv
 
+from app.constants import plc_uri, mysql_uri
 from sqlalchemy.exc import InterfaceError
 from sqlalchemy_utils import database_exists, create_database
 
@@ -18,15 +19,20 @@ def init_database(db_uri):
     print(f"{db_uri} exists:", database_exists_(db_uri))
 
 
-init_database(sqlserver_uri)
 init_database(mysql_uri)
 
-import sys
 
 from werkzeug.security import generate_password_hash
 from app import create_app, db
 from app.models import *
 
+from app.pull import DatabaseManagement
+from app.pull.models import Base
+
+if getenv("NEED_INIT_MSSQL"):
+    init_database(plc_uri)
+    dm = DatabaseManagement(plc_uri)
+    dm.create_database(Base.metadata)
 
 app = create_app("db")
 context = app.app_context()
@@ -70,5 +76,7 @@ admin = Admin(
 db.session.add(role)
 db.session.add(admin)
 db.session.commit()
+
+print("`init_db` Done.")
 
 context.pop()

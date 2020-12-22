@@ -11,5 +11,5 @@ from app.pull import migrate_into
 app = create_app("db")
 app.app_context().push()
 
-migrate_into(Z1Tags, Sshc)
-migrate_into(Z2Tags, Yjl)
+migrate_into(Z1Tags)
+migrate_into(Z2Tags)
