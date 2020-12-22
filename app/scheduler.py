@@ -40,6 +40,7 @@ def get_color(tablename):
     }.get(tablename, "c")
 
 
+logger.remove()
 logger.add(
     "sched.log",
     format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{message}</level>",

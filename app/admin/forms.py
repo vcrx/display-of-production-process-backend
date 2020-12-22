@@ -249,6 +249,7 @@ class AlarmField(FloatField):
             validates.append(
                 NumberRange(min=require_min, message=label + "不得小于 %(min)s")
             )
+        self._label = label
         super(AlarmField, self).__init__(label, validates, **kwargs)
 
     def gettext(self, _):
@@ -260,7 +261,7 @@ class AlarmForm(FlaskForm):
     sshc_cksfdown = AlarmField("松散回潮出口水分下限")
     yjl_rksfup = AlarmField("叶加料入口水分上限")
     yjl_rksfdown = AlarmField("叶加料入口水分下限")
-    yjl_wlljzlup = AlarmField("叶加料物料累积重量")
+    yjl_wlljzlup = AlarmField("叶加料物料累积重量上限")
     yjl_wlljzldown = AlarmField("叶加料物料累积重量下限")
     yjl_wlssllup = AlarmField("叶加料物料实时流量上限")
     yjl_wlsslldown = AlarmField("叶加料物料实时流量下限")

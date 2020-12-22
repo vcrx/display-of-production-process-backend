@@ -21,7 +21,7 @@ class SssfControl(Base, db.Model):
 class BjControl(Base, db.Model):
     # 存下历史所有的 BjControl，每次取最高 id 的一条就是了，相当于历史记录。
     __tablename__ = "bj_control"
-    id = db.Column(db.Integer, primary_key=True)  # 编号
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)  # 编号
     sshc_cksfup = db.Column(db.Float)  # 松散回潮出口水分上限
     sshc_cksfdown = db.Column(db.Float)  # 松散回潮出口水分下限
     yjl_rksfup = db.Column(db.Float)  # 叶加料入口水分上限
@@ -64,6 +64,43 @@ class BjControl(Base, db.Model):
     def get_last_one(cls):
         bj_control: cls = cls.query.order_by(cls.id.desc()).first()
         return bj_control
+
+
+class BjRecords(Base, db.Model):
+    """报警记录"""
+
+    __tablename__ = "bj_records"
+    id = db.Column(db.Integer, autoincrement=True, primary_key=True)  # 编号
+    time = db.Column(db.DateTime)  # 时间
+    pph = db.Column(db.String(128))  # 品牌号
+    pch = db.Column(db.Integer)  # 批次号
+    stage = db.Column(db.String(128))  # 生产阶段
+    factor = db.Column(db.String(128))  # 影响因素
+    reason = db.Column(db.Text)  # 报警原因
+    status = db.Column(db.Integer, default=0)  # 状态：未读0 已读1
+
+    @classmethod
+    def add_one(cls, dct: dict):
+        """
+        {
+            datetime.datetime(2020, 10, 12, 13, 8, tzinfo=tzutc()): {
+                'sshc_cksfup': {'break': True, 'reason': 'sshc_cksfup，范围：1.0 目前：18.630000115'},
+                'sshc_cksfdown': {'break': True, 'reason': 'sshc_cksfdown，范围：9999.0 目前：18.630000115'}
+            }
+        }
+        """
+        for time, data in dct.items():
+            for factor, v in data.items():
+                obj = cls(
+                    time=time,
+                    pph="利群",
+                    pch=None,
+                    stage=factor,
+                    factor=factor,
+                    reason=v.get("reason"),
+                )
+                db.session.add(obj)
+        db.session.commit()
 
 
 # 人工控制

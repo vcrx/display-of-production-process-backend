@@ -128,7 +128,7 @@ def alarm():
             flash("修改成功", "alarm-success")
         else:
             flash("修改失败", "alarm-error")
-        return redirect(url_for("alarm"))
+        return redirect(url_for("admin.alarm"))
     data = {}
     if bj_control is not None:
         data: dict = BjControlSchema().dump(bj_control)

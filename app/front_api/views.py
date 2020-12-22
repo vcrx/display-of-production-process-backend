@@ -1,3 +1,4 @@
+from app.models.control import BjRecords
 from datetime import datetime
 from typing import List
 
@@ -6,6 +7,7 @@ from flask import request
 
 from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl, Hs, Sshc
 from app.schemas import (
+    BjRecordsSchema,
     YjlSchema,
     BjControlSchema,
     YjlInfoSchema,
@@ -180,7 +182,23 @@ def alarm():
         "sfyd": str //是否以读
     }]
     """
-    return response()
+    query_params = get_query(request.args)
+    page = query_params.get("page", 1)
+    page = safe_int(page, 1)
+    per_page = query_params.get("per_page", 10)
+    per_page = safe_int(per_page, 1)
+    data = BjRecords.query.order_by(BjRecords.id.desc()).paginate(
+        page=page, per_page=per_page, max_per_page=20
+    )
+    items = BjRecordsSchema(many=True).dump(data.items)
+    resp_dict = {
+        "items": items,
+        "page": data.page,
+        "pages": data.pages,
+        "per_page": data.per_page,
+        "total": data.total,
+    }
+    return response(data=resp_dict)
 
 
 @front.route("/factor/<name>", methods=["GET"])

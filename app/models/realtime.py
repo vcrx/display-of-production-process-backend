@@ -1,3 +1,6 @@
+from collections import defaultdict
+from app.utils.string import remove_prefix, remove_suffix
+from app.models.history import SshcInfo, YjlInfo
 from typing import Any, Dict
 
 import arrow
@@ -38,6 +41,13 @@ def get_data(df):
 
 # 松散回潮
 class Sshc(Base, db.Model):
+    _mapping = {
+        "wlssll": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_PV_Massflow",
+        "wlljzl": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_Total_Massflow",
+        "hfwd": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.TB101_PV_Temperature",
+        "cksf": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.ZF102_PV_Moisture",
+        "ckwd": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.ZF102_PV_Temp",
+    }
     __tablename__ = "sshc"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
@@ -55,20 +65,13 @@ class Sshc(Base, db.Model):
 
     @classmethod
     def add_many(cls, df: pd.DataFrame):
-        mapping = {
-            "wlssll": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_PV_Massflow",
-            "wlljzl": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_Total_Massflow",
-            "hfwd": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.TB101_PV_Temperature",
-            "cksf": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.ZF102_PV_Moisture",
-            "ckwd": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.ZF102_PV_Temp",
-        }
         data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
         try:
             for time, data in data_dict.items():
                 kwargs = {}
-                for name in mapping.keys():
+                for name in cls._mapping.keys():
                     try:
-                        kwargs[name] = data[mapping[name]]["_VALUE"]
+                        kwargs[name] = data[cls._mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
 
@@ -84,9 +87,60 @@ class Sshc(Base, db.Model):
         obj: cls = cls.query.order_by(cls.id.desc()).first()
         return obj
 
+    @classmethod
+    def judge_limit(cls, df, limit: dict):
+        # fields = ("sshc_cksfup", "sshc_cksfdown")
+        fields = limit.keys()
+        result = defaultdict(dict)
+
+        for origin_field in fields:
+            # 移除前后缀，获取字段名：如 sshc_cksfup -> cksf
+            field = remove_prefix(origin_field, "sshc_")
+            field = remove_suffix(field, "up")
+            field = remove_suffix(field, "down")
+            name = cls._mapping[field]
+            data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
+
+            for time, data in data_dict.items():
+                # 不是有效数据
+                if not data.get("qualified"):
+                    continue
+                dct: dict = data.get(name)
+                if not dct:
+                    # 没这个 name 值
+                    break
+                value = dct.get("_VALUE")
+                # 上限
+                if origin_field.endswith("up"):
+                    if value > limit[origin_field]:
+                        result[time][origin_field] = {
+                            "break": True,
+                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
+                        }
+                # 下限
+                if origin_field.endswith("down"):
+                    if value < limit[origin_field]:
+                        result[time][origin_field] = {
+                            "break": True,
+                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
+                        }
+
+        return result
+
 
 # 叶加料
 class Yjl(Base, db.Model):
+    _mapping = {
+        "wlsjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_PV_Massflow",
+        "wlljzl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_Total_Massflow",
+        "ljjsl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ST201_Total_Waterflow",
+        "rksf": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF201_PV_Moisture",
+        "ssjsl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV",
+        "ssjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_04.OutPhyPV",
+        "lywd": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.KA104_PV_ST201_Temperature",
+        "ckwd": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Temp",
+        "cksf": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Moisture",
+    }
     __tablename__ = "yjl"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
@@ -115,25 +169,14 @@ class Yjl(Base, db.Model):
 
     @classmethod
     def add_many(cls, df):
-        mapping = {
-            "wlsjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_PV_Massflow",
-            "wlljzl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_Total_Massflow",
-            "ljjsl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ST201_Total_Waterflow",
-            "rksf": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF201_PV_Moisture",
-            "ssjsl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV",
-            "ssjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_04.OutPhyPV",
-            "lywd": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.KA104_PV_ST201_Temperature",
-            "ckwd": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Temp",
-            "cksf": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.ZF202_PV_Moisture",
-        }
         data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
 
         try:
             for time, data in data_dict.items():
                 kwargs = {}
-                for name in mapping.keys():
+                for name in cls._mapping.keys():
                     try:
-                        kwargs[name] = data[mapping[name]]["_VALUE"]
+                        kwargs[name] = data[cls._mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
 
@@ -152,9 +195,81 @@ class Yjl(Base, db.Model):
         yjl: Yjl = Yjl.query.order_by(Yjl.id.desc()).first()
         return yjl
 
+    @classmethod
+    def judge_limit(cls, df, limit: dict):
+        # fields = (
+        #     "yjl_rksfup",
+        #     "yjl_rksfdown",
+        #     "yjl_wlljzlup",
+        #     "yjl_wlljzldown",
+        #     "yjl_wlssllup",
+        #     "yjl_wlsslldown",
+        #     "yjl_lywdup",
+        #     "yjl_lywddown",
+        #     "yjl_ljjslup",
+        #     "yjl_ljjsldown",
+        #     "yjl_ssjslup",
+        #     "yjl_ssjsldown",
+        #     "yjl_wdup",
+        #     "yjl_wddown",
+        #     "yjl_sdup",
+        #     "yjl_sddown",
+        #     "yjl_ckwdup",
+        #     "yjl_ckwddown",
+        #     "yjl_cksfup",
+        #     "yjl_cksfdown",
+        # )
+        fields = limit.keys()
+        result = defaultdict(dict)
+
+        for origin_field in fields:
+            # 移除前后缀，获取字段名：如 sshc_cksfup -> cksf
+            field = remove_prefix(origin_field, "yjl_")
+            field = remove_suffix(field, "up")
+            field = remove_suffix(field, "down")
+            name = cls._mapping[field]
+            data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
+
+            for time, data in data_dict.items():
+                # 不是有效数据
+                if not data.get("qualified"):
+                    continue
+                dct: dict = data.get(name)
+                if not dct:
+                    # 没这个 name 值
+                    break
+                value = dct.get("_VALUE")
+                # 上限
+                if origin_field.endswith("up"):
+                    if value > limit[origin_field]:
+                        result[time][origin_field] = {
+                            "break": True,
+                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
+                        }
+                # 下限
+                if origin_field.endswith("down"):
+                    if value < limit[origin_field]:
+                        result[time][origin_field] = {
+                            "break": True,
+                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
+                        }
+
+        return result
+
 
 # 烘丝
 class Hs(Base, db.Model):
+    _mapping = {
+        "sssf": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.MOIST_PV",
+        "zqll": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamMaFl",
+        "fhzqyl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamPressAft",
+        "fqzqyl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamPressBef",
+        "zqtj": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamVolFl",
+        "y32fmz": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_ValPos_Y32",
+        "wlsjll": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.FLOW_PV",
+        "wlljzl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.FLOW_TOT",
+        "zqllfmkd": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.CV_SteamMaFl",
+    }
     __tablename__ = "hs"
     id = db.Column(db.Integer, primary_key=True)  # 编号
     time = db.Column(db.DateTime)  # 时间
@@ -179,25 +294,14 @@ class Hs(Base, db.Model):
 
     @classmethod
     def add_many(cls, df):
-        mapping = {
-            "sssf": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.MOIST_PV",
-            "zqll": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamMaFl",
-            "fhzqyl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamPressAft",
-            "fqzqyl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamPressBef",
-            "zqtj": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_SteamVolFl",
-            "y32fmz": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.PV_ValPos_Y32",
-            "wlsjll": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.FLOW_PV",
-            "wlljzl": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.Upstream_HMI.Misc.Value.FLOW_TOT",
-            "zqllfmkd": "DietDAServer.Tags.KLD.PLC.ProgramBlock.HMI.Component.SX1_HMI.Misc.Value.CV_SteamMaFl",
-        }
         data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
 
         try:
             for time, data in data_dict.items():
                 kwargs = {}
-                for name in mapping.keys():
+                for name in cls._mapping.keys():
                     try:
-                        kwargs[name] = data[mapping[name]]["_VALUE"]
+                        kwargs[name] = data[cls._mapping[name]]["_VALUE"]
                     except KeyError:
                         kwargs[name] = None
 
@@ -213,6 +317,46 @@ class Hs(Base, db.Model):
         obj: cls = cls.query.order_by(cls.id.desc()).first()
         return obj
 
+    @classmethod
+    def judge_limit(cls, df, limit: dict):
+        # fields = ("sssf_up", "sssf_down")
+        fields = limit.keys()
+        result = defaultdict(dict)
+
+        for origin_field in fields:
+            # 移除前后缀，获取字段名：如 sssf_up -> sssf
+            # 这里跟上面的处理不太一样，有空可以统一一下。
+            field = remove_suffix(origin_field, "_up")
+            field = remove_suffix(field, "_down")
+            name = cls._mapping[field]
+            data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
+
+            for time, data in data_dict.items():
+                # 不是有效数据
+                if not data.get("qualified"):
+                    continue
+                dct: dict = data.get(name)
+                if not dct:
+                    # 没这个 name 值
+                    break
+                value = dct.get("_VALUE")
+                # 上限
+                if origin_field.endswith("up"):
+                    if value > limit[origin_field]:
+                        result[time][origin_field] = {
+                            "break": True,
+                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
+                        }
+                # 下限
+                if origin_field.endswith("down"):
+                    if value < limit[origin_field]:
+                        result[time][origin_field] = {
+                            "break": True,
+                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
+                        }
+
+        return result
+
 
 # 批次号分配器
 class Pch(db.Model):
@@ -227,11 +371,14 @@ class Pch(db.Model):
     @classmethod
     def get(cls, name):
         if name == "sshc":
-            ...
+            obj: SshcInfo = SshcInfo.query.order_by(SshcInfo.id.desc()).first()
+
         elif name == "yjl":
+            obj: YjlInfo = YjlInfo.query.order_by(YjlInfo.id.desc()).first()
+
+        elif name == "Hs":
             ...
-        elif name == "":
-            ...
+            return
 
         item = cls.query.filter_by(name=name).first()
         return item.value if item else None

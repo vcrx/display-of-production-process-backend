@@ -1,3 +1,4 @@
+from app.models.control import BjRecords
 from datetime import timedelta
 
 import pandas as pd
@@ -12,6 +13,27 @@ from .models import Z1Tags, Z2Tags, KLDTags
 from app.constants import plc_uri
 
 N_MINUTES = 1
+
+
+def judge_alarm(df, MYSQL):
+    # MYSQL: Type[Union[Sshc, Yjl, Hs]]
+    from app.models import BjControl
+    from app.schemas import BjControlSchema
+
+    bj_control = BjControl.get_last_one()
+    tablename = MYSQL.__tablename__
+    if tablename == "hs":
+        prefix = "sssf"
+    else:
+        prefix = tablename
+    if bj_control is None:
+        return
+    data: dict = BjControlSchema(only=BjControl.get_columns_by_prefix(prefix)).dump(
+        bj_control
+    )
+    result = MYSQL.judge_limit(df, data)
+    if result:
+        BjRecords.add_one(result)
 
 
 def migrate_into(MSSQL: Type[Union[Z1Tags, Z2Tags, KLDTags]]):
@@ -76,7 +98,7 @@ def migrate_into(MSSQL: Type[Union[Z1Tags, Z2Tags, KLDTags]]):
     if df.empty:
         log_message += f"判断无新增数据\n"
         return log_message
-
+    judge_alarm(df, MYSQL)
     pch = Pch.get(m_name) or 0
     qualified = (df["_QUALITY"] == 192).all()
     log_message += f"采集数据是否合格: {qualified}"
