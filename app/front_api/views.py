@@ -15,7 +15,7 @@ from app.schemas import (
     HsSchema,
     SshcSchema,
 )
-from app.utils import response, get_query, safe_int
+from app.utils import response, get_query, safe_int, safe_round
 from . import front
 
 
@@ -100,7 +100,7 @@ def index_data():
             }
         else:
             yjl_dct[attr] = {
-                "value": value,
+                "value": safe_round(value),
                 "up": bj_dumped.get("yjl_{}up".format(attr)),
                 "down": bj_dumped.get("yjl_{}down".format(attr)),
             }
@@ -116,7 +116,7 @@ def index_data():
             }
         else:
             sshc_dct[attr] = {
-                "value": value,
+                "value": safe_round(value),
                 "up": bj_dumped.get("sshc_{}up".format(attr)),
                 "down": bj_dumped.get("sshc_{}down".format(attr)),
             }
@@ -129,7 +129,7 @@ def index_data():
             "value": arrow.get(hs_dumped["time"]).timestamp,
         },
         "sssf": {
-            "value": hs_dumped["sssf"],
+            "value": safe_round(hs_dumped["sssf"]),
             "up": bj_dumped.get("sssf_up"),
             "down": bj_dumped.get("sssf_down"),
         },
@@ -288,21 +288,9 @@ def first_five_batch():
     ).dump(yjls)
     result = []
 
-    def f(name):
-        return list(map(lambda x: x[name], yjl_dcts))
-
-    # [ {'sssf': 18.5307}, {'sssf': 18.5465}, ...]
-    # sssfs = (
-    #     CyInfo.query.filter(CyInfo.rq.in_(f("rq")))
-    #     .filter(CyInfo.pph.in_(f("pph")))
-    #     .filter(CyInfo.pch.in_(f("pch")))
-    #     .with_entities(CyInfo.sssf)
-    #     .order_by(CyInfo.id.desc())
-    #     .all()
-    # )
-    # sssf_dcts = [dict(zip(i.keys(), i)) for i in sssfs]
     for yjl in yjl_dcts:
-        # yjl["sssf"] = sssf["sssf"]
+        for key in ("rksf", "cksf", "ckwd", "ljjsl"):
+            yjl[key] = safe_round(yjl[key])
         yjl["rq"] = arrow.get(yjl["rq"]).format("YYYY-MM-DD")
         result.append(yjl)
     return response(data=result)

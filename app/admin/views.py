@@ -50,7 +50,6 @@ def admin_auth(func):
         for url in urls:
             # 只要求前缀存在就行。
             # 比如 /hello/<name> 和 /hello 两个规则只需要设置 /hello 就行
-            # if str(rule) == url:
             if str(rule).startswith(url):
                 block_flag = False
                 break

@@ -27,6 +27,22 @@ def safe_int(value, default=None):
     return safe_cast(value, int, default)
 
 
+def isfloat(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
+
+
+def safe_round(value, digits=2):
+    try:
+        value = float(value)
+        return round(value, digits)
+    except Exception:
+        return value
+
+
 def normalize_query_param(value):
     """
     Given a non-flattened query parameter value,
