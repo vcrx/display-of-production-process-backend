@@ -32,8 +32,8 @@ def migrate_job():
 
 
 def my_listener(event):
-    if e := event.exception:
-        print("The job crashed :(", e)
+    if event.exception:
+        print("The job crashed :(", event.exception)
     else:
         print("The job worked :)")
 

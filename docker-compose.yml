@@ -15,7 +15,7 @@ services:
       - mysql_data:/var/lib/mysql
     environment:
       TZ: Asia/Shanghai
-      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_PASSWORD
       MYSQL_DATABASE: yancao
   plc:
     image: mcr.microsoft.com/mssql/server

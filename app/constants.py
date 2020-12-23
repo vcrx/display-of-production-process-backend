@@ -40,7 +40,7 @@ mes_uri = URL(
 mysql_uri = URL(
     "mysql+pymysql",
     username="root",
-    password=_("MYSQL_ROOT_PASSWORD"),
+    password=_("MYSQL_PASSWORD"),
     host="127.0.0.1",
     port=3306,
     database="yancao",

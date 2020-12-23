@@ -99,16 +99,6 @@ def migrate_into(MSSQL: Type[Union[Z1Tags, Z2Tags, KLDTags]]):
         log_message += f"判断无新增数据\n"
         return log_message
     judge_alarm(df, MYSQL)
-    pch = Pch.get(m_name) or 0
-    qualified = (df["_QUALITY"] == 192).all()
-    log_message += f"采集数据是否合格: {qualified}"
-    # 合格数据将放到上一批，否则批次号将+1
-    if not qualified:
-        Pch.set(m_name, pch + 1)
-        pch = pch + 1
-        log_message += f"分发批次号： {pch}\n"
-    else:
-        log_message += f"批次号： {pch}\n"
 
     grouped_by_time = df.groupby("_TIMESTAMP")
     for time_str in grouped_by_time.groups.keys():
