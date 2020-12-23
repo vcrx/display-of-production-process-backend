@@ -53,13 +53,13 @@ def create_app(mode="app") -> Flask:
         app.register_blueprint(admin_blueprint)
         app.register_blueprint(front_blueprint)
 
-        from .scheduler import init_scheduler
-
-        init_scheduler(app)
         CORS(app)
 
         @app.errorhandler(404)
         def page_not_found(error):
             return render_template("admin/404.html"), 404
 
+        from .scheduler import init_scheduler
+
+        init_scheduler(app)
     return app

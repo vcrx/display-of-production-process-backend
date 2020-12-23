@@ -22,36 +22,36 @@ class BjControl(Base, db.Model):
     # 存下历史所有的 BjControl，每次取最高 id 的一条就是了，相当于历史记录。
     __tablename__ = "bj_control"
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)  # 编号
-    sshc_cksfup = db.Column(db.Float)  # 松散回潮出口水分上限
-    sshc_cksfdown = db.Column(db.Float)  # 松散回潮出口水分下限
-    yjl_rksfup = db.Column(db.Float)  # 叶加料入口水分上限
-    yjl_rksfdown = db.Column(db.Float)  # 叶加料入口水分下限
-    yjl_wlljzlup = db.Column(db.Float)  # 叶加料物料累积重量上限
-    yjl_wlljzldown = db.Column(db.Float)  # 叶加料物料累积重量下限
-    yjl_wlssllup = db.Column(db.Float)  # 叶加料物料实时流量上限
-    yjl_wlsslldown = db.Column(db.Float)  # 叶加料物料实时流量下限
-    yjl_lywdup = db.Column(db.Float)  # 叶加料料液温度上限
-    yjl_lywddown = db.Column(db.Float)  # 叶加料料液温度下限
-    yjl_ljjslup = db.Column(db.Float)  # 叶加料累积加水量上限
-    yjl_ljjsldown = db.Column(db.Float)  # 叶加料累积加水量下限
-    yjl_ssjslup = db.Column(db.Float)  # 叶加料瞬时加水量上限
-    yjl_ssjsldown = db.Column(db.Float)  # 叶加料瞬时加水量下限
-    yjl_wdup = db.Column(db.Float)  # 叶加料温度上限
-    yjl_wddown = db.Column(db.Float)  # 叶加料温度下限
-    yjl_sdup = db.Column(db.Float)  # 叶加料湿度上限
-    yjl_sddown = db.Column(db.Float)  # 叶加料湿度下限
-    yjl_ckwdup = db.Column(db.Float)  # 叶加料出口温度上限
-    yjl_ckwddown = db.Column(db.Float)  # 叶加料出口温度下限
-    yjl_cksfup = db.Column(db.Float)  # 叶加料出口水分上限
-    yjl_cksfdown = db.Column(db.Float)  # 叶加料出口水分下限
-    cy_wdup = db.Column(db.Float)  # 储叶温度上限
-    cy_wddown = db.Column(db.Float)  # 储叶温度下限
-    cy_sdup = db.Column(db.Float)  # 储叶湿度上限
-    cy_sddown = db.Column(db.Float)  # 储叶湿度下限
-    qs_wdup = db.Column(db.Float)  # 切丝温度上限
-    qs_wddown = db.Column(db.Float)  # 切丝温度下限
-    qs_sdup = db.Column(db.Float)  # 切丝湿度上限
-    qs_sddown = db.Column(db.Float)  # 切丝湿度下限
+    sshc_cksf_up = db.Column(db.Float)  # 松散回潮出口水分上限
+    sshc_cksf_down = db.Column(db.Float)  # 松散回潮出口水分下限
+    yjl_rksf_up = db.Column(db.Float)  # 叶加料入口水分上限
+    yjl_rksf_down = db.Column(db.Float)  # 叶加料入口水分下限
+    yjl_wlljzl_up = db.Column(db.Float)  # 叶加料物料累积重量上限
+    yjl_wlljzl_down = db.Column(db.Float)  # 叶加料物料累积重量下限
+    yjl_wlssll_up = db.Column(db.Float)  # 叶加料物料实时流量上限
+    yjl_wlssll_down = db.Column(db.Float)  # 叶加料物料实时流量下限
+    yjl_lywd_up = db.Column(db.Float)  # 叶加料料液温度上限
+    yjl_lywd_down = db.Column(db.Float)  # 叶加料料液温度下限
+    yjl_ljjsl_up = db.Column(db.Float)  # 叶加料累积加水量上限
+    yjl_ljjsl_down = db.Column(db.Float)  # 叶加料累积加水量下限
+    yjl_ssjsl_up = db.Column(db.Float)  # 叶加料瞬时加水量上限
+    yjl_ssjsl_down = db.Column(db.Float)  # 叶加料瞬时加水量下限
+    yjl_wd_up = db.Column(db.Float)  # 叶加料温度上限
+    yjl_wd_down = db.Column(db.Float)  # 叶加料温度下限
+    yjl_sd_up = db.Column(db.Float)  # 叶加料湿度上限
+    yjl_sd_down = db.Column(db.Float)  # 叶加料湿度下限
+    yjl_ckwd_up = db.Column(db.Float)  # 叶加料出口温度上限
+    yjl_ckwd_down = db.Column(db.Float)  # 叶加料出口温度下限
+    yjl_cksf_up = db.Column(db.Float)  # 叶加料出口水分上限
+    yjl_cksf_down = db.Column(db.Float)  # 叶加料出口水分下限
+    cy_wd_up = db.Column(db.Float)  # 储叶温度上限
+    cy_wd_down = db.Column(db.Float)  # 储叶温度下限
+    cy_sd_up = db.Column(db.Float)  # 储叶湿度上限
+    cy_sd_down = db.Column(db.Float)  # 储叶湿度下限
+    qs_wd_up = db.Column(db.Float)  # 切丝温度上限
+    qs_wd_down = db.Column(db.Float)  # 切丝温度下限
+    qs_sd_up = db.Column(db.Float)  # 切丝湿度上限
+    qs_sd_down = db.Column(db.Float)  # 切丝湿度下限
     sssf_up = db.Column(db.Float)  # 生丝水分控制值上限
     sssf_down = db.Column(db.Float)  # 生丝水分控制值下限
 
@@ -84,8 +84,8 @@ class BjRecords(Base, db.Model):
         """
         {
             datetime.datetime(2020, 10, 12, 13, 8, tzinfo=tzutc()): {
-                'sshc_cksfup': {'break': True, 'reason': 'sshc_cksfup，范围：1.0 目前：18.630000115'},
-                'sshc_cksfdown': {'break': True, 'reason': 'sshc_cksfdown，范围：9999.0 目前：18.630000115'}
+                'sshc_cksf_up': {'break': True, 'reason': 'sshc_cksf_up，范围：1.0 目前：18.630000115'},
+                'sshc_cksf_down': {'break': True, 'reason': 'sshc_cksf_down，范围：9999.0 目前：18.630000115'}
             }
         }
         """

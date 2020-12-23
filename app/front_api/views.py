@@ -145,26 +145,26 @@ def index_data():
     # 储叶温度
     data["cy"]["wd"] = {
         "value": None,
-        "up": bj_dumped.get("cy_wdup"),
-        "down": bj_dumped.get("cy_wddown"),
+        "up": bj_dumped.get("cy_wd_up"),
+        "down": bj_dumped.get("cy_wd_down"),
     }
     # 储叶湿度
     data["cy"]["sd"] = {
         "value": None,
-        "up": bj_dumped.get("cy_sdup"),
-        "down": bj_dumped.get("cy_sddown"),
+        "up": bj_dumped.get("cy_sd_up"),
+        "down": bj_dumped.get("cy_sd_down"),
     }
     # 切丝温度
     data["qs"]["wd"] = {
         "value": None,
-        "up": bj_dumped.get("qs_wdup"),
-        "down": bj_dumped.get("qs_wddown"),
+        "up": bj_dumped.get("qs_wd_up"),
+        "down": bj_dumped.get("qs_wd_down"),
     }
     # 切丝湿度
     data["qs"]["sd"] = {
         "value": None,
-        "up": bj_dumped.get("qs_sdup"),
-        "down": bj_dumped.get("qs_sddown"),
+        "up": bj_dumped.get("qs_sd_up"),
+        "down": bj_dumped.get("qs_sd_down"),
     }
     return response(data=data)
 

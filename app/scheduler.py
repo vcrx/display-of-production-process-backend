@@ -1,6 +1,5 @@
 import logging
-import sys
-from typing import Optional, Type, Union
+from typing import Type, Union
 
 from apscheduler.events import EVENT_JOB_ERROR, EVENT_JOB_EXECUTED, JobExecutionEvent
 from apscheduler.executors.pool import ThreadPoolExecutor

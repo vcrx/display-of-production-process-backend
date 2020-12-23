@@ -39,6 +39,45 @@ def get_data(df):
     return result
 
 
+UP_SUFFIX = "_up"
+DOWN_SUFFIX = "_down"
+
+
+def judge_limit(df, limit: dict, prefix: str, mapping: dict):
+    fields = limit.keys()
+    result = defaultdict(dict)
+
+    for origin_field in fields:
+        # 移除前后缀，获取字段名：如 sshc_cksf_up -> cksf
+        field = remove_prefix(origin_field, prefix)
+        field = remove_suffix(remove_suffix(field, UP_SUFFIX), DOWN_SUFFIX)
+        name = mapping[field]
+        data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
+
+        for time, data in data_dict.items():
+            # 不是有效数据
+            if not data.get("qualified"):
+                continue
+            dct: dict = data.get(name)
+            if not dct:
+                # 没这个 name 值
+                break
+            value = dct.get("_VALUE")
+            # 上限
+            if origin_field.endswith(UP_SUFFIX):
+                if value > limit[origin_field]:
+                    result[time][origin_field] = {
+                        "reason": f"{origin_field}，上限：{limit[origin_field]} 目前：{value}",
+                    }
+            # 下限
+            if origin_field.endswith(DOWN_SUFFIX):
+                if value < limit[origin_field]:
+                    result[time][origin_field] = {
+                        "reason": f"{origin_field}，下限：{limit[origin_field]} 目前：{value}",
+                    }
+    return result
+
+
 # 松散回潮
 class Sshc(Base, db.Model):
     _mapping = {
@@ -89,42 +128,8 @@ class Sshc(Base, db.Model):
 
     @classmethod
     def judge_limit(cls, df, limit: dict):
-        # fields = ("sshc_cksfup", "sshc_cksfdown")
-        fields = limit.keys()
-        result = defaultdict(dict)
-
-        for origin_field in fields:
-            # 移除前后缀，获取字段名：如 sshc_cksfup -> cksf
-            field = remove_prefix(origin_field, "sshc_")
-            field = remove_suffix(field, "up")
-            field = remove_suffix(field, "down")
-            name = cls._mapping[field]
-            data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
-
-            for time, data in data_dict.items():
-                # 不是有效数据
-                if not data.get("qualified"):
-                    continue
-                dct: dict = data.get(name)
-                if not dct:
-                    # 没这个 name 值
-                    break
-                value = dct.get("_VALUE")
-                # 上限
-                if origin_field.endswith("up"):
-                    if value > limit[origin_field]:
-                        result[time][origin_field] = {
-                            "break": True,
-                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
-                        }
-                # 下限
-                if origin_field.endswith("down"):
-                    if value < limit[origin_field]:
-                        result[time][origin_field] = {
-                            "break": True,
-                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
-                        }
-
+        # fields = ("sshc_cksf_up", "sshc_cksf_down")
+        result = judge_limit(df, limit, "sshc_", cls._mapping)
         return result
 
 
@@ -198,62 +203,28 @@ class Yjl(Base, db.Model):
     @classmethod
     def judge_limit(cls, df, limit: dict):
         # fields = (
-        #     "yjl_rksfup",
-        #     "yjl_rksfdown",
-        #     "yjl_wlljzlup",
-        #     "yjl_wlljzldown",
-        #     "yjl_wlssllup",
-        #     "yjl_wlsslldown",
-        #     "yjl_lywdup",
-        #     "yjl_lywddown",
-        #     "yjl_ljjslup",
-        #     "yjl_ljjsldown",
-        #     "yjl_ssjslup",
-        #     "yjl_ssjsldown",
-        #     "yjl_wdup",
-        #     "yjl_wddown",
-        #     "yjl_sdup",
-        #     "yjl_sddown",
-        #     "yjl_ckwdup",
-        #     "yjl_ckwddown",
-        #     "yjl_cksfup",
-        #     "yjl_cksfdown",
+        #     "yjl_rksf_up",
+        #     "yjl_rksf_down",
+        #     "yjl_wlljzl_up",
+        #     "yjl_wlljzl_down",
+        #     "yjl_wlssll_up",
+        #     "yjl_wlssll_down",
+        #     "yjl_lywd_up",
+        #     "yjl_lywd_down",
+        #     "yjl_ljjsl_up",
+        #     "yjl_ljjsl_down",
+        #     "yjl_ssjsl_up",
+        #     "yjl_ssjsl_down",
+        #     "yjl_wd_up",
+        #     "yjl_wd_down",
+        #     "yjl_sd_up",
+        #     "yjl_sd_down",
+        #     "yjl_ckwd_up",
+        #     "yjl_ckwd_down",
+        #     "yjl_cksf_up",
+        #     "yjl_cksf_down",
         # )
-        fields = limit.keys()
-        result = defaultdict(dict)
-
-        for origin_field in fields:
-            # 移除前后缀，获取字段名：如 sshc_cksfup -> cksf
-            field = remove_prefix(origin_field, "yjl_")
-            field = remove_suffix(field, "up")
-            field = remove_suffix(field, "down")
-            name = cls._mapping[field]
-            data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
-
-            for time, data in data_dict.items():
-                # 不是有效数据
-                if not data.get("qualified"):
-                    continue
-                dct: dict = data.get(name)
-                if not dct:
-                    # 没这个 name 值
-                    break
-                value = dct.get("_VALUE")
-                # 上限
-                if origin_field.endswith("up"):
-                    if value > limit[origin_field]:
-                        result[time][origin_field] = {
-                            "break": True,
-                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
-                        }
-                # 下限
-                if origin_field.endswith("down"):
-                    if value < limit[origin_field]:
-                        result[time][origin_field] = {
-                            "break": True,
-                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
-                        }
-
+        result = judge_limit(df, limit, "yjl_", cls._mapping)
         return result
 
 
@@ -320,41 +291,7 @@ class Hs(Base, db.Model):
     @classmethod
     def judge_limit(cls, df, limit: dict):
         # fields = ("sssf_up", "sssf_down")
-        fields = limit.keys()
-        result = defaultdict(dict)
-
-        for origin_field in fields:
-            # 移除前后缀，获取字段名：如 sssf_up -> sssf
-            # 这里跟上面的处理不太一样，有空可以统一一下。
-            field = remove_suffix(origin_field, "_up")
-            field = remove_suffix(field, "_down")
-            name = cls._mapping[field]
-            data_dict: Dict[Any, Dict[str, Dict[str, float]]] = get_data(df)
-
-            for time, data in data_dict.items():
-                # 不是有效数据
-                if not data.get("qualified"):
-                    continue
-                dct: dict = data.get(name)
-                if not dct:
-                    # 没这个 name 值
-                    break
-                value = dct.get("_VALUE")
-                # 上限
-                if origin_field.endswith("up"):
-                    if value > limit[origin_field]:
-                        result[time][origin_field] = {
-                            "break": True,
-                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
-                        }
-                # 下限
-                if origin_field.endswith("down"):
-                    if value < limit[origin_field]:
-                        result[time][origin_field] = {
-                            "break": True,
-                            "reason": f"{origin_field}，范围：{limit[origin_field]} 目前：{value}",
-                        }
-
+        result = judge_limit(df, limit, "", cls._mapping)
         return result
 
 

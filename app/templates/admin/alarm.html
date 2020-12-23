@@ -1,10 +1,9 @@
 {% extends "admin/admin.html" %}
-
 {% macro render_field(field) %}
     <td>
-        {{ field(class_="form-control", placeholder=field.label.text, value=data.get(field.name, ''),**kwargs)|safe }}
+        {{ field(class_="form-control", placeholder=field.label.text, value=data.get(field.name, ''), **kwargs)|safe }}
         {% if field.errors %}
-            <ul class=errors>
+            <ul class="errors">
                 {% for error in field.errors %}
                     <li>{{ error }}</li>
                 {% endfor %}
@@ -12,7 +11,6 @@
         {% endif %}
     </td>
 {% endmacro %}
-
 {% block content %}
     <style>
         .btn-submit {
@@ -28,7 +26,9 @@
     <section class="content-header">
         <h1>生丝水分控制后台管理系统</h1>
         <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> 生丝水分控制</a></li>
+            <li>
+                <a href="#"><i class="fa fa-dashboard"></i> 生丝水分控制</a>
+            </li>
             <li class="active">报警控制</li>
         </ol>
     </section>
@@ -39,25 +39,35 @@
                     <div class="box-header">
                         <h3 class="box-title">报警管理</h3>
                     </div>
-                    <ul class="nav nav-tabs" role="tablist" style="margin-left: 10px;margin-bottom: 10px">
+                    <ul
+                            class="nav nav-tabs"
+                            role="tablist"
+                            style="margin-left: 10px; margin-bottom: 10px"
+                    >
                         <li role="presentation" class="active">
-                            <a href="#sshc" aria-controls="sshc" role="tab"
-                               data-toggle="tab">松散回潮</a>
+                            <a href="#sshc" aria-controls="sshc" role="tab" data-toggle="tab"
+                            >松散回潮</a
+                            >
                         </li>
                         <li role="presentation">
-                            <a href="#ryjl" aria-controls="ryjl" role="tab" data-toggle="tab">润叶加料</a>
+                            <a href="#ryjl" aria-controls="ryjl" role="tab" data-toggle="tab"
+                            >润叶加料</a
+                            >
                         </li>
                         <li role="presentation">
-                            <a href="#cy" aria-controls="cy" role="tab"
-                               data-toggle="tab">储叶</a>
+                            <a href="#cy" aria-controls="cy" role="tab" data-toggle="tab"
+                            >储叶</a
+                            >
                         </li>
                         <li role="presentation">
-                            <a href="#qs" aria-controls="qs" role="tab"
-                               data-toggle="tab">切丝</a>
+                            <a href="#qs" aria-controls="qs" role="tab" data-toggle="tab"
+                            >切丝</a
+                            >
                         </li>
                         <li role="presentation">
-                            <a href="#sssf" aria-controls="sssf" role="tab"
-                               data-toggle="tab">生丝水分</a>
+                            <a href="#sssf" aria-controls="sssf" role="tab" data-toggle="tab"
+                            >生丝水分</a
+                            >
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -76,12 +86,13 @@
                                         <tr>
                                             <td>松散回潮</td>
                                             <td>出口水分</td>
-                                            {{ render_field(form.sshc_cksfdown) }}
-                                            {{ render_field(form.sshc_cksfup) }}
+                                            {{ render_field(form.sshc_cksf_down) }} {{ render_field(form.sshc_cksf_up) }}
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
+                                    <button type="submit" class="btn btn-default btn-submit">
+                                        保存
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -100,54 +111,48 @@
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>入口水分</td>
-                                            {{ render_field(form.yjl_rksfdown) }}
-                                            {{ render_field(form.yjl_rksfup) }}
+                                            {{ render_field(form.yjl_rksf_down) }} {{ render_field(form.yjl_rksf_up) }}
                                         </tr>
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>物料累计重量</td>
-                                            {{ render_field(form.yjl_wlljzldown) }}
-                                            {{ render_field(form.yjl_wlljzlup) }}
+                                            {{ render_field(form.yjl_wlljzl_down) }} {{ render_field(form.yjl_wlljzl_up) }}
                                         </tr>
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>瞬时加水量</td>
-                                            {{ render_field(form.yjl_ssjsldown) }}
-                                            {{ render_field(form.yjl_ssjslup) }}
+                                            {{ render_field(form.yjl_ssjsl_down) }} {{ render_field(form.yjl_ssjsl_up) }}
                                         </tr>
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>料液温度</td>
-                                            {{ render_field(form.yjl_lywddown) }}
-                                            {{ render_field(form.yjl_lywdup) }}
+                                            {{ render_field(form.yjl_lywd_down) }} {{ render_field(form.yjl_lywd_up) }}
                                         </tr>
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>环境温度</td>
-                                            {{ render_field(form.yjl_wddown) }}
-                                            {{ render_field(form.yjl_wdup) }}
+                                            {{ render_field(form.yjl_wd_down) }} {{ render_field(form.yjl_wd_up) }}
                                         </tr>
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>环境湿度</td>
-                                            {{ render_field(form.yjl_sddown) }}
-                                            {{ render_field(form.yjl_sdup) }}
+                                            {{ render_field(form.yjl_sd_down) }} {{ render_field(form.yjl_sd_up) }}
                                         </tr>
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>出口温度</td>
-                                            {{ render_field(form.yjl_ckwddown) }}
-                                            {{ render_field(form.yjl_ckwdup) }}
+                                            {{ render_field(form.yjl_ckwd_down) }} {{ render_field(form.yjl_ckwd_up) }}
                                         </tr>
                                         <tr>
                                             <td>润叶加料</td>
                                             <td>出口水分</td>
-                                            {{ render_field(form.yjl_cksfdown) }}
-                                            {{ render_field(form.yjl_cksfup) }}
+                                            {{ render_field(form.yjl_cksf_down) }} {{ render_field(form.yjl_cksf_up) }}
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
+                                    <button type="submit" class="btn btn-default btn-submit">
+                                        保存
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -166,18 +171,18 @@
                                         <tr>
                                             <td>储叶</td>
                                             <td>温度</td>
-                                            {{ render_field(form.cy_wddown) }}
-                                            {{ render_field(form.cy_wdup) }}
+                                            {{ render_field(form.cy_wd_down) }} {{ render_field(form.cy_wd_up) }}
                                         </tr>
                                         <tr>
                                             <td>储叶</td>
                                             <td>湿度</td>
-                                            {{ render_field(form.cy_sddown) }}
-                                            {{ render_field(form.cy_sdup) }}
+                                            {{ render_field(form.cy_sd_down) }} {{ render_field(form.cy_sd_up) }}
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
+                                    <button type="submit" class="btn btn-default btn-submit">
+                                        保存
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -196,18 +201,18 @@
                                         <tr>
                                             <td>切丝</td>
                                             <td>温度</td>
-                                            {{ render_field(form.qs_wddown) }}
-                                            {{ render_field(form.qs_wdup) }}
+                                            {{ render_field(form.qs_wd_down) }} {{ render_field(form.qs_wd_up) }}
                                         </tr>
                                         <tr>
                                             <td>切丝</td>
                                             <td>湿度</td>
-                                            {{ render_field(form.qs_sddown) }}
-                                            {{ render_field(form.qs_sdup) }}
+                                            {{ render_field(form.qs_sd_down) }} {{ render_field(form.qs_sd_up) }}
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
+                                    <button type="submit" class="btn btn-default btn-submit">
+                                        保存
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -226,12 +231,13 @@
                                         <tr>
                                             <td>生丝水分</td>
                                             <td>控制值</td>
-                                            {{ render_field(form.sssf_down) }}
-                                            {{ render_field(form.sssf_up) }}
+                                            {{ render_field(form.sssf_down) }} {{ render_field(form.sssf_up) }}
                                         </tr>
                                         </tbody>
                                     </table>
-                                    <button type="submit" class="btn btn-default btn-submit">保存</button>
+                                    <button type="submit" class="btn btn-default btn-submit">
+                                        保存
+                                    </button>
                                 </form>
                             </div>
                         </div>
@@ -242,8 +248,6 @@
     </section>
     <!--内容-->
 {% endblock %}
-
-
 {% block js %}
     <script type="text/javascript">
         $(document).ready(function () {

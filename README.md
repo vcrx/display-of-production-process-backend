@@ -10,8 +10,6 @@
 
 安装好依赖之后需要配置环境变量，创建 .env 文件，填入：
 
-提供了一个 `.env.example`，可以改名为 `.env` 后修改里面的内容。
-
 ```dotenv
 SECRET_KEY="自己设置一个"
 PLC_PASSWORD="PLC 数据库密码"
@@ -19,13 +17,15 @@ MES_PASSWORD="MES 数据库密码"
 MYSQL_PASSWORD="程序数据库密码"
 ```
 
+提供了一个 `.env.example`，可以改名为 `.env` 后修改里面的内容。
+
 `PLC_PASSWORD` 和 `MES_PASSWORD` 是实时采集数据库的密码。
 
 `MYSQL_PASSWORD` 是程序使用的的数据库密码。
 
-数据库的地址什么的可以直接先改 `app/constants.py` 里面的信息
+数据库地址什么的可以直接先改 `app/constants.py` 里面的信息
 
-还有一些配置在 `app/__init__.py` 中的 `init_config` 中。
+还有一些配置在 `app/__init__.py` 中的 `init_config` 中。如：
 
 ```python
 def init_config(app: Flask):
@@ -38,8 +38,8 @@ def init_config(app: Flask):
 
 如果你本地装好了数据库，那只需要配置好数据库密码，然后填入 `.env` 中的对应的变量中。
 
-项目需要 mysql 和 mssql，mssql 是做数据采集服务器。嵌入式设备采集数据后存入已有的 mssql 数据库。
-本项目通过 Mysql 来维护项目本身的数据。
+项目需要 MySQL 和 mssql，mssql 是做数据采集服务器。嵌入式设备采集数据后存入已有的 mssql 数据库。
+本项目通过 MySQL 来维护项目本身的数据。
 
 测试开发时可以使用 docker，可以很方便的启动和删除一个数据库，可以看 docs 下的文档。
 
@@ -47,9 +47,9 @@ def init_config(app: Flask):
 
 注意，因为为了防止误修改了 mssql 数据库，如果想初始化 mssql 数据库，需要设置一个环境变量才行，放在 `.env` 或者环境变量中都可以：
 
-为了防止误修改了 mssql 数据库！
-为了防止误修改了 mssql 数据库！
-为了防止误修改了 mssql 数据库！
+防止误修改 mssql 数据库！
+防止误修改 mssql 数据库！
+防止误修改 mssql 数据库！
 
 ```dotenv
 NEED_INIT_MSSQL=True
