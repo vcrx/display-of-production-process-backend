@@ -1,3 +1,7 @@
+# 一些无用的文件
+
+test.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

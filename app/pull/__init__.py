@@ -1,16 +1,15 @@
-from app.models.control import BjRecords
 from datetime import timedelta
+from typing import Type, Union
 
+import arrow
 import pandas as pd
-
-from sqlalchemy import desc
+from app.constants import mes_uri, plc_uri
+from app.models.control import BjRecords
 from flask import current_app
+from sqlalchemy import desc
 
-from typing import Union, Type
 from .db import DatabaseManagement
-from .models import Z1Tags, Z2Tags, KLDTags
-
-from app.constants import plc_uri
+from .models import History, KLDTags, Z1Tags, Z2Tags
 
 N_MINUTES = 1
 
@@ -36,8 +35,78 @@ def judge_alarm(df, MYSQL):
         BjRecords.add_one(result)
 
 
+qs_mapping = {
+    "wd": "DLNY_ArchestrA_KT_K2.AIValue.0",
+    "sd": "DLNY_ArchestrA_KT_K2.AIValue.1",
+}
+
+cy_mapping = {
+    "wd": "DLNY_ArchestrA_KT_K3.AIValue.0",
+    "sd": "DLNY_ArchestrA_KT_K3.AIValue.1",
+}
+
+yjl_mapping = {
+    "wd": "DLNY_ArchestrA_KT_K2.AIValue.32",
+    "sd": "DLNY_ArchestrA_KT_K2.AIValue.33",
+}
+
+sshc_mapping = {
+    "wd": "DLNY_ArchestrA_KT_K2.AIValue.36",
+    "sd": "DLNY_ArchestrA_KT_K2.AIValue.37",
+}
+
+
+def parse_mes(df):
+    """
+    {
+        '2020/10/12 13:06': {
+            'qualified': 1,
+            'DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_PIDState_x.HMI_Wr_PIDState_03.OutPhyPV': {
+                '_NUMERICID': 0.0,
+                '_VALUE': 18.793315889,
+                '_QUALITY': 192.0
+            },
+            ...
+        },
+    }
+    """
+
+    grouped_by_time = df.groupby("_TIMESTAMP")
+    result = {}
+    for time_str in grouped_by_time.groups.keys():
+        _df = grouped_by_time.get_group(time_str)
+        data = _df.groupby("_BATCHID").mean().drop("id", axis=1).T.to_dict()
+        _qualified = (_df["_QUALITY"] == 192).all()
+        qualified = 1 if _qualified else 0
+        data["qualified"] = qualified
+        time_arrow = arrow.get(time_str).datetime
+        result[time_arrow] = data
+    return result
+
+
+def get_mes(start_time, end_time, Table):
+    from app.models import Cy, Qs, Sshc, Yjl
+
+    mes_dm = DatabaseManagement(mes_uri)
+    if Table == Sshc:
+        mapping = sshc_mapping
+    elif Table == Yjl:
+        mapping = yjl_mapping
+    elif Table == Cy:
+        mapping = cy_mapping
+    elif Table == Qs:
+        mapping = qs_mapping
+    else:
+        return "无法识别的 MES 数据库表名"
+    query = History.query(mes_dm, start_time, end_time, tuple(mapping.values()))
+    df = pd.read_sql_query(
+        query.statement,
+        mes_dm.session.connection(),
+    )
+
+
 def migrate_into(MSSQL: Type[Union[Z1Tags, Z2Tags, KLDTags]]):
-    from app.models import Hs, Sshc, Yjl, Pch
+    from app.models import Hs, Pch, Sshc, Yjl
 
     """
     MSSQL: Z1Tags, Z2Tags, KLDTags
@@ -61,11 +130,11 @@ def migrate_into(MSSQL: Type[Union[Z1Tags, Z2Tags, KLDTags]]):
     m_name = MYSQL.__tablename__
     log_message += f" {s_name} -> {m_name} \n"
 
-    dm = DatabaseManagement(plc_uri)
+    plc_dm = DatabaseManagement(plc_uri)
 
     max_time_item = MYSQL.query.order_by(desc(MYSQL.time)).first()
 
-    query_ = dm.query(MSSQL)
+    query_ = plc_dm.query(MSSQL)
 
     if max_time_item:
         max_time = max_time_item.time
@@ -86,20 +155,22 @@ def migrate_into(MSSQL: Type[Union[Z1Tags, Z2Tags, KLDTags]]):
         # 因为后面的时间判断使用 > 号，所以这里要让 max_time 小一点
         max_time = s_item._TIMESTAMP - timedelta(minutes=1)
 
+    start_time = max_time
+    end_time = max_time + timedelta(minutes=N_MINUTES)
     # 获取大于已有数据库时间的 N_MINUTES 条数据
-    query_ = query_.filter(MSSQL._TIMESTAMP > max_time).filter(
-        max_time + timedelta(minutes=N_MINUTES) >= MSSQL._TIMESTAMP
+    query_ = query_.filter(MSSQL._TIMESTAMP > start_time).filter(
+        MSSQL._TIMESTAMP <= end_time
     )
     log_message += f"实时 {m_name} 数据库最新时间: {max_time}\n"
     df = pd.read_sql_query(
         query_.statement,
-        dm.session.connection(),
+        plc_dm.session.connection(),
     )
     if df.empty:
         log_message += f"判断无新增数据\n"
         return log_message
     judge_alarm(df, MYSQL)
-
+    # 获取时间
     grouped_by_time = df.groupby("_TIMESTAMP")
     for time_str in grouped_by_time.groups.keys():
         log_message += f"新增时间 {time_str}\n"

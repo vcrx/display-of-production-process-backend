@@ -1,21 +1,14 @@
-from app.models.control import BjRecords
 from datetime import datetime
 from typing import List
 
 import arrow
+from app.models import BjControl, Hs, RgControl, Sshc, Yjl, YjlInfo
+from app.models.control import BjRecords
+from app.schemas import (BjControlSchema, BjRecordsSchema, HsSchema,
+                         RgControlSchema, SshcSchema, YjlInfoSchema, YjlSchema)
+from app.utils import get_query, response, safe_int, safe_round
 from flask import request
 
-from app.models import Yjl, YjlInfo, CyInfo, BjControl, RgControl, Hs, Sshc
-from app.schemas import (
-    BjRecordsSchema,
-    YjlSchema,
-    BjControlSchema,
-    YjlInfoSchema,
-    RgControlSchema,
-    HsSchema,
-    SshcSchema,
-)
-from app.utils import response, get_query, safe_int, safe_round
 from . import front
 
 

@@ -1,14 +1,14 @@
 from collections import defaultdict
-from app.utils.string import remove_prefix, remove_suffix
-from app.models.history import SshcInfo, YjlInfo
 from typing import Any, Dict
 
 import arrow
 import pandas as pd
 from app import db
+from app.utils.string import remove_prefix, remove_suffix
 from sqlalchemy import exc
 
 from .base import Base
+from .history import SshcInfo, YjlInfo
 
 
 def get_data(df):
@@ -78,8 +78,9 @@ def judge_limit(df, limit: dict, prefix: str, mapping: dict):
     return result
 
 
-# 松散回潮
 class Sshc(Base, db.Model):
+    """松散回潮"""
+
     _mapping = {
         "wlssll": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_PV_Massflow",
         "wlljzl": "DietDAServer.Tags.Z1.PLC.Global.HMI_Wr_ShowValue.RB101_Total_Massflow",
@@ -97,6 +98,10 @@ class Sshc(Base, db.Model):
     hfwd = db.Column(db.Float)  # 回风温度
     ckwd = db.Column(db.Float)  # 出口温度
     cksf = db.Column(db.Float)  # 出口水分
+
+    wd = db.Column(db.Float)  # 温度
+    sd = db.Column(db.Float)  # 湿度
+
     sssf_controls = db.relationship("SssfControl", backref="sshc")  # 生丝水分控制外键关系关联
 
     def __repr__(self):
@@ -133,8 +138,9 @@ class Sshc(Base, db.Model):
         return result
 
 
-# 叶加料
 class Yjl(Base, db.Model):
+    """叶加料"""
+
     _mapping = {
         "wlsjll": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_PV_Massflow",
         "wlljzl": "DietDAServer.Tags.Z2.PLC.Global.HMI_Wr_ShowValue.DB201_Total_Massflow",
@@ -160,6 +166,9 @@ class Yjl(Base, db.Model):
     lywd = db.Column(db.Float)  # 料液温度
     ckwd = db.Column(db.Float)  # 出口温度
     cksf = db.Column(db.Float)  # 出口水分
+
+    wd = db.Column(db.Float)  # 温度
+    sd = db.Column(db.Float)  # 湿度
 
     ycs = db.relationship("Yc", backref="yjl")  # 预测外键关系关联
     sssf_controls = db.relationship("SssfControl", backref="yjl")  # 生丝水分控制外键关系关联
@@ -329,6 +338,26 @@ class Pch(db.Model):
             obj = cls(name=name, value=value)
             db.session.add(obj)
         db.session.commit()
+
+
+class Cy(Base, db.Model):
+    """储叶"""
+
+    __tablename__ = "cy"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+
+    wd = db.Column(db.Float)  # 温度
+    sd = db.Column(db.Float)  # 湿度
+
+
+class Qs(Base, db.Model):
+    """储叶"""
+
+    __tablename__ = "qs"
+    id = db.Column(db.Integer, primary_key=True)  # 编号
+
+    wd = db.Column(db.Float)  # 温度
+    sd = db.Column(db.Float)  # 湿度
 
 
 # 预测

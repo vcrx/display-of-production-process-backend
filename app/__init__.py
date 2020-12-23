@@ -15,10 +15,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from os import getenv as _env
-from flask import Flask, render_template
+from flask import Flask, render_template, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
+from pathlib import Path
 
 db = SQLAlchemy()
 ma = Marshmallow()
@@ -39,6 +40,7 @@ def init_config(app: Flask):
 
 
 def create_app(mode="app") -> Flask:
+
     app = Flask(__name__)
 
     init_config(app)
@@ -55,11 +57,8 @@ def create_app(mode="app") -> Flask:
 
         CORS(app)
 
-        @app.errorhandler(404)
-        def page_not_found(error):
-            return render_template("admin/404.html"), 404
-
         from .scheduler import init_scheduler
 
         init_scheduler(app)
+
     return app

@@ -41,6 +41,8 @@ def init_config(app: Flask):
 项目需要 MySQL 和 mssql，mssql 是做数据采集服务器。嵌入式设备采集数据后存入已有的 mssql 数据库。
 本项目通过 MySQL 来维护项目本身的数据。
 
+注意 MySQL 字符集记得要选 `utf8`。
+
 测试开发时可以使用 docker，可以很方便的启动和删除一个数据库，可以看 docs 下的文档。
 
 ### 数据准备

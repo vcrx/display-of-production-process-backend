@@ -1,6 +1,6 @@
 from os import getenv
 
-from app.constants import plc_uri, mysql_uri
+from app.constants import plc_uri, mes_uri, mysql_uri
 from sqlalchemy.exc import InterfaceError
 from sqlalchemy_utils import database_exists, create_database
 
@@ -27,12 +27,16 @@ from app import create_app, db
 from app.models import *
 
 from app.pull import DatabaseManagement
-from app.pull.models import Base
+from app.pull.models.plc import Base as PLCBase
+from app.pull.models.mes import Base as MESBase
 
 if getenv("NEED_INIT_MSSQL"):
     init_database(plc_uri)
-    dm = DatabaseManagement(plc_uri)
-    dm.create_database(Base.metadata)
+    plc_dm = DatabaseManagement(plc_uri)
+    plc_dm.create_database(PLCBase.metadata)
+    init_database(mes_uri)
+    mes_dm = DatabaseManagement(mes_uri)
+    mes_dm.create_database(MESBase.metadata)
 
 app = create_app("db")
 context = app.app_context()
