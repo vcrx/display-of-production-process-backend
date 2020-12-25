@@ -6,6 +6,9 @@ from os import getenv as _
 
 from sqlalchemy.engine.url import URL
 
+# mssql_driver = "SQL Server Native Client 11.0"
+mssql_driver = "ODBC Driver 17 for SQL Server"
+
 # 原有的采集数据的数据库
 plc_uri = URL(
     "mssql+pyodbc",
@@ -17,7 +20,7 @@ plc_uri = URL(
     query={
         "charset": "utf8",
         # 使用 hostname 连接时，要指定使用的 Driver 名字
-        "driver": "SQL Server Native Client 10.0",
+        "driver": mssql_driver,
     },
 )
 
@@ -32,7 +35,7 @@ mes_uri = URL(
     query={
         "charset": "utf8",
         # 使用 hostname 连接时，要指定使用的 Driver 名字
-        "driver": "SQL Server Native Client 10.0",
+        "driver": mssql_driver,
     },
 )
 

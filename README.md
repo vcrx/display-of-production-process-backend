@@ -34,6 +34,15 @@ def init_config(app: Flask):
     app.config["SCHEDULER_COLLECTION_FROM_SCRATCH"] = False
 ```
 
+#### 安装 SQLServer ODBC Driver
+
+会遇到一个报错： `[IM002] [Microsoft][ODBC 驱动程序管理器] 未发现数据源名称并且未指定默认驱动程序 (0) (SQLDriverConnect)`
+
+这里在 `resources/SQLServerDriver` 里面提供有两个安装包，选择对应自己系统的版本就好了。
+
+你也可以去下载 Microsoft 的驱动 <https://docs.microsoft.com/en-us/sql/connect/odbc/download-odbc-driver-for-sql-server>。
+但是需要在 `app/constants.py` 中把驱动程序名字改成和你下载的对应的，比如：`ODBC Driver 17 for SQL Server`。
+
 ### 建立数据库表
 
 如果你本地装好了数据库，那只需要配置好数据库密码，然后填入 `.env` 中的对应的变量中。

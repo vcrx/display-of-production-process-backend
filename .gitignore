@@ -1,5 +1,4 @@
 # 一些无用的文件
-
 test.py
 
 # Byte-compiled / optimized / DLL files
@@ -215,3 +214,5 @@ fabric.properties
 
 !app/static/*
 !app/static/**
+
+!resources/**
